@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoidSentry2 — Documentation</title>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar" aria-label="Primary">
+            <div class="logo">
+                <h1>VoidSentry2</h1>
+                <p class="version">v0.1.0</p>
+                <div class="logo-links">
+                    <a href="https://github.com/Elentium/VoidSentry2" target="_blank" rel="noopener" class="logo-link">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        VoidSentry2
+                    </a>
+                    <a href="https://wally.run/package/elentium/voidsentry2" target="_blank" rel="noopener" class="logo-link">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L5 8.09v7.82l7 3.94l7-3.94V8.09l-7-3.94z"/></svg>
+                        Wally
+                    </a>
+                    <a href="https://create.roblox.com/store/asset/109800466320728" target="_blank" rel="noopener" class="logo-link logo-link--creator" title="Creator Store listing">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+                        Creator Store
+                    </a>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><button type="button" class="nav-btn active" data-page="intro">Intro</button></li>
+                <li><button type="button" class="nav-btn" data-page="installation">Installation</button></li>
+                <li><button type="button" class="nav-btn" data-page="configuration">Configuration</button></li>
+                <li><button type="button" class="nav-btn" data-page="api">API</button></li>
+                <li><button type="button" class="nav-btn" data-page="usage">Usage</button></li>
+                <li><button type="button" class="nav-btn" data-page="examples">Examples</button></li>
+                <li><button type="button" class="nav-btn" data-page="benchmarks">Benchmarks</button></li>
+                <li><button type="button" class="nav-btn" data-page="tips">Useful tips</button></li>
+                <li><button type="button" class="nav-btn" data-page="custom-types">Custom types</button></li>
+                <li><button type="button" class="nav-btn" data-page="updates">Update logs</button></li>
+                <li><button type="button" class="nav-btn" data-page="credits">Credits</button></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <section id="intro" class="page active">
+                <div class="page-content">
+                    <h1 class="page-title">VoidSentry2</h1>
+                    <p class="tagline">Powerful &amp; Performant <code class="inline-code">buffer</code> serialization library, successor to <a class="tagline-github-link" href="https://github.com/Elentium/VoidSentry" target="_blank" rel="noopener"><svg class="tagline-github-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><span>VoidSentry</span></a>.</p>
+
+                    <div class="section">
+                        <h2>What it does</h2>
+                        <p>The library serializes Luau and Roblox data into <code class="inline-code">buffer</code> and reads it back. It supports <strong>35+</strong> types, an easy-to-use API, and optional <strong>Zstd</strong> compression via Roblox <code class="inline-code">EncodingService</code>.</p>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h3>Schematized Serialization</h3>
+                                <p>You define the way the data is serialized. The library writes and reads bytes in that fixed order — smaller payloads and predictable layout when both sides share the same schema.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Schemaless serialization</h3>
+                                <p>You pass plain values and the library infers their types at runtime, storing a small tag before each value. Handy when the list of values changes call to call without maintaining a separate schema for every combination.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Rich Types Support</h3>
+                                <p>Numbers, strings, vectors, <code class="inline-code">CFrame</code>, <code class="inline-code">Color3</code>, <code class="inline-code">enum(...)</code>, arrays, maps, <code class="inline-code">optional</code>, <code class="inline-code">any</code>, <code class="inline-code">instance</code> (id map), and <code class="inline-code">serInstance</code> after <code class="inline-code">registerInstanceSchema</code>.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Configurable</h3>
+                                <p>Strict mode, dynamic instance/vector behavior, buffer cap — see the <strong>Configuration</strong> page for more info.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3>Quality Oriented</h3>
+                                <p>Strong Luau typing for clear autocomplete and safer refactors, hot paths tuned for performance, and a large built-in test suite run under stress to catch regressions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Quick start</h2>
+                        <h3>Static</h3>
+                        <div class="code-block">
+                            <pre><code class="language-lua">--!strict
+local VS = require(path.to.VoidSentry2)
+local T = VS.types
+local static = VS.static
+
+local row = T.struct({
+    n = T.int32,
+    s = T.string,
+})
+
+local buf = static.serialize(row, { n = 42, s = "hi" }, nil, nil)
+local out = static.deserialize(row, buf, nil, nil)</code></pre>
+                        </div>
+                        <h3>Dynamic</h3>
+                        <p>Each value you pass becomes one tagged chunk in the buffer. The receiver reads the same number of values in the same order.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local VS = require(path.to.VoidSentry2)
+local dynamic = VS.dynamic
+
+-- Example: send a name, a user id, a position, and whether sprint is on — no struct definition.
+local playerId = 9001
+local targetPos = Vector3.new(10, 0, -3)
+
+local buf = dynamic.serialize(nil, nil, "MovePlayer", playerId, targetPos, true)
+if not buf then return end
+
+local name, id, pos, sprinting = dynamic.deserialize(nil, nil, buf)
+-- name == "MovePlayer", id == 9001, pos == targetPos, sprinting == true</code></pre>
+                        </div>
+                    </div>
+
+                    <nav class="page-nav page-nav--next-only" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="installation">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Installation</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="installation" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Installation</h1>
+
+                    <div class="section">
+                        <h2>Wally</h2>
+                        <p>Add the dependency and run the installer.</p>
+                        <div class="code-block">
+                            <pre><code class="language-toml">[dependencies]
+VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
+                        </div>
+                        <p>Then run <code class="inline-code">wally install</code> and <code class="inline-code">require</code> the module from your tree (for example <code class="inline-code">game.ReplicatedStorage.Packages.VoidSentry2</code> depending on layout).</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>GitHub</h2>
+                        <p>Clone <a class="tagline-github-link" href="https://github.com/Elentium/VoidSentry2" target="_blank" rel="noopener"><svg class="tagline-github-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><span>github.com/Elentium/VoidSentry2</span></a> and wire the <code class="inline-code">src</code> tree into your project with Rojo (or copy the source into <code class="inline-code">ReplicatedStorage</code>). Point <code class="inline-code">require</code> at the package entry module.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Model file (<code class="inline-code">.rbxm</code>)</h2>
+                        <p>A packaged <code class="inline-code">/roblox/VoidSentry2.rbxm</code> model is provided for drag-and-drop into Studio. Insert it under <code class="inline-code">ReplicatedStorage</code> (or your preferred folder) and <code class="inline-code">require</code> the ModuleScript entry.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Roblox Creator Store</h2>
+                        <p>The library is published as a Creator Store asset so you can add it from the toolbox.</p>
+                        <div class="logo-links logo-links--installation">
+                            <a href="https://create.roblox.com/store/asset/109800466320728" target="_blank" rel="noopener" class="logo-link logo-link--creator" title="Creator Store listing">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+                                Creator Store
+                            </a>
+                        </div>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="intro">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Intro</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="configuration">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Configuration</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="configuration" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Configuration</h1>
+                    <p class="tagline">Defaults live in the package; change them to match your game’s needs.</p>
+
+                    <div class="section">
+                        <h2>Where to edit</h2>
+                        <p>Main switches are in <code class="inline-code">src/shared/config/constants.luau</code>. If you use Wally, edit a <strong>vendored or forked copy</strong> of the library (or override via your own build pipeline) so updates do not wipe your changes. If you clone from GitHub, change the file in your repo before syncing to Studio.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Common options</h2>
+                        <ul class="types-list doc-ol">
+                            <li><strong><code class="inline-code">strictMode</code></strong> — <code class="inline-code">true</code>: bad input usually throws. <code class="inline-code">false</code>: many failures warn and return <code class="inline-code">nil</code>.</li>
+                            <li><strong><code class="inline-code">maxBufferSize</code></strong> — Upper bound for the internal scratch buffer; serialization fails if a payload would exceed it.</li>
+                            <li><strong><code class="inline-code">dynamicInstanceType</code></strong> — In <strong>dynamic</strong> mode only: how a plain <code class="inline-code">Instance</code> is written. <code class="inline-code">"instance"</code> encodes a numeric id using <code class="inline-code">_VSID</code> and your instance map (same object on deserialize). <code class="inline-code">"serInstance"</code> uses registered schemas and property snapshots. Static schemas ignore this — they use whichever node you put in the <code class="inline-code">struct</code> (<code class="inline-code">T.instance</code> vs <code class="inline-code">T.serInstance(...)</code>).</li>
+                            <li><strong><code class="inline-code">dynamicVectorType</code></strong> — In <strong>dynamic</strong> mode only: how a vector object is inferred(luau vector or roblox Vector3)</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <h2>Related code</h2>
+                        <p><code class="inline-code">src/shared/config/init.luau</code> re-exports constants for the rest of the library. You normally do not require it from game code — only adjust <code class="inline-code">constants.luau</code> when you maintain your own copy of VoidSentry2.</p>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="installation">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Installation</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="api">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">API</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="api" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">API reference</h1>
+
+                    <nav class="api-toc" aria-label="API sections">
+                        <a href="#api-module">Module</a>
+                        <a href="#api-static">Static</a>
+                        <a href="#api-dynamic">Dynamic</a>
+                        <a href="#api-instance">Instances</a>
+                        <a href="#api-types-table">Type catalog</a>
+                    </nav>
+
+                    <div class="section" id="api-module">
+                        <h2>Module exports</h2>
+                        <div class="api-item">
+                            <h3 class="api-signature">VoidSentry2.types</h3>
+                            <p>Table of type factories / nodes (<code class="inline-code">int32</code>, <code class="inline-code">struct({ ... })</code>, <code class="inline-code">array(...)</code>, etc.). Each node exposes <code class="inline-code">write</code> / <code class="inline-code">read</code> internally; you pass nodes to <code class="inline-code">static.serialize</code> / <code class="inline-code">deserialize</code>.</p>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">VoidSentry2.static</h3>
+                            <p><code class="inline-code">staticSerializer</code> with:</p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code>serialize&lt;T&gt;(serdes: typeNode&lt;T&gt;, input: T, offset: number?, compressionLevel: number?) -&gt; buffer?</code></li>
+                                <li><code>deserialize&lt;T&gt;(serdes: typeNode&lt;T&gt;, input: buffer, offset: number?, wasCompressed: boolean?) -&gt; T?</code></li>
+                            </ul>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">VoidSentry2.dynamic</h3>
+                            <p><code class="inline-code">dynamicSerializer</code>:</p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code>serialize&lt;T...&gt;(compressionLevel: number?, offset: number?, T...) -&gt; buffer?</code></li>
+                                <li><code>deserialize(wasCompressed: boolean?, offset: number?, input: buffer) -&gt; ...any?</code> — first <strong>argument</strong> <code class="inline-code">wasCompressed</code>: pass <code class="inline-code">true</code> if the buffer was produced with a non-<code class="inline-code">nil</code> compression level on <code class="inline-code">serialize</code>.</li>
+                            </ul>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">VoidSentry2.registerInstanceSchema(className: string, schema: { [string]: typeNode })</h3>
+                            <p>Registers a property layout for <code class="inline-code">types.serInstance(className)</code> and for dynamic inference when <code class="inline-code">dynamicInstanceType</code> is set to serInstance mode.</p>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">VoidSentry2.combine(t1: table, t2: table) -&gt; table</h3>
+                            <p>Shallow merge of two tables (used for convenience; not serialization-specific).</p>
+                        </div>
+                    </div>
+
+                    <div class="section" id="api-static">
+                        <h2>Static serializer</h2>
+                        <p>Each call has exactly one <strong>root</strong> type node. To send several logical values in one go, put them in a single <code class="inline-code">struct</code> (or an <code class="inline-code">array</code> / <code class="inline-code">map</code>) — that is the normal pattern for “multiple fields” on the wire.</p>
+                        <div class="api-item">
+                            <h3 class="api-signature">Offset</h3>
+                            <p>Writing starts at byte index <code class="inline-code">offset</code> (default <code class="inline-code">0</code>) inside an internal scratch buffer. The returned buffer length equals the <strong>final write cursor</strong>. Bytes <strong>before</strong> <code class="inline-code">offset</code> are zero-filled in the returned buffer so you can overwrite them with a header, version, or magic value after <code class="inline-code">serialize</code>. On <code class="inline-code">deserialize</code>, pass the same start index so reading begins after your metadata.</p>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">Compression</h3>
+                            <p>If <code class="inline-code">compressionLevel</code> on <code class="inline-code">serialize</code> is a number, the whole payload is Zstd-compressed. On <code class="inline-code">deserialize</code>, pass <code class="inline-code">wasCompressed = true</code> to decompress first; pass <code class="inline-code">nil</code> or <code class="inline-code">false</code> for uncompressed buffers.</p>
+                        </div>
+                    </div>
+
+                    <div class="section" id="api-dynamic">
+                        <h2>Dynamic serializer</h2>
+                        <p>Each value is stored with a small type id byte before its bytes so the reader knows what to decode next. If you used Zstd on <code class="inline-code">serialize</code>, pass <code class="inline-code">wasCompressed = true</code> on <code class="inline-code">deserialize</code>; otherwise pass <code class="inline-code">nil</code> or <code class="inline-code">false</code>.</p>
+                    </div>
+
+                    <div class="section" id="api-instance">
+                        <h2>Instances</h2>
+                        <div class="api-item">
+                            <h3 class="api-signature">types.instance</h3>
+                            <p>Serializes a registered Roblox <code class="inline-code">Instance</code> by numeric id (<code class="inline-code">_VSID</code> attribute + server/client instance map). Round-trip restores the <strong>same</strong> object reference.</p>
+                        </div>
+                        <div class="api-item">
+                            <h3 class="api-signature">types.serInstance("ClassName")</h3>
+                            <p>Requires a prior <code class="inline-code">registerInstanceSchema</code>. Produces a <strong>new</strong> instance on deserialize with properties read from the buffer.</p>
+                        </div>
+                    </div>
+
+                    <div class="section" id="api-types-table">
+                        <h2>Type catalog (sizes / notes)</h2>
+                        <h3>Integers &amp; floats</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>int8</code> … <code>uint32</code></td><td>1–4 B</td><td>Fixed-width integers (includes <code>int24</code>, <code>uint24</code>).</td></tr>
+                                <tr><td><code>float16</code>, <code>float24</code>, <code>float32</code>, <code>float64</code></td><td>2–8 B</td><td>IEEE half/single/double; <code>float24</code> is custom reduced precision.</td></tr>
+                            </tbody>
+                        </table>
+                        <h3>Primitives &amp; strings</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>boolean</code></td><td>1 byte.</td></tr>
+                                <tr><td><code>string</code></td><td>16-bit length; max 65535 payload bytes.</td></tr>
+                                <tr><td><code>string255</code></td><td>8-bit length; max 255 bytes.</td></tr>
+                                <tr><td><code>vector</code></td><td>Luau <code>vector</code>, 12 bytes (float32 axes).</td></tr>
+                                <tr><td><code>nothing</code></td><td><code>nil</code>, 0 bytes.</td></tr>
+                                <tr><td><code>void</code></td><td>Empty table <code>{}</code>, 0 bytes.</td></tr>
+                            </tbody>
+                        </table>
+                        <h3>Roblox &amp; math types</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>vector2</code>, <code>vector3</code></td><td>Full precision; <code>vector*f16</code> / <code>vector*f24</code> variants for smaller wire size.</td></tr>
+                                <tr><td><code>cframe</code>, <code>cframef24</code>, <code>qcframe</code>, <code>qcframef24</code></td><td>Matrix vs quaternion layouts.</td></tr>
+                                <tr><td><code>color3</code></td><td>3 bytes (uint8 channels).</td></tr>
+                                <tr><td><code>enum(Enum.X)</code></td><td><code>EnumItem</code>, 2-byte wire value.</td></tr>
+                            </tbody>
+                        </table>
+                        <h3>Collections &amp; specials</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>array(T)</code>, <code>array255(T)</code></td><td>Length-prefixed lists (uint16 vs uint8 count).</td></tr>
+                                <tr><td><code>map(K,V)</code>, <code>map255(K,V)</code></td><td>Dictionary; count then each key–value pair (pair order follows table iteration).</td></tr>
+                                <tr><td><code>struct({ key = T })</code></td><td>Fixed record; field order on the wire is sorted by key name.</td></tr>
+                                <tr><td><code>optional(T)</code></td><td>Presence flag + optional payload; deserialized absent value is <code>nil</code> (same as failure unless you use context / strict mode).</td></tr>
+                                <tr><td><code>any</code></td><td>Discriminator + dynamic inner layout.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="configuration">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Configuration</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="usage">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Usage</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="usage" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Usage</h1>
+                    <p class="tagline">How to think about the library before you copy examples — <strong>static</strong> vs <strong>dynamic</strong>, errors, compression, offsets, and config flags.</p>
+
+                    <div class="section">
+                        <h2>When VoidSentry2 helps</h2>
+                        <p>If you already send Luau tables through remotes or store big JSON-like structures, you pay for table encoding and larger network IO. A <code class="inline-code">buffer</code> is compact and fast to read back, as long as <strong>both sides agree on the layout</strong> (static schema) or on the <strong>order and compression flag</strong> (dynamic). It does not replace Roblox’s built-in replication; it is for your own byte payloads.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Type nodes and one root value</h2>
+                        <p><code class="inline-code">VoidSentry2.types</code> exposes factories like <code class="inline-code">T.uint32</code>, <code class="inline-code">T.struct({ ... })</code>, <code class="inline-code">T.array(T)</code>. Each value is a small object the library uses internally. You almost never call <code class="inline-code">write</code>/<code class="inline-code">read</code> yourself — you pass the node to <code class="inline-code">static.serialize</code> / <code class="inline-code">static.deserialize</code>. One serialize call = <strong>one</strong> root value (often one table shaped like your <code class="inline-code">struct</code>).</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Static vs dynamic</h2>
+                        <p><strong>Static</strong> — You pick the exact wire shape. Smallest size and least CPU usage when the schema is stable (player state, inventory snapshot, weapon stats). Use <code class="inline-code">struct</code> for “many fields in one message”.</p>
+                        <p><strong>Dynamic</strong> — You pass a variable list of values; each gets a one-byte type tag (plus payload). Easier for debug tools, admin commands, or “send whatever mix of primitives I have right now”. Payload is larger than static for the same data.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Strict vs lax (<code class="inline-code">strictMode</code>)</h2>
+                        <p>In <code class="inline-code">src/shared/config/constants.luau</code>, <code class="inline-code">strictMode = true</code> (default in source) makes most bad input <strong>throw</strong>. With <code class="inline-code">false</code>, many failures <strong>warn</strong> and <code class="inline-code">serialize</code>/<code class="inline-code">deserialize</code> return <code class="inline-code">nil</code>. Lax mode needs discipline: every call site should check for <code class="inline-code">nil</code>. Also remember <code class="inline-code">optional(T)</code> can legally deserialize to <code class="inline-code">nil</code> when the value is absent — that is not always an error.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Compression (Zstd)</h2>
+                        <p>Both serializers use Roblox <code class="inline-code">EncodingService</code>. Compression uses extra CPU on send and receive. On <code class="inline-code">serialize</code> you pass an optional numeric level; on <code class="inline-code">deserialize</code> you pass whether the buffer was compressed (see API reference). Try it on real payloads — small messages sometimes shrink little or not at all.</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>Offsets and custom headers</h2>
+                        <p>If you want <strong>some number of bytes</strong> of your own data at the start of the same buffer (for example a protocol version, magic value, or chunk length) before the VoidSentry2 payload, call <code class="inline-code">serialize(..., headerByteCount, nil)</code> then write your header into indices <code class="inline-code">0 .. headerByteCount - 1</code>. Deserialize with the same offset so reading starts after your header. You can also keep headers in a separate buffer and pass only the payload with offset <code class="inline-code">0</code>.</p>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="api">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">API</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="examples">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Examples</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="examples" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Examples</h1>
+                    <div class="section">
+                        <h2>Player snapshot (static)</h2>
+                        <p>Assume <code class="inline-code">local VS = require(...)</code>, <code class="inline-code">local T = VS.types</code>, <code class="inline-code">local static = VS.static</code> for each block below.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local T = VS.types
+local static = VS.static
+
+local Player = T.struct({
+    id = T.uint32,
+    name = T.string255,
+    pos = T.vector3,
+    hp = T.float32,
+})
+
+local buf = static.serialize(Player, {
+    id = 1,
+    name = "Aria",
+    pos = Vector3.new(0, 10, 0),
+    hp = 100,
+}, nil, nil)
+
+local round = static.deserialize(Player, buf, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Batched entities + Zstd</h2>
+                        <p>Serialize with a numeric level; deserialize with <code class="inline-code">wasCompressed = true</code>.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local EntityList = T.array(T.struct({
+    id = T.uint16,
+    x = T.float32,
+    y = T.float32,
+}))
+
+local buf = static.serialize(EntityList, entities, nil, 5)
+local out = static.deserialize(EntityList, buf, nil, true)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Offset: reserve bytes, then write a header</h2>
+                        <p>First <code class="inline-code">HEADER</code> bytes stay zero until you fill magic/version; payload starts at <code class="inline-code">HEADER</code>. Deserialize with the same offset.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local HEADER = 8
+local Payload = T.struct({ score = T.uint16, name = T.string255 })
+
+local buf = static.serialize(Payload, { score = 10, name = "Ann" }, HEADER, nil)
+buffer.writeu32(buf, 0, 0x50505332) -- example magic "PPS2"
+buffer.writeu32(buf, 4, 1)        -- example protocol version
+
+local data = static.deserialize(Payload, buf, HEADER, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Dynamic with Zstd</h2>
+                        <p>First argument to <code class="inline-code">serialize</code> is the compression level (or <code class="inline-code">nil</code> for none). First argument to <code class="inline-code">deserialize</code> is <code class="inline-code">true</code> if that buffer was compressed.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local dynamic = VS.dynamic
+
+local bigString = string.rep("x", 4000)
+-- First arg = Zstd level 4; then offset nil; then the values to pack.
+local buf = dynamic.serialize(4, nil, "ServerLog", bigString)
+if not buf then return end
+
+-- Because we used a compression level above, pass true here.
+local label, payload = dynamic.deserialize(true, nil, buf)
+-- label == "ServerLog", payload == bigString</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Static “RPC-shaped” packet (several fields, one struct)</h2>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local Rpc = T.struct({
+    op = T.string255,
+    playerId = T.uint32,
+    amount = T.float32,
+})
+
+local buf = static.serialize(Rpc, {
+    op = "Damage",
+    playerId = 7,
+    amount = 12.5,
+}, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2><code class="inline-code">enum</code> (Roblox <code class="inline-code">EnumItem</code>)</h2>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local MaterialField = T.enum(Enum.Material)
+local Row = T.struct({ mat = MaterialField })
+
+local buf = static.serialize(Row, { mat = Enum.Material.Slate }, nil, nil)
+local back = static.deserialize(Row, buf, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Dynamic RPC-style tuple</h2>
+                        <p>Uncompressed dynamic buffer: first two arguments to <code class="inline-code">serialize</code> are <code class="inline-code">nil</code> (no Zstd, no write offset). Receiver unpacks in order.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local dynamic = VS.dynamic
+
+local playerId = 42
+local targetPos = Vector3.new(1, 0, 0)
+
+local b = dynamic.serialize(nil, nil, "Move", playerId, targetPos, true)
+if not b then return end
+
+local opName, id, pos, wantsJump = dynamic.deserialize(nil, nil, b)
+-- opName == "Move", id == playerId, pos == targetPos, wantsJump == true</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Optional fields + nested struct</h2>
+                        <p>Model “maybe present” values with <code class="inline-code">optional</code>; nest <code class="inline-code">struct</code> for grouped fields.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local T = VS.types
+local static = VS.static
+
+local Profile = T.struct({
+    userId = T.uint32,
+    displayName = T.string255,
+    bio = T.optional(T.string255),
+    stats = T.struct({
+        kills = T.uint16,
+        deaths = T.uint16,
+    }),
+})
+
+local buf = static.serialize(Profile, {
+    userId = 9001,
+    displayName = "Neo",
+    bio = nil,
+    stats = { kills = 12, deaths = 3 },
+}, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>String keys → numbers (<code class="inline-code">map</code>)</h2>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local T = VS.types
+local static = VS.static
+
+local Scores = T.map(T.string255, T.float32)
+
+local buf = static.serialize(Scores, {
+    ["arena_1"] = 99.5,
+    ["arena_2"] = 12.0,
+}, nil, nil)
+local out = static.deserialize(Scores, buf, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2><code class="inline-code">void</code>, <code class="inline-code">nothing</code>, and <code class="inline-code">any</code></h2>
+                        <p><code class="inline-code">void</code> is an empty table <code class="inline-code">{}</code> marker (zero payload bytes). <code class="inline-code">nothing</code> is Luau <code class="inline-code">nil</code> with zero bytes. <code class="inline-code">any</code> stores a discriminator plus an inner value — useful when one field can hold several shapes.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local Ping = T.struct({ kind = T.string255, payload = T.any })
+local buf = static.serialize(Ping, { kind = "int", payload = 42 }, nil, nil)
+local back = static.deserialize(Ping, buf, nil, nil)</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2><code class="inline-code">serInstance</code>: register schema, then serialize</h2>
+                        <p>Run <code class="inline-code">registerInstanceSchema</code> once per class name (usually at module load). Then use <code class="inline-code">types.serInstance("ClassName")</code> in your static schema. Deserialization creates a <strong>new</strong> Instance and assigns properties from the buffer.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local VS = require(game.ReplicatedStorage.VoidSentry2)
+local T = VS.types
+local static = VS.static
+
+VS.registerInstanceSchema("Part", {
+    Name = T.string255,
+    Anchored = T.boolean,
+})
+
+local PartSnapshot = T.struct({
+    template = T.serInstance("Part"),
+})
+
+local src = Instance.new("Part")
+src.Name = "Floor"
+src.Anchored = true
+
+local buf = static.serialize(PartSnapshot, { template = src }, nil, nil)
+local copy = static.deserialize(PartSnapshot, buf, nil, nil)
+-- copy.template is a new Part with Name / Anchored restored</code></pre>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h2>Mixing <code class="inline-code">instance</code> (by reference) and static structs</h2>
+                        <p><code class="inline-code">types.instance</code> writes a numeric id and resolves the same object on the peer via your <code class="inline-code">instanceMap</code> and <code class="inline-code">_VSID</code> — use for live object graphs. <code class="inline-code">serInstance</code> snapshots property bags into new instances — use for templates or reconstructed props.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">-- instance: same Part reference round-trips if both sides share instanceMap + _VSID
+local RefPayload = T.struct({ target = T.instance })
+
+-- serInstance: wire carries property values; deserialize builds a fresh Instance
+local ClonePayload = T.struct({ cloneOfPart = T.serInstance("Part") })</code></pre>
+                        </div>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="usage">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Usage</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="benchmarks">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Benchmarks</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="benchmarks" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Benchmarks</h1>
+                    <div class="note-box">
+                        <h4>Format</h4>
+                        <p>Each section maps test titles to <strong>average microseconds per operation</strong>.</p>
+                        <p class="muted" style="margin-top:0.75rem;">Numbers vary by device and Studio version — treat them as a rough guide, not a guarantee.</p>
+                    </div>
+                    <div id="benchmarks-root" class="section"></div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="examples">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Examples</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="tips">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Useful tips</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="tips" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Useful tips</h1>
+                    <p class="tagline">Short habits that save time.</p>
+                    <div class="practice-item">
+                        <h3>Build schemas once</h3>
+                        <p>Define <code class="inline-code">local MySchema = T.struct({ ... })</code> at module scope. Creating new <code class="inline-code">struct</code> tables inside hot loops creates garbage and costs CPU.</p>
+                    </div>
+                    <div class="practice-item">
+                        <h3>Use smaller types when the data allows</h3>
+                        <p>If a number never exceeds 255, <code class="inline-code">uint8</code> beats <code class="inline-code">uint32</code>. If position does not need full float precision, <code class="inline-code">vector3f24</code> or <code class="inline-code">vector3f16</code> saves bytes versus <code class="inline-code">vector3</code>.</p>
+                    </div>
+                    <div class="practice-item">
+                        <h3>Measure compression on real traffic</h3>
+                        <p>Zstd helps repetitive blobs; tiny messages may not shrink enough to pay for CPU.</p>
+                    </div>
+                    <div class="warning-item">
+                        <h3>Changing your schema breaks old bytes</h3>
+                        <p><strong>Caution:</strong> adding/removing/reordering <code class="inline-code">struct</code> fields or switching node kinds changes the wire layout. Old clients or old save files will mis-read data if you do not migrate.</p>
+                        <p><strong>Tip:</strong> add a <code class="inline-code">version = T.uint8</code> (or wider) field at the start of your root <code class="inline-code">struct</code>, bump it when you change layout, and branch reads or run a one-time migration.</p>
+                    </div>
+                    <div class="warning-item">
+                        <h3><code class="inline-code">nil</code> from <code class="inline-code">optional</code> vs <code class="inline-code">nil</code> from failure</h3>
+                        <p>An absent <code class="inline-code">optional(T)</code> decodes as <code class="inline-code">nil</code> on success. In lax mode, failures can also yield <code class="inline-code">nil</code>. Use <code class="inline-code">strictMode</code>, outer framing (length + checksum), or protocol context to tell the cases apart when it matters.</p>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="benchmarks">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Benchmarks</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="custom-types">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Custom types</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="custom-types" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Custom shapes &amp; Roblox instances</h1>
+                    <p class="tagline">Most of the time, combining built-in type nodes and calling <code class="inline-code">registerInstanceSchema</code> for <code class="inline-code">serInstance</code> is the right approach. Editing the library source is only for brand-new wire encodings.</p>
+
+                    <div class="section">
+                        <h2>1. Composable schemas (recommended): <code class="inline-code">struct</code> + primitives</h2>
+                        <p><strong>What it is.</strong> You describe the wire layout by combining built-in nodes: <code class="inline-code">struct</code>, <code class="inline-code">array</code>, <code class="inline-code">map</code>, <code class="inline-code">optional</code>, numbers, strings, vectors, <code class="inline-code">enum</code>, <code class="inline-code">any</code>, etc. No changes to the VoidSentry2 package — only your game code.</p>
+                        <p><strong>When to use it.</strong> Almost always: gameplay state, RPC payloads, configs, save blobs with a stable field set. If the shape varies at runtime, combine <code class="inline-code">optional</code>, <code class="inline-code">any</code>, or the <strong>dynamic</strong> serializer instead of inventing a new primitive.</p>
+                        <div class="code-block">
+                            <pre><code class="language-lua">local T = VS.types
+local static = VS.static
+
+-- "Custom" in the sense of your game: a fixed record + list of sub-records
+local InventorySlot = T.struct({
+    itemId = T.uint16,
+    count = T.uint8,
+})
+
+local PlayerSave = T.struct({
+    version = T.uint8,
+    coins = T.uint32,
+    slots = T.array(InventorySlot),
+})
+
+local buf = static.serialize(PlayerSave, saveTable, nil, nil)</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>2. Extending the library (fork): buffer primitives vs type nodes</h2>
+                        <p>VoidSentry2 splits <strong>raw bytes</strong> and <strong>named wire types</strong> into two layers. They are related but not the same file.</p>
+
+                        <h3>2a. Primitive encodings — <code class="inline-code">src/buffer/writer.luau</code> &amp; <code class="inline-code">src/buffer/reader.luau</code></h3>
+                        <p><strong>What they are.</strong> Low-level helpers (<code class="inline-code">writef32</code>, <code class="inline-code">writef24</code>, <code class="inline-code">writeu16</code>, <code class="inline-code">NEED</code>, <code class="inline-code">START</code>/<code class="inline-code">FINISH</code>, etc.) that advance the shared scratch buffer cursor and read/write bytes. They do <strong>not</strong> assign type discriminators and are not ”VoidSentry2 types” — they are building blocks.</p>
+                        <p><strong>When to change them.</strong> When you need a <strong>new byte layout</strong> that does not exist yet (e.g. another packed float size, a custom fixed-width blob). Pair every new <code class="inline-code">write*</code> with a matching <code class="inline-code">read*</code> in the reader.</p>
+                        <p><strong>Example in-tree.</strong> <code class="inline-code">writef24</code> / the matching read path implement the float24 wire format; <code class="inline-code">src/types/float24.luau</code> then <em>calls</em> those primitives from its type node’s <code class="inline-code">write</code>/<code class="inline-code">read</code>.</p>
+
+                        <h3>2b. Type nodes — <code class="inline-code">src/types/&lt;name&gt;.luau</code> + <code class="inline-code">src/shared/config/typeSigns.luau</code></h3>
+                        <p><strong>What they are.</strong> Each file exports a frozen <code class="inline-code">typeNode</code>: <code class="inline-code">{ write = …, read = … }</code> that validates Luau/Roblox values, calls <code class="inline-code">writer.NEED</code>, then buffer primitives. This is where <code class="inline-code">float32</code>, <code class="inline-code">struct</code>, <code class="inline-code">qcframe</code>, etc. live.</p>
+                        <p><strong>How they are registered (important).</strong> Root <code class="inline-code">src/init.luau</code> loops every entry in <code class="inline-code">typeSigns.luau</code> and does <code class="inline-code">require("@self/types/" .. name)</code>. The <strong>key</strong> in <code class="inline-code">typeSigns</code> must match the <strong>filename</strong> (e.g. <code class="inline-code">float32 = 11</code> → <code class="inline-code">src/types/float32.luau</code>). Those modules fill <code class="inline-code">signMap</code> and the exported <code class="inline-code">types</code> table. The small <code class="inline-code">src/types/init.luau</code> file only declares empty tables; it does <strong>not</strong> register types — that happens in <code class="inline-code">src/init.luau</code>.</p>
+                        <p><strong>What you add for a new wire type.</strong> (1) A new unique byte id in <code class="inline-code">typeSigns.luau</code>. (2) A new <code class="inline-code">src/types/&lt;name&gt;.luau</code> whose name matches that key, implementing <code class="inline-code">write</code>/<code class="inline-code">read</code> like <code class="inline-code">src/types/uint8.luau</code> or <code class="inline-code">src/types/float32.luau</code>.</p>
+
+                        <h3>2c. Dynamic serializer &amp; inference</h3>
+                        <p>In <strong>dynamic</strong> mode, <code class="inline-code">dynanode</code> writes a <strong>one-byte type sign</strong> (from <code class="inline-code">typeSigns</code>) before each value’s payload. If your new type should be <strong>chosen automatically</strong> from plain Luau values, you may also need to extend <code class="inline-code">src/shared/inferValueType.luau</code>. <strong>Static</strong> schemas call the node directly and do not emit that per-root sign — they still use the same <code class="inline-code">typeNode</code> tables.</p>
+
+                        <p><strong>When to bother.</strong> Only for wire formats or runtime inference you cannot build from existing nodes (section 1). Otherwise prefer composition and keep upstream merges easy.</p>
+
+                        <div class="code-block">
+                            <pre><code class="language-lua">-- Conceptual split:
+
+-- src/buffer/writer.luau  →  add writeMyBits(...) / reader symmetry
+-- src/types/myformat.luau →  write = function(v) NEED(n) … writeMyBits(v) … end
+-- src/shared/config/typeSigns.luau →  myformat = 40  -- next free id
+
+-- Optional for dynamic auto-pick:
+-- src/shared/inferValueType.luau → map typeof(value) / tags to typeSigns.myformat</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>3. <code class="inline-code">serInstance</code> end-to-end</h2>
+                        <p><strong><code class="inline-code">types.serInstance(className)</code></strong> serializes a <strong>fixed set of properties</strong> you declare per class. Flow:</p>
+                        <ol class="types-list doc-ol">
+                            <li><strong>Register once per class name.</strong> <code class="inline-code">VoidSentry2.registerInstanceSchema(className, { PropName = typeNode, ... })</code> — keys are <strong>property names</strong> as strings; values are type nodes (e.g. <code class="inline-code">T.string255</code>, <code class="inline-code">T.vector3</code>). Call during server/client startup before any serialize.</li>
+                            <li><strong>Reference in schemas.</strong> Use <code class="inline-code">T.serInstance("Part")</code> (same string as <code class="inline-code">className</code>) inside </li>
+                            <li><strong>Serialize.</strong> Pass a real Instance of that class; the library reads each registered property from the object and writes bytes.</li>
+                            <li><strong>Deserialize.</strong> The library creates a <strong>new</strong> Instance with <code class="inline-code">Instance.new(className)</code>, then assigns properties from the buffer. It is not the same object identity as the source.</li>
+                        </ol>
+                        <p><strong>Contrast with <code class="inline-code">types.instance</code>.</strong> That encodes a <strong>reference</strong> (numeric id + <code class="inline-code">_VSID</code> + shared <code class="inline-code">instanceMap</code>) so the <strong>same</strong> Instance round-trips on both sides. Use references for live replication; use <code class="inline-code">serInstance</code> when you want a property snapshot or a fresh clone from wire data.</p>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="tips">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Useful tips</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="updates">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Update logs</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="updates" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Update logs</h1>
+                    <div class="changelog-item latest">
+                        <h3 class="version-badge">VoidSentry2 v0.1.0 – initial release</h3>
+                    </div>
+
+                    <nav class="page-nav" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="custom-types">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Custom types</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                        <button type="button" class="page-nav__btn page-nav__btn--next" data-page="credits">
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg></span>
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Next</span>
+                                <span class="page-nav__name">Credits</span>
+                            </span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="credits" class="page">
+                <div class="page-content">
+                    <h1 class="page-title">Credits</h1>
+                    <div class="credits-card">
+                        <h3>Author</h3>
+                        <p><strong>IAMNOTULTRA3</strong></p>
+                    </div>
+                    <div class="credits-card">
+                        <h3>License</h3>
+                        <p>Apache-2.0</p>
+                    </div>
+                    <div class="credits-card">
+                        <h3>Packages</h3>
+                        <p>Wally: <code class="inline-code">elentium/voidsentry2</code></p>
+                    </div>
+
+                    <nav class="page-nav page-nav--prev-only" aria-label="Adjacent pages">
+                        <button type="button" class="page-nav__btn page-nav__btn--prev" data-page="updates">
+                            <span class="page-nav__text">
+                                <span class="page-nav__dir">Previous</span>
+                                <span class="page-nav__name">Update logs</span>
+                            </span>
+                            <span class="page-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><polygon points="17 4 4 12 17 20" fill="currentColor"/></svg></span>
+                        </button>
+                    </nav>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/benchmarks.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" crossorigin></script>
+    <script defer src="js/app.js"></script>
+</body>
+</html>
