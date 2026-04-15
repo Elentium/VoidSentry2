@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
     shared types storage + sign map
 
@@ -10,11 +11,11 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local exports = require("./shared/exports")
+const exports = require("./shared/exports")
 -----------------------------------------------------
 -- MODULE                                          --
 -----------------------------------------------------
-local module = {
+const module = {
 	signMap = {} :: { [number]: exports.possibleNode },
 	types = {} :: exports.types,
 }

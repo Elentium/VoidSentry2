@@ -1,10 +1,10 @@
 --!strict
+--!optimize 2
 --[[
 	VoidSentry2 Configuration Module
 ]]
-local constants = require("@self/constants")
-local typeSigns = require("@self/typeSigns")
-local instanceSchemas = require("@self/instanceSchemas")
+const constants = require("@self/constants")
+const typeSigns = require("@self/typeSigns")
 
 return {
 	-- constants
@@ -19,7 +19,4 @@ return {
 
 	-- type signs
 	typeSigns = typeSigns,
-
-	-- instance schemas (live table; populated by src/init.luau)
-	serializedInstanceSchemas = instanceSchemas,
 }

@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
     Quaternion CFrame
 	- 21 bytes
@@ -9,67 +10,92 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
-local math = require("../shared/math")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
+const math = require("../shared/math")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "CFrame"
+const VAL_TYPE: string = "CFrame"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = typeof
-local NEED = writer.NEED
-local WRITE = writer.F24
-local READ = reader.F24
-local NEW = CFrame.new
-local TOQUATER = math.toQuater
+const TYPE: <T>(T) -> string = typeof
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.F24
+const READ: (...any) -> (number, number?) = reader.F24
+const NEW: (() -> CFrame) & ((Vector3) -> CFrame) & ((Vector3, Vector3) -> CFrame) & ((number, number, number) -> CFrame) & ((number, number, number, number, number, number, number) -> CFrame) & ((
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number,
+	number
+) -> CFrame) =
+	CFrame.new
+const TOQUATER: (CFrame) -> (number, number, number, number) = math.toQuaternion
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
-	write = @native function(value: CFrame): number
-		if TYPE(value) ~= VAL_TYPE then
-			return FAIL
-		end
-		if not NEED(21) then
-			return FAIL
-		end
-		local x: number, y: number, z: number = value.X, value.Y, value.Z
-		local qx: number, qy: number, qz: number, qw: number = TOQUATER(value)
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function qcframef24_write(value: CFrame): number
+	const vType: string = TYPE(value)
+	if vType ~= VAL_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize QCFrameF24 type – "CFrame" expected, got "{vType}"`)
+		return FAIL
+	end
+	if not NEED(21) then
+		return FAIL
+	end
+	const x: number, y: number, z: number = value.X, value.Y, value.Z
+	const qx: number, qy: number, qz: number, qw: number = TOQUATER(value)
 
-		WRITE(x)
-		WRITE(y)
-		WRITE(z)
-		WRITE(qx)
-		WRITE(qy)
-		WRITE(qz)
-		WRITE(qw)
+	WRITE(x)
+	WRITE(y)
+	WRITE(z)
+	WRITE(qx)
+	WRITE(qy)
+	WRITE(qz)
+	WRITE(qw)
 
-		return SUCCESS
-	end,
+	return SUCCESS
+end
 
-	read = @native function(): (number, CFrame?)
-		local x: number, y: number, z: number, qx: number, qy: number, qz: number, qw: number
-		local flag: number
-		flag, x = READ()
-		flag, y = READ()
-		flag, z = READ()
-		flag, qx = READ()
-		flag, qy = READ()
-		flag, qz = READ()
-		flag, qw = READ()
-		-- doing 1 check per read is redundant for most cases, as most writes are valid,
-		-- unless it's networker and exploiter spams invalid buffers, 1 check per read is worse for performance
-		if flag == FAIL then
-			return FAIL, nil
-		end
+@native
+const function qcframef24_read(): (number, CFrame?)
+	local x: number, y: number, z: number, qx: number, qy: number, qz: number, qw: number
+	local flag: number
+	flag, x = READ()
+	flag, y = READ()
+	flag, z = READ()
+	flag, qx = READ()
+	flag, qy = READ()
+	flag, qz = READ()
+	flag, qw = READ()
+	-- doing 1 check per read is redundant for most cases, as most writes are valid,
+	-- unless it's networker and exploiter spams invalid buffers, 1 check per read is worse for performance
+	if flag == FAIL then
+		return FAIL, nil
+	end
 
-		return flag, NEW(x :: number, y :: number, z :: number, qx :: number, qy :: number, qz :: number, qw :: number)
-	end,
-}
+	return flag, NEW(x :: number, y :: number, z :: number, qx :: number, qy :: number, qz :: number, qw :: number)
+end
+
+return table.freeze({
+	write = qcframef24_write,
+	read = qcframef24_read,
+})

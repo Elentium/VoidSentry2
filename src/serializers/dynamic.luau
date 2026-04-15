@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Dynamic V0.1.0
 
@@ -8,48 +9,48 @@
 -----------------------------------------------------
 -- SERVICES                                        --
 -----------------------------------------------------
-local EncodingService = game:GetService("EncodingService")
+const EncodingService = game:GetService("EncodingService")
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local dynanode = require("../shared/dynanode")
-local config = require("../shared/config")
-local reader = require("../buffer/reader")
-local writer = require("../buffer/writer")
+const dynanode = require("../shared/dynanode")
+const config = require("../shared/config")
+const reader = require("../buffer/reader")
+const writer = require("../buffer/writer")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local FAIL: number = config.fail
-local EOR: number = config.eor
-local ALG: Enum.CompressionAlgorithm = Enum.CompressionAlgorithm.Zstd
+const FAIL: number = config.fail
+const EOR: number = config.eor
+const ALG: Enum.CompressionAlgorithm = Enum.CompressionAlgorithm.Zstd
 
 -----------------------------------------------------
 -- LOCALIZATIONS                                   --
 -----------------------------------------------------
-local PACK = table.pack
-local UNPACK = table.unpack
-local DYNANODE_WRITE = dynanode.write
-local W_START = writer.START
-local W_FINISH = writer.FINISH
-local R_START = reader.START
-local R_FINISH = reader.FINISH
-local LEN = buffer.len
+const PACK: <V>(...V) -> { [number]: V, n: number } = table.pack
+const UNPACK: <V>({ V }, number?, number?) -> ...V = table.unpack
+const DYNANODE_WRITE: (any) -> number = dynanode.write
+const W_START: (number?) -> () = writer.START
+const W_FINISH: () -> buffer = writer.FINISH
+const R_START: (buffer, number?) -> () = reader.START
+const R_FINISH: () -> () = reader.FINISH
+const LEN: (buffer) -> number = buffer.len
 
 -----------------------------------------------------
 -- API                                             --
 -----------------------------------------------------
-local dynamic = {}
+const dynamic = {}
 
 @native
 function dynamic.serialize(compressionLevel: number?, offset: number?, ...: any): buffer?
-	local input: { [number]: any, n: number } = PACK(...)
-	local n: number = input.n
+	const input: { [number]: any, n: number } = PACK(...)
+	const n: number = input.n
 
 	W_START(offset)
 	for i = 1, n do
-		local value: any = input[i]
-		local flag: number = DYNANODE_WRITE(value)
+		const value: any = input[i]
+		const flag: number = DYNANODE_WRITE(value)
 		if flag == FAIL then
 			W_FINISH()
 			return nil
@@ -64,8 +65,8 @@ function dynamic.serialize(compressionLevel: number?, offset: number?, ...: any)
 end
 
 @native
-function dynamic.deserialize(wasCompressed: boolean?, offset: number?, input: buffer): ...any?
-	local output: { any } = {}
+function dynamic.deserialize(wasCompressed: boolean?, offset: number?, input: buffer): ...any
+	const output: { any } = {}
 	if wasCompressed then
 		input = EncodingService:DecompressBuffer(input, ALG)
 	end
@@ -91,4 +92,4 @@ function dynamic.deserialize(wasCompressed: boolean?, offset: number?, input: bu
 	return UNPACK(output, 1, i)
 end
 
-return dynamic
+return table.freeze(dynamic)

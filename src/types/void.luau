@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	void
 	empty table
@@ -7,19 +8,27 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
+const config = require("../shared/config")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
+const SUCCESS: number = config.success
 
-return {
-	write = @native function(value: {}): number
-		return SUCCESS
-	end,
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function void_write(value: {}): number
+	return SUCCESS
+end
 
-	read = @native function(_lastFlag: number?): (number, {})
-		return _lastFlag or SUCCESS, {}
-	end,
-}
+@native
+const function void_read(_lastFlag: number?): (number, {})
+	return _lastFlag or SUCCESS, {}
+end
+
+return table.freeze({
+	write = void_write,
+	read = void_read,
+})

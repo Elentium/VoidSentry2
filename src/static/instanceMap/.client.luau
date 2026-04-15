@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
     InstanceMap.client V0.1.0
 
@@ -7,21 +8,21 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local instanceMap = require("./")
+const instanceMap = require("./")
 
 -----------------------------------------------------
 -- MAIN                                            --
 -----------------------------------------------------
-local deferFetch = function(instance: Instance): number
-	local co = coroutine.running()
+const deferFetch = function(instance: Instance): number
+	const co = coroutine.running()
 	task.delay(0, function()
 		task.defer(co, instance:GetAttribute("_VSID"))
 	end)
 	return coroutine.yield()
 end
 
-local onInstance = function(instance: Instance): ()
-	local id: number = instance:GetAttribute("_VSID") or deferFetch(instance)
+const onInstance = function(instance: Instance): ()
+	const id: number = instance:GetAttribute("_VSID") or deferFetch(instance)
 	if not id then
 		return
 	end

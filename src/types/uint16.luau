@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Unsigned 16-bit integer
 	2 bytes
@@ -6,37 +7,45 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local NUM_TYPE: string = "number"
+const NUM_TYPE: string = "number"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.U16
-local READ = reader.U16
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.U16
+const READ: () -> (number, number?) = reader.U16
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
-	write = @native function(value: number): number
-		if TYPE(value) ~= NUM_TYPE then
-			return FAIL
-		end
-		if not NEED(2) then
-			return FAIL
-		end
-		WRITE(value)
-		return SUCCESS
-	end,
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function uint16_write(value: number): number
+	const vType: string = TYPE(value)
+	if vType ~= NUM_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize UInt16 type – "number" expected, got "{vType}"`)
+		return FAIL
+	end
+	if not NEED(2) then
+		return FAIL
+	end
+	WRITE(value)
+	return SUCCESS
+end
 
+return table.freeze({
+	write = uint16_write,
 	read = READ, -- avoid possible extra function call
-}
+})

@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
     BufferReader V0.1.0
 
@@ -8,13 +9,13 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
+const config = require("../shared/config")
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS = config.success
-local FAIL = config.fail
-local EOR = config.eor
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
+const EOR: number = config.eor
 -----------------------------------------------------
 -- STATE                                           --
 -----------------------------------------------------
@@ -25,23 +26,23 @@ local len: number = 0
 -----------------------------------------------------
 -- LOCALIZE BUILTINS                               --
 -----------------------------------------------------
-local READ_U8 = buffer.readu8
-local READ_I8 = buffer.readi8
-local READ_U16 = buffer.readu16
-local READ_I16 = buffer.readi16
-local READ_U32 = buffer.readu32
-local READ_I32 = buffer.readi32
-local READ_F32 = buffer.readf32
-local READ_F64 = buffer.readf64
-local READ_STRING = buffer.readstring
-local LEN = buffer.len
+const READ_U8: (buffer, number) -> number = buffer.readu8
+const READ_I8: (buffer, number) -> number = buffer.readi8
+const READ_U16: (buffer, number) -> number = buffer.readu16
+const READ_I16: (buffer, number) -> number = buffer.readi16
+const READ_U32: (buffer, number) -> number = buffer.readu32
+const READ_I32: (buffer, number) -> number = buffer.readi32
+const READ_F32: (buffer, number) -> number = buffer.readf32
+const READ_F64: (buffer, number) -> number = buffer.readf64
+const READ_STRING: (buffer, number, number) -> string = buffer.readstring
+const LEN: (buffer) -> number = buffer.len
 
-local LDEXP = math.ldexp
+const LDEXP: (number, number) -> number = math.ldexp
 
-local AND = bit32.band
-local OR = bit32.bor
-local LSHIFT = bit32.lshift
-local EXTRACT = bit32.extract
+const AND: (...number) -> number = bit32.band
+const OR: (...number) -> number = bit32.bor
+const LSHIFT: (number, number) -> number = bit32.lshift
+const EXTRACT: (number, number, number?) -> number = bit32.extract
 
 -----------------------------------------------------
 -- API                                             --
@@ -50,7 +51,7 @@ local EXTRACT = bit32.extract
     Initializes the variables for the reader operations
 ]]
 @native
-local function start(b: buffer, offset: number?): ()
+const function start(b: buffer, offset: number?): ()
 	currentBuffer = b
 	cursor = offset or 0
 	len = LEN(b)
@@ -59,7 +60,8 @@ end
 --[[
     Removes the buffer reference to GC the buffer
 ]]
-local finish = function(): ()
+@native
+const function finish(): ()
 	currentBuffer = nil -- clear the reference to GC the buffer
 	-- zeroing cursor/len is unnecessary as it is just extra instructions which give no benefits
 end
@@ -68,12 +70,12 @@ end
     UInt8 read operation
 ]]
 @native
-local function readu8(): (number, number?)
+const function readu8(): (number, number?)
 	if cursor + 1 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_U8(currentBuffer :: buffer, cursor)
+	const value: number = READ_U8(currentBuffer :: buffer, cursor)
 	cursor += 1
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -82,12 +84,12 @@ end
     Int8 read operation
 ]]
 @native
-local function readi8(): (number, number?)
+const function readi8(): (number, number?)
 	if cursor + 1 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_I8(currentBuffer :: buffer, cursor)
+	const value: number = READ_I8(currentBuffer :: buffer, cursor)
 	cursor += 1
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -96,12 +98,12 @@ end
     UInt16 read operation
 ]]
 @native
-local function readu16(): (number, number?)
+const function readu16(): (number, number?)
 	if cursor + 2 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_U16(currentBuffer :: buffer, cursor)
+	const value: number = READ_U16(currentBuffer :: buffer, cursor)
 	cursor += 2
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -110,12 +112,12 @@ end
     Int16 read operation
 ]]
 @native
-local function readi16(): (number, number?)
+const function readi16(): (number, number?)
 	if cursor + 2 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_I16(currentBuffer :: buffer, cursor)
+	const value: number = READ_I16(currentBuffer :: buffer, cursor)
 	cursor += 2
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -126,16 +128,16 @@ end
     Special values: ±Inf and NaN are preserved.
 ]]
 @native
-local function readf16(): (number, number?)
+const function readf16(): (number, number?)
 	if cursor + 2 > len then
 		return FAIL, nil
 	end
-	local packed: number = READ_U16(currentBuffer :: buffer, cursor)
+	const packed: number = READ_U16(currentBuffer :: buffer, cursor)
 	cursor += 2
 
-	local sign: number = EXTRACT(packed, 15, 1)
-	local exp16: number = EXTRACT(packed, 10, 5)
-	local mant10: number = EXTRACT(packed, 0, 10)
+	const sign: number = EXTRACT(packed, 15, 1)
+	const exp16: number = EXTRACT(packed, 10, 5)
+	const mant10: number = EXTRACT(packed, 0, 10)
 
 	local result: number
 	if exp16 == 0x1F then
@@ -158,13 +160,13 @@ end
     UInt24 read operation
 ]]
 @native
-local function readu24(): (number, number?)
+const function readu24(): (number, number?)
 	if cursor + 3 > len then
 		return FAIL, nil
 	end
 
-	local low: number = READ_U16(currentBuffer :: buffer, cursor)
-	local high: number = READ_U8(currentBuffer :: buffer, cursor + 2)
+	const low: number = READ_U16(currentBuffer :: buffer, cursor)
+	const high: number = READ_U8(currentBuffer :: buffer, cursor + 2)
 	cursor += 3
 	return cursor == len and EOR or SUCCESS, OR(low, LSHIFT(high, 16))
 end
@@ -173,13 +175,13 @@ end
     Int24 read operation
 ]]
 @native
-local function readi24(): (number, number?)
+const function readi24(): (number, number?)
 	if cursor + 3 > len then
 		return FAIL, nil
 	end
 
-	local low: number = READ_U16(currentBuffer :: buffer, cursor)
-	local high: number = READ_U8(currentBuffer :: buffer, cursor + 2)
+	const low: number = READ_U16(currentBuffer :: buffer, cursor)
+	const high: number = READ_U8(currentBuffer :: buffer, cursor + 2)
 	cursor += 3
 
 	local value: number = OR(low, LSHIFT(high, 16))
@@ -196,16 +198,16 @@ end
     Special values: ±Inf and NaN are preserved (exp24=0x7F).
 ]]
 @native
-local function readf24(): (number, number?)
+const function readf24(): (number, number?)
 	if cursor + 3 > len then
 		return FAIL, nil
 	end
-	local mant16: number = READ_U16(currentBuffer :: buffer, cursor)
-	local byte2: number = READ_U8(currentBuffer :: buffer, cursor + 2)
+	const mant16: number = READ_U16(currentBuffer :: buffer, cursor)
+	const byte2: number = READ_U8(currentBuffer :: buffer, cursor + 2)
 	cursor += 3
 
-	local sign: number = EXTRACT(byte2, 7, 1)
-	local exp24: number = AND(byte2, 0x7F)
+	const sign: number = EXTRACT(byte2, 7, 1)
+	const exp24: number = AND(byte2, 0x7F)
 
 	local result: number
 	if exp24 == 0x7F then
@@ -228,12 +230,12 @@ end
     UInt32 read operation
 ]]
 @native
-local function readu32(): (number, number?)
+const function readu32(): (number, number?)
 	if cursor + 4 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_U32(currentBuffer :: buffer, cursor)
+	const value: number = READ_U32(currentBuffer :: buffer, cursor)
 	cursor += 4
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -242,12 +244,12 @@ end
     Int32 read operation
 ]]
 @native
-local function readi32(): (number, number?)
+const function readi32(): (number, number?)
 	if cursor + 4 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_I32(currentBuffer :: buffer, cursor)
+	const value: number = READ_I32(currentBuffer :: buffer, cursor)
 	cursor += 4
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -256,12 +258,12 @@ end
     Float32 read operation
 ]]
 @native
-local function readf32(): (number, number?)
+const function readf32(): (number, number?)
 	if cursor + 4 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_F32(currentBuffer :: buffer, cursor)
+	const value: number = READ_F32(currentBuffer :: buffer, cursor)
 	cursor += 4
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -270,12 +272,12 @@ end
     Float64 read operation
 ]]
 @native
-local function readf64(): (number, number?)
+const function readf64(): (number, number?)
 	if cursor + 8 > len then
 		return FAIL, nil
 	end
 
-	local value: number = READ_F64(currentBuffer :: buffer, cursor)
+	const value: number = READ_F64(currentBuffer :: buffer, cursor)
 	cursor += 8
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -284,17 +286,17 @@ end
     String255 read operation
 ]]
 @native
-local function reads255(): (number, string?)
+const function reads255(): (number, string?)
 	if cursor >= len then
 		return FAIL, nil
 	end
-	local strlen: number = READ_U8(currentBuffer :: buffer, cursor)
+	const strlen: number = READ_U8(currentBuffer :: buffer, cursor)
 	cursor += 1
 	if cursor + strlen > len then
 		return FAIL, nil
 	end
 
-	local value: string = READ_STRING(currentBuffer :: buffer, cursor, strlen)
+	const value: string = READ_STRING(currentBuffer :: buffer, cursor, strlen)
 	cursor += strlen
 	return cursor == len and EOR or SUCCESS, value
 end
@@ -303,22 +305,22 @@ end
     String65535 read operation
 ]]
 @native
-local function reads65(): (number, string?)
+const function reads65(): (number, string?)
 	if cursor + 2 > len then
 		return FAIL, nil
 	end
-	local strlen: number = READ_U16(currentBuffer :: buffer, cursor)
+	const strlen: number = READ_U16(currentBuffer :: buffer, cursor)
 	cursor += 2
 	if cursor + strlen > len then
 		return FAIL, nil
 	end
 
-	local value: string = READ_STRING(currentBuffer :: buffer, cursor, strlen)
+	const value: string = READ_STRING(currentBuffer :: buffer, cursor, strlen)
 	cursor += strlen
 	return cursor == len and EOR or SUCCESS, value
 end
 
-return {
+return table.freeze({
 	U8 = readu8,
 	I8 = readi8,
 	U16 = readu16,
@@ -336,4 +338,4 @@ return {
 
 	START = start,
 	FINISH = finish,
-}
+})

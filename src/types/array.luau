@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Array
 	2 + vSize(n) bytes
@@ -8,72 +9,92 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
-local exports = require("../shared/exports")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
+const exports = require("../shared/exports")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
-type typeNode = exports.typeNode
+type typeNode<T = any> = exports.typeNode<T>
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "table"
+const VAL_TYPE: string = "table"
+
+const MAX_LEN: number = 0xFFFF
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE_U16 = writer.U16
-local READ_U16 = reader.U16
-local CREATE = table.create
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE_U16: (number) -> () = writer.U16
+const READ_U16: () -> (number, number?) = reader.U16
+const CREATE: typeof(table.create) = table.create
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 @native
-local function arrayNodeBuild(valueType: typeNode): typeNode
-	local valWrite = valueType.write
-	local valRead = valueType.read
-	return {
-		write = @native function(value: { any }): number
-			if TYPE(value) ~= VAL_TYPE then
+const function arrayNodeBuild<T>(valueType: typeNode<T>): typeNode<{ T }>
+	const valWrite: (T?) -> number = valueType.write
+	const valRead: (number?) -> (number, T?) = valueType.read
+
+	-----------------------------------------------------
+	-- READ/WRITE                                      --
+	-----------------------------------------------------
+	@native
+	const function array_write(value: { T }): number
+		const vType: string = TYPE(value)
+		if vType ~= VAL_TYPE then
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Array type – "table" expected, got "{vType}"`)
+			return FAIL
+		end
+
+		const len: number = #value
+		if not NEED(2) then
+			return FAIL
+		elseif len > MAX_LEN then
+			FAIL_FN(
+				`[VoidSentry2]: Failed to serialize Array type – array length exceeds max limit; length: {len}, limit: {MAX_LEN}`
+			)
+			return FAIL
+		end
+		WRITE_U16(len)
+		for i: number, v: any in value do
+			if valWrite(v) == FAIL then
 				return FAIL
 			end
+		end
+		return SUCCESS
+	end
 
-			local len: number = #value
-			if not NEED(2) then
-				return FAIL
-			end
-			WRITE_U16(len)
-			for i: number, v: any in value do
-				if valWrite(v) == FAIL then
-					return FAIL
-				end
-			end
-			return SUCCESS
-		end,
-		read = @native function(): (number, any?)
-			local flag: number, len: number? = READ_U16()
-			if flag == FAIL then
-				return FAIL
-			end
-			local array: { any } = CREATE(len :: number)
-			local rflag: number = flag
+	@native
+	const function array_read(): (number, { T }?)
+		const flag: number, len: number? = READ_U16()
+		if flag == FAIL then
+			return FAIL, nil
+		end
+		const array: { T } = CREATE(len :: number)
+		local rflag: number = flag
 
-			for i = 1, len :: number do
-				rflag, array[i] = valRead()
-				if rflag == FAIL then
-					return FAIL
-				end
+		for i = 1, len :: number do
+			rflag, array[i] = valRead()
+			if rflag == FAIL then
+				return FAIL, nil
 			end
+		end
 
-			return rflag, array
-		end,
-	}
+		return rflag, array
+	end
+
+	return table.freeze({
+		write = array_write,
+		read = array_read,
+	}) :: typeNode<{ T }>
 end
 
 return arrayNodeBuild

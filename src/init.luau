@@ -1,3 +1,5 @@
+--!optimize 2
+--!native
 --[[
 	================================================================================
 	  VoidSentry2  |  v0.1.0  |  Apache-2.0  |  by IAMNOTULTRA3
@@ -8,17 +10,16 @@
 	================================================================================
 	  API
 	================================================================================
-	  VoidSentry.types    -- named type nodes/factories; pass as schema arguments
-	  VoidSentry.static   -- schema-based serializer; fastest, layout known upfront
-	  VoidSentry.dynamic  -- schemaless serializer; tags each value at runtime
+	  VoidSentry2.types    -- named type nodes/factories; pass as schema arguments
+	  VoidSentry2.static   -- schema-based serializer; fastest, layout known upfront
+	  VoidSentry2.dynamic  -- schemaless serializer; tags each value at runtime
+	  VoidSentry2.instanceSchemas -- container for serialized instances schemas;
 
-	  static.new(compressionLevel: number?, ...schema) -> serializer
-	    :serialize(offset: number?, ...values)   -> buffer?
-	    :deserialize(offset: number?, buf: buffer)       -> ...values?
+	  static.serialize(serdes, value, offset?, compressionLevel?) -> buffer?
+	  static.deserialize(serdes, buf, offset?, wasCompressed?) -> value?
 
 	  dynamic.serialize(compressionLevel: number?, offset: number?, ...values) -> buffer?
 	  dynamic.deserialize(wasCompressed: boolean?, offset: number?, buf: buffer)     -> ...values?
-
 	================================================================================
 	  TYPES
 	================================================================================
@@ -46,10 +47,10 @@
 	    nothing           0 B      nil; writes and reads nothing
 
 	  COLLECTIONS         size     notes
-	    array(T)          2+n*T    ordered list; max 65535 elements
-	    array255(T)       1+n*T    ordered list; max 255 elements
-	    map(K,V)          2+n*(K+V)  uint16 n, then n (key,value) pairs; K,V sized per entry if fixed
-	    map255(K,V)       1+n*(K+V)  uint8 n; max 255 pairs; same layout
+	    array(T)          2+T(n)   ordered list; max 65535 elements
+	    array255(T)       1+T(n)    ordered list; max 255 elements
+	    map(K,V)          2+n(K+V)  uint16 n, then n (key,value) pairs; K,V sized per entry if fixed
+	    map255(K,V)       1+n (K+V)  uint8 n; max 255 pairs; same layout
 
 	  SPECIAL             size     notes
 	    void              0 B      empty table {}; no bytes written
@@ -69,61 +70,112 @@
 	    cframef24         36 B     CFrame 3x4 matrix (float24 components)
 	    qcframe           28 B     CFrame quaternion + position (float32)
 	    qcframef24        21 B     CFrame quaternion + position (float24)
+		enum			  2  B     Roblox Enumeration (2 bytes for writing the EnumItem Value)
 ]]
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local exports = require("@self/shared/exports")
-local static = require("@self/serializers/static")
-local dynamic = require("@self/serializers/dynamic")
-local typeSigns = require("@self/shared/config/typeSigns")
-local instanceSchemas = require("@self/shared/config/instanceSchemas")
-local typesModule = require("@self/types")
+const exports = require("@self/shared/exports")
+const static = require("@self/serializers/static")
+const dynamic = require("@self/serializers/dynamic")
+const typeSigns = require("@self/shared/config/typeSigns")
+const instanceSchemas = require("@self/static/instanceSchemas")
+const typesModule = require("@self/types")
+const config = require("@self/shared/config")
+const serInstanceSigns = require("@self/static/serInstanceSigns")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
 export type staticSerializer = exports.staticSerializer
-export type staticObject<T... = ()> = exports.staticObject
 export type dynamicSerializer = exports.dynamicSerializer
-export type types = exports.types
-export type voidSentry = exports.voidSentry
-type possibleNode = exports.possibleNode
-type typeNode = exports.typeNode
+export type types = exports.voidSentryTypes
+export type voidSentry2 = exports.voidSentry2
+export type possibleNode = exports.possibleNode
+export type typeNode<T = any> = exports.typeNode<T>
+export type extractTypeNode<T> = exports.extractTypeNode<T>
 
 -----------------------------------------------------
 -- VARIABLES                                       --
 -----------------------------------------------------
-local signMap = typesModule.signMap
-local types = typesModule.types :: { [string]: any }
+const signMap: { possibleNode } = typesModule.signMap
+const types: types = typesModule.types
+const failFn: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
 -- INIT                                            --
 -----------------------------------------------------
 for name: string, sign: number in typeSigns :: { [string]: number } do
-	local node = require(`@self/types/{name}`)
+	const node = require(`@self/types/{name}`)
 	signMap[sign] = node
 	types[name] = node
 end
 
 -----------------------------------------------------
--- SER INSTANCE SCHEMAS                            --
+-- API					                           --
 -----------------------------------------------------
-instanceSchemas.Part = {
-	Name = types.string,
-	Transparency = types.float32,
-	CFrame = types.cframe,
-	Color = types.color3,
-	Anchored = types.boolean,
-	Reflectance = types.float32,
-}
+--[[
+	Combines 2 tables together (shallow copy)
+	@param t1 – the first table
+	@param t2 – the second table
+	@returns t3 – a new table that contains data of both tables
+]]
+const function combine<T1, T2>(t1: T1, t2: T2): T1 & T2
+	const firstArgType: string = type(t1)
+	const secondArgType: string = type(t2)
+	if firstArgType ~= "table" then
+		failFn(`[VoidSentry2]: Table combining failed – Invalid argument #1, "table" expected, got {firstArgType}`)
+		return
+	elseif secondArgType ~= "table" then
+		failFn(`[VoidSentry2]: Table combining failed – Invalid argument #2, "table" expected, got {secondArgType}`)
+		return
+	end
+	const t3: T1 & T2 = {}
+	for key, value in t1 do
+		t3[key] = value
+	end
+	for key, value in t2 do
+		t3[key] = value
+	end
+	return t3
+end
+
+--[[
+	Registers classname schema & sign in @instanceSchemas and @serInstanceSigns
+	@param className – the instance class name to register
+	@param schema – the class schema
+	@returns ()
+]]
+const function registerInstanceSchema(className: string, schema: { [string]: typeNode }): ()
+	const firstArgType: string = type(className)
+	const secondArgType: string = type(schema)
+	if firstArgType ~= "string" then
+		failFn(
+			`[VoidSentry2]: Serialized instance schema registering failed – Invalid argument #1, "string" expected, got {firstArgType}`
+		)
+		return
+	elseif secondArgType ~= "table" then
+		failFn(
+			`[VoidSentry2]: Serialized instance schema registering failed – Invalid argument #2, "table" expected, got {secondArgType}`
+		)
+		return
+	end
+
+	instanceSchemas[className] = schema
+	const idx: number = #serInstanceSigns.signLookup + 1
+	serInstanceSigns.signLookup[idx] = className
+	serInstanceSigns.nameLookup[className] = idx
+end
+
 -----------------------------------------------------
 -- MODULE                                          --
 -----------------------------------------------------
-local VoidSentry = {
-	types = typesModule.types,
+const VoidSentry2 = {
+	types = types,
 	static = static,
 	dynamic = dynamic,
+	registerInstanceSchema = registerInstanceSchema,
+	combine = combine,
 }
 
-return VoidSentry :: voidSentry
+return VoidSentry2 :: voidSentry2

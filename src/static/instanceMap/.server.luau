@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
     InstanceMap.server V0.1.0
 
@@ -7,13 +8,13 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local instanceMap = require("./")
+const instanceMap = require("./")
 -----------------------------------------------------
 -- MAIN                                            --
 -----------------------------------------------------
 local i: number = 0
 
-local onInstance = function(instance: Instance): ()
+const onInstance = function(instance: Instance): ()
 	i += 1
 	instance:SetAttribute("_VSID", i)
 	instanceMap[i] = instance

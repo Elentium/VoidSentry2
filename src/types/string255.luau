@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	string255
 	1 + strlen bytes
@@ -7,44 +8,55 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "string"
+const VAL_TYPE: string = "string"
 
-local LEN_LIMIT: number = 0xFF
+const LEN_LIMIT: number = 0xFF
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.STR_S
-local READ = reader.STR_S
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (string, number) -> () = writer.STR_S
+const READ: () -> (number, string?) = reader.STR_S
+const FAIL_FN = config.strictMode and error or warn
 
-return {
-	write = @native function(value: string): number
-		if TYPE(value) ~= VAL_TYPE then
-			return FAIL
-		end
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function string255_write(value: string): number
+	const vType: string = TYPE(value)
+	if vType ~= VAL_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize String255 type – "string" expected, got "{vType}"`)
+		return FAIL
+	end
 
-		local len: number = #value
-		if len > LEN_LIMIT then
-			return FAIL
-		end
-		if not NEED(1 + len) then
-			return FAIL
-		end
-		WRITE(value, len)
-		return SUCCESS
-	end,
+	const len: number = #value
+	if len > LEN_LIMIT then
+		FAIL_FN(
+			`[VoidSentry2]: Failed to serialize String255 type – String255 max length is 255, input value length is {len}`
+		)
+		return FAIL
+	end
+	if not NEED(1 + len) then
+		return FAIL
+	end
+	WRITE(value, len)
+	return SUCCESS
+end
 
+return table.freeze({
+	write = string255_write,
 	read = READ, -- avoid possible extra function call
-}
+})

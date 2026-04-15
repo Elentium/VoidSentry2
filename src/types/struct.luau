@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	struct
 	nodeSize per node bytes
@@ -9,32 +10,33 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local exports = require("../shared/exports")
+const config = require("../shared/config")
+const exports = require("../shared/exports")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
-type typeNode = exports.typeNode
+type typeNode<T = any> = exports.typeNode<T>
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "table"
+const VAL_TYPE: string = "table"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local SORT = table.sort
+const TYPE: <T>(T) -> string = type
+const SORT: <V>({ V }, ((V, V) -> boolean)?) -> () = table.sort
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 @native
-local function structNodeBuild(struct: { [string]: typeNode }): typeNode
-	local keys: { string } = {}
-	local writes: { [string]: (any) -> number } = {}
-	local reads: { [string]: () -> (number, any?) } = {}
+const function structNodeBuild<T>(struct: T & { [string]: typeNode }): typeNode<T>
+	const keys: { string } = {}
+	const writes: { [string]: <T>(T) -> number } = {}
+	const reads: { [string]: () -> (number, any?) } = {}
 	for key: string, value: typeNode in struct :: { [string]: typeNode } do
 		keys[#keys + 1] = key
 		writes[key] = value.write
@@ -42,39 +44,46 @@ local function structNodeBuild(struct: { [string]: typeNode }): typeNode
 	end
 	SORT(keys)
 
-	return {
-		write = @native function(value: { [string]: any }): number
-			if TYPE(value) ~= VAL_TYPE then
+	-----------------------------------------------------
+	-- READ/WRITE                                      --
+	-----------------------------------------------------
+	@native
+	const function struct_write<V>(value: { [string]: V } & T): number
+		const vType: string = TYPE(value)
+		if vType ~= VAL_TYPE then
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Struct type – "table" expected, got "{vType}"`)
+			return FAIL
+		end
+
+		for _, key: string in keys do
+			const fieldWrite: <Z>(Z) -> number = writes[key]
+			if fieldWrite(value[key]) == FAIL then
 				return FAIL
 			end
+		end
+		return SUCCESS
+	end
 
-			for _, key: string in keys do
-				local write = writes[key]
-				if write(value[key]) == FAIL then
-					return FAIL
-				end
+	@native
+	const function struct_read(): (number, T?)
+		const out: { [string]: any } = {}
+
+		local flag: number
+		for _, key: string in keys do
+			const fieldRead: () -> (number, any?) = reads[key]
+			flag, out[key] = fieldRead()
+			if flag == FAIL then
+				return FAIL, nil
 			end
-			return SUCCESS
-		end,
-		read = @native function(): (number, { [string]: any }?)
-			local struct: { [string]: any } = {}
+		end
 
-			local flag: number
-			for _, key: string in keys do
-				local read = reads[key]
-				if not read then
-					return FAIL, nil
-				end
+		return flag, out
+	end
 
-				flag, struct[key] = read()
-				if flag == FAIL then
-					return FAIL, nil
-				end
-			end
-
-			return flag, struct
-		end,
-	}
+	return table.freeze({
+		write = struct_write,
+		read = struct_read,
+	}) :: typeNode<T>
 end
 
 return structNodeBuild

@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	nothing
 	0 bytes
@@ -6,19 +7,27 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
+const config = require("../shared/config")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
+const SUCCESS: number = config.success
 
-return {
-	write = @native function(value: nil): number
-		return SUCCESS
-	end,
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function nothing_write(value: nil): number
+	return SUCCESS
+end
 
-	read = @native function(_lastFlag: number?): (number, nil)
-		return _lastFlag or SUCCESS, nil
-	end,
-}
+@native
+const function nothing_read(_lastFlag: number?): (number, nil)
+	return _lastFlag or SUCCESS, nil
+end
+
+return table.freeze({
+	write = nothing_write,
+	read = nothing_read,
+})

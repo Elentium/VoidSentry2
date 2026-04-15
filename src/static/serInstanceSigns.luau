@@ -1,29 +1,28 @@
 --!strict
+--!optimize 2
+--[[
+	SerInstanceSigns v0.1.0
+
+	Contains serialized instances type signs, 
+]]
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local instanceSchemas = require("../shared/config/instanceSchemas")
+const exports = require("../shared/exports")
+
+-----------------------------------------------------
+-- TYPES	                                       --
+-----------------------------------------------------
+type typeNode<T = any> = exports.typeNode<T>
 
 -----------------------------------------------------
 -- VARIABLES                                       --
 -----------------------------------------------------
-local signLookup = {}
-local nameLookup = {}
-local serInstanceSigns = {
+const signLookup = {}
+const nameLookup = {}
+const serInstanceSigns = {
 	signLookup = signLookup :: { [number]: string },
 	nameLookup = nameLookup :: { [string]: number },
 }
 
------------------------------------------------------
--- INIT                                            --
------------------------------------------------------
-for className: string in instanceSchemas do
-	table.insert(signLookup, className)
-end
-table.sort(signLookup)
-
-for sign: number, className: string in signLookup do
-	nameLookup[className] = sign
-end
-
-return serInstanceSigns
+return table.freeze(serInstanceSigns)

@@ -1,3 +1,4 @@
+--!optimize 2
 --[[
 	Dynanode V0.1.0
 
@@ -10,49 +11,54 @@
 -----------------------------------------------------
 local typesModule: typeof(require("../types")) = nil
 local serInstanceSigns: typeof(require("../static/serInstanceSigns")) = nil
-local inferElementType = require("./inferValueType")
-local config = require("./config")
-local exports = require("./exports")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const inferValueType = require("./inferValueType")
+const config = require("./config")
+const exports = require("./exports")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
+const enumMap = require("../static/enumMap")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
-type typeNode = exports.typeNode
+type typeNode<T = any> = exports.typeNode<T>
 
 type possibleNode = exports.possibleNode
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local UNKNOWN: number = config.unknownType
-local typeSigns = config.typeSigns
+const UNKNOWN: number = config.unknownType
+const typeSigns = config.typeSigns
 
-local FAIL: number = config.fail
+const FAIL: number = config.fail
 
-local ANY_NODE: typeNode = nil
-
+local ANY_NODE: typeNode<any> = nil
 local SIGNMAP: typeof(typesModule.signMap) = nil
 
-local ANYID: number = typeSigns.any
-local ARRAYID: number = typeSigns.array
-local ARRAY255ID: number = typeSigns.array255
-local MAPID: number = typeSigns.map
-local SER_INSTANCE_ID = typeSigns.serInstance
+const ANYID: number = typeSigns.any
+const ARRAYID: number = typeSigns.array
+const ARRAY255ID: number = typeSigns.array255
+const MAPID: number = typeSigns.map
+const SER_INSTANCE_ID: number = typeSigns.serInstance
 local SER_INSTANCE_SIGNMAP: typeof(serInstanceSigns.signLookup) = nil
 local SER_INSTANCE_NAMEMAP: typeof(serInstanceSigns.nameLookup) = nil
+const ENUM_ID: number = typeSigns.enum
+const enumIdMap: { [number]: Enum } = enumMap.idMap
+const enumReverseMap: { [Enum]: number } = enumMap.reverseMap
 
 -----------------------------------------------------
 -- LOCALIZATIONS                                   --
 -----------------------------------------------------
-local NEED = writer.NEED
-local READ_SIGN = reader.U8
-local WRITE_SIGN = writer.U8
-local TYPE = type
-local FAIL_FN = config.strictMode and error or warn
+const NEED: (number) -> boolean = writer.NEED
+const READ_SIGN: (...any) -> (number, number?) = reader.U8
+const WRITE_SIGN: (number) -> () = writer.U8
+const WRITE_ID: (number) -> () = writer.U16
+const READ_ID: () -> (number, number?) = reader.U16
+const TYPE: <T>(T) -> string = type
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
+return table.freeze({
 	write = @native function(value: any): number
 		-- initialize types & other related constants on first op (prevent recursive dependency from any <-> types <--> dynanode)
 		if typesModule == nil then
@@ -63,7 +69,7 @@ return {
 			SIGNMAP = typesModule.signMap
 			ANY_NODE = SIGNMAP[ANYID]
 		end
-		local sign: number = inferElementType(value)
+		const sign: number = inferValueType(value)
 		if sign == UNKNOWN then
 			-----------------------------------------------------
 			-- UNKNOWN HANDLING                                --
@@ -91,15 +97,20 @@ return {
 			elseif sign == MAPID then
 				node = node(ANY_NODE, ANY_NODE)
 			elseif sign == SER_INSTANCE_ID then
-				local className: string = value.ClassName
+				const className: string = value.ClassName
 				node = node(className)
 				-- write ID
-				local isign: number = SER_INSTANCE_NAMEMAP[className]
+				const isign: number = SER_INSTANCE_NAMEMAP[className]
 				-- the sign will always exist (if it does not – the node constructor will error)
 				if not NEED(1) then
 					FAIL_FN(`[VoidSentry2]: Dynamic write failed – Buffer access out of bounds`)
 				end
 				WRITE_SIGN(isign)
+			elseif sign == ENUM_ID then
+				const enum: Enum = value.EnumType
+				const id: number = enumReverseMap[enum]
+				WRITE_ID(id)
+				node = node(enum)
 			end
 		end
 
@@ -138,15 +149,28 @@ return {
 					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read serInstance sign`)
 					return FAIL
 				end
-				local className: string = SER_INSTANCE_SIGNMAP[isign]
+				const className: string = SER_INSTANCE_SIGNMAP[isign]
 				if not className then
 					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid serInstance sign ({isign})`)
 					return FAIL
 				end
 				node = node(className)
+			elseif sign == ENUM_ID then
+				local id: number?
+				flag, id = READ_ID()
+				if flag == FAIL then
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read enum sign`)
+					return FAIL
+				end
+				const enum: Enum = enumIdMap[id :: number]
+				if not enum then
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – The enum ID is invalid {id}`)
+					return FAIL
+				end
+				node = node(enum)
 			end
 		end
 
 		return (node :: typeNode).read(flag)
 	end,
-}
+})

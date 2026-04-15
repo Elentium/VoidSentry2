@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Key-value Map
 	1 + nodeSize(n) bytes
@@ -7,87 +8,99 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
-local exports = require("../shared/exports")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
+const exports = require("../shared/exports")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
-type typeNode = exports.typeNode
+type typeNode<T = any> = exports.typeNode<T>
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "table"
+const VAL_TYPE: string = "table"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE_LEN = writer.U8
-local READ_LEN = reader.U8
-
-local FAIL_FN = config.strictMode and error or warn
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE_LEN: (number) -> () = writer.U8
+const READ_LEN: () -> (number, number?) = reader.U8
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 @native
-local function map255NodeBuild(keyType: typeNode, valueType: typeNode): typeNode
-	local valWrite = valueType.write
-	local valRead = valueType.read
-	local keyWrite = keyType.write
-	local keyRead = keyType.read
+const function map255NodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V>): typeNode
+	const valWrite: (V) -> number = valueType.write
+	const valRead: (number?) -> (number, V?) = valueType.read
+	const keyWrite: (K) -> number = keyType.write
+	const keyRead: (number?) -> (number, K?) = keyType.read
 
-	return {
-		write = @native function(value: { [any]: any }): number
-			if TYPE(value) ~= VAL_TYPE then
+	-----------------------------------------------------
+	-- READ/WRITE                                      --
+	-----------------------------------------------------
+	@native
+	const function map255_write(value: { [K]: V }): number
+		const vType: string = TYPE(value)
+		if vType ~= VAL_TYPE then
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Map255 type – "table" expected, got "{vType}"`)
+			return FAIL
+		end
+
+		local len: number = 0
+		for _ in value do
+			len += 1
+		end
+		if not NEED(1) then
+			return FAIL
+		elseif len > 0xFF then
+			FAIL_FN(
+				`[VoidSentry2]: Failed to serialize Map255 type – Map255 max length is 255, input value length is {len}`
+			)
+			return FAIL
+		end
+		WRITE_LEN(len)
+		for k: K, v: V in value do
+			if keyWrite(k) == FAIL then
+				return FAIL
+			elseif valWrite(v) == FAIL then
 				return FAIL
 			end
+		end
 
-			local len: number = 0
-			for _ in value do
-				len += 1
-			end
-			if not NEED(1) then
-				return FAIL
-			elseif len > 0xFF then
-				FAIL_FN(`Map max length is 255, the input length is {len}`)
-				return FAIL
-			end
-			WRITE_LEN(len)
-			for k: any, v: any in value do
-				if keyWrite(k) == FAIL then
-					return FAIL
-				elseif valWrite(v) == FAIL then
-					return FAIL
-				end
-			end
+		return SUCCESS
+	end
 
-			return SUCCESS
-		end,
-		read = @native function(): (number, any?)
-			local flag: number, len: number? = READ_LEN()
+	@native
+	const function map255_read(): (number, { [K]: V }?)
+		local flag: number, len: number? = READ_LEN()
+		if flag == FAIL then
+			return FAIL, nil
+		end
+		const tbl: { [K]: V } = {}
+
+		for i = 1, len :: number do
+			local key: K?, val: V?
+			flag, key = keyRead()
+			flag, val = valRead()
 			if flag == FAIL then
-				return FAIL
+				return FAIL, nil
 			end
-			local map: { [any]: any } = {}
-			local key: any, value: any
+			tbl[key] = val
+		end
 
-			for i = 1, len :: number do
-				flag, key = keyRead()
-				flag, value = valRead()
-				if flag == FAIL then
-					return FAIL
-				end
-				map[key] = value
-			end
+		return flag, tbl
+	end
 
-			return flag, map
-		end,
-	}
+	return table.freeze({
+		write = map255_write,
+		read = map255_read,
+	}) :: typeNode
 end
 
 return map255NodeBuild

@@ -1,9 +1,11 @@
 --!strict
+--!optimize 2
 --[[
 	BufferWriter V0.1.0
 
 	Serializes into one reusable big buffer (config.maxBufferSize).
-	START only resets cursor / offset; FINISH allocates an exact-sized buffer and copies bytes [0, cursor).
+	START sets the write cursor (with optional offset for metadata/headers)
+	FINISH allocates a buffer of length `cursor` and copies bigBuffer [0, cursor).
 
 	Type nodes are responsible for calling NEED(n) once before writing their fields.
 	The primitive write functions themselves do no bounds checking.
@@ -11,75 +13,77 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-
------------------------------------------------------
--- CONSTANTS / STATE                               --
------------------------------------------------------
-local bigCap: number = config.maxBufferSize
-local bigBuffer: buffer = buffer.create(bigCap)
-local cursor: number = 0
+const config = require("../shared/config")
 
 -----------------------------------------------------
 -- LOCALIZE BUILTINS                               --
 -----------------------------------------------------
-local CREATE = buffer.create
-local COPY = buffer.copy
+const CREATE: (number) -> buffer = buffer.create
+const COPY: (buffer, number, buffer, number?, number?) -> () = buffer.copy
 
-local WRITE_U8 = buffer.writeu8
-local WRITE_I8 = buffer.writei8
-local WRITE_U16 = buffer.writeu16
-local WRITE_I16 = buffer.writei16
-local WRITE_U32 = buffer.writeu32
-local WRITE_I32 = buffer.writei32
-local WRITE_F32 = buffer.writef32
-local WRITE_F64 = buffer.writef64
-local WRITE_STRING = buffer.writestring
+const WRITE_U8: (buffer, number, number) -> () = buffer.writeu8
+const WRITE_I8: (buffer, number, number) -> () = buffer.writei8
+const WRITE_U16: (buffer, number, number) -> () = buffer.writeu16
+const WRITE_I16: (buffer, number, number) -> () = buffer.writei16
+const WRITE_U32: (buffer, number, number) -> () = buffer.writeu32
+const WRITE_I32: (buffer, number, number) -> () = buffer.writei32
+const WRITE_F32: (buffer, number, number) -> () = buffer.writef32
+const WRITE_F64: (buffer, number, number) -> () = buffer.writef64
+const WRITE_STRING: (buffer, number, string, number?) -> () = buffer.writestring
 
-local ABS = math.abs
-local FREXP = math.frexp
+const ABS: (number) -> number = math.abs
+const FREXP: (number) -> (number, number) = math.frexp
 
-local AND = bit32.band
-local OR = bit32.bor
-local EXTRACT = bit32.extract
-local LSHIFT = bit32.lshift
+const AND: (...number) -> number = bit32.band
+const OR: (...number) -> number = bit32.bor
+const EXTRACT: (number, number, number?) -> number = bit32.extract
+const LSHIFT: (number, number) -> number = bit32.lshift
+
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+
+const HUGE: number = math.huge
+const NHUGE: number = -HUGE
 
 -----------------------------------------------------
--- FAIL/STRICT HANDLING                            --
+-- STATE                    			           --
 -----------------------------------------------------
-local failFn = config.strictMode and error or warn
+const bigCap: number = config.maxBufferSize
+const bigBuffer: buffer = CREATE(bigCap)
+
+local cursor: number = 0
+local off: number = 0
 
 -----------------------------------------------------
--- NEED (called once per type node write)          --
+-- API                                             --
 -----------------------------------------------------
 @native
-local function need(size: number): boolean
+const function need(size: number): boolean
 	if cursor + size > bigCap then
-		failFn(
-			`VoidSentry2 writer: need {size} byte(s) at cursor {cursor} but bigBuffer ends at {bigCap} (config.maxBufferSize)`
+		FAIL_FN(
+			`[VoidSentry2]: writer.need throw – need {size} byte(s) at cursor {cursor} but bigBuffer ends at {bigCap} (config.maxBufferSize)`
 		)
 		return false
 	end
 	return true
 end
 
------------------------------------------------------
--- API                                             --
------------------------------------------------------
 @native
-local function start(offset: number?)
+const function start(offset: number?)
 	cursor = offset or 0
+	off = cursor
 	if cursor > bigCap then
-		failFn(`VoidSentry2 writer: offset {cursor} exceeds bigBuffer size {bigCap}`)
+		FAIL_FN(`VoidSentry2 writer: offset {cursor} exceeds bigBuffer size {bigCap}`)
 		cursor = bigCap + 1 -- poison; every subsequent need() call will fail.
 	end
 end
 
 @native
-local function finish(): buffer
-	local b: buffer = CREATE(cursor)
+const function finish(): buffer
+	const b: buffer = CREATE(cursor)
 	if cursor > 0 then
-		COPY(b, 0, bigBuffer, 0, cursor)
+		-- ensure the offset bytes are all zeroed
+		-- if previous operation(s) had no offset – the first bytes have previous data
+		COPY(b, off, bigBuffer, off, cursor - off)
 	end
 	return b
 end
@@ -88,25 +92,25 @@ end
 -- PRIMITIVE WRITES                                --
 -----------------------------------------------------
 @native
-local function writeu8(value: number): ()
+const function writeu8(value: number): ()
 	WRITE_U8(bigBuffer, cursor, value)
 	cursor += 1
 end
 
 @native
-local function writei8(value: number): ()
+const function writei8(value: number): ()
 	WRITE_I8(bigBuffer, cursor, value)
 	cursor += 1
 end
 
 @native
-local function writeu16(value: number): ()
+const function writeu16(value: number): ()
 	WRITE_U16(bigBuffer, cursor, value)
 	cursor += 2
 end
 
 @native
-local function writei16(value: number): ()
+const function writei16(value: number): ()
 	WRITE_I16(bigBuffer, cursor, value)
 	cursor += 2
 end
@@ -116,27 +120,26 @@ end
 	Special values: ±Inf stored as exp=0x1F mant=0; NaN as exp=0x1F mant=0x200.
 ]]
 @native
-local function writef16(value: number): ()
+const function writef16(value: number): ()
 	local packed: number
 	if value ~= value then
 		packed = 0x7E00
-	elseif value == math.huge then
+	elseif value == HUGE then
 		packed = 0x7C00
-	elseif value == -math.huge then
+	elseif value == NHUGE then
 		packed = 0xFC00
 	elseif value == 0 then
 		packed = 0
 	else
-		local sign: number = if value < 0 then 1 else 0
-		local m: number, e: number = FREXP(ABS(value))
-		local biasedExp: number = e + 14
+		const sign: number = if value < 0 then 1 else 0
+		const m: number, e: number = FREXP(ABS(value))
+		const biasedExp: number = e + 14
 		if biasedExp >= 0x1F then
 			packed = OR(LSHIFT(sign, 15), 0x7C00)
 		elseif biasedExp <= 0 then
 			packed = LSHIFT(sign, 15)
 		else
-			local mant10: number = (m * 2 - 1) * 1024 + 0.5
-			mant10 = mant10 // 1
+			const mant10: number = ((m * 2 - 1) * 1024 + 0.5) // 1
 			packed = OR(LSHIFT(sign, 15), LSHIFT(biasedExp, 10), AND(mant10, 0x3FF))
 		end
 	end
@@ -145,7 +148,7 @@ local function writef16(value: number): ()
 end
 
 @native
-local function writeu24(value: number): ()
+const function writeu24(value: number): ()
 	WRITE_U16(bigBuffer, cursor, AND(value, 0xFFFF))
 	WRITE_U8(bigBuffer, cursor + 2, EXTRACT(value, 16, 8))
 	cursor += 3
@@ -156,25 +159,25 @@ end
 	Layout in buffer: [lo16 of mantissa] [sign(1) | exp(7)]
 ]]
 @native
-local function writef24(value: number): ()
+const function writef24(value: number): ()
 	local mant16: number
 	local byte2: number
 	if value ~= value then
 		mant16 = 0x8000
 		byte2 = 0x7F
-	elseif value == math.huge then
+	elseif value == HUGE then
 		mant16 = 0
 		byte2 = 0x7F
-	elseif value == -math.huge then
+	elseif value == NHUGE then
 		mant16 = 0
 		byte2 = 0xFF
 	elseif value == 0 then
 		mant16 = 0
 		byte2 = 0
 	else
-		local sign: number = if value < 0 then 1 else 0
-		local m: number, e: number = FREXP(ABS(value))
-		local biasedExp: number = e + 62
+		const sign: number = if value < 0 then 1 else 0
+		const m: number, e: number = FREXP(ABS(value))
+		const biasedExp: number = e + 62
 		if biasedExp >= 0x7F then
 			mant16 = 0
 			byte2 = OR(LSHIFT(sign, 7), 0x7F)
@@ -182,7 +185,7 @@ local function writef24(value: number): ()
 			mant16 = 0
 			byte2 = LSHIFT(sign, 7)
 		else
-			local frac: number = m * 2 - 1
+			const frac: number = m * 2 - 1
 			mant16 = AND((frac * 65536 + 0.5) // 1, 0xFFFF)
 			byte2 = OR(LSHIFT(sign, 7), biasedExp)
 		end
@@ -193,31 +196,31 @@ local function writef24(value: number): ()
 end
 
 @native
-local function writeu32(value: number): ()
+const function writeu32(value: number): ()
 	WRITE_U32(bigBuffer, cursor, value)
 	cursor += 4
 end
 
 @native
-local function writei32(value: number): ()
+const function writei32(value: number): ()
 	WRITE_I32(bigBuffer, cursor, value)
 	cursor += 4
 end
 
 @native
-local function writef32(value: number): ()
+const function writef32(value: number): ()
 	WRITE_F32(bigBuffer, cursor, value)
 	cursor += 4
 end
 
 @native
-local function writef64(value: number): ()
+const function writef64(value: number): ()
 	WRITE_F64(bigBuffer, cursor, value)
 	cursor += 8
 end
 
 @native
-local function writes255(value: string, len: number): ()
+const function writes255(value: string, len: number): ()
 	WRITE_U8(bigBuffer, cursor, len)
 	cursor += 1
 	WRITE_STRING(bigBuffer, cursor, value)
@@ -225,14 +228,14 @@ local function writes255(value: string, len: number): ()
 end
 
 @native
-local function writes65(value: string, len: number): ()
+const function writes65(value: string, len: number): ()
 	WRITE_U16(bigBuffer, cursor, len)
 	cursor += 2
 	WRITE_STRING(bigBuffer, cursor, value)
 	cursor += len
 end
 
-return {
+return table.freeze({
 	START = start,
 	FINISH = finish,
 	NEED = need,
@@ -251,4 +254,4 @@ return {
 	F64 = writef64,
 	STR_S = writes255,
 	STR = writes65,
-}
+})

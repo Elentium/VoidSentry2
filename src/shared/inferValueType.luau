@@ -1,3 +1,4 @@
+--!optimize 2
 --[[
 	InferValueType V0.1.0
 
@@ -28,46 +29,47 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("./config")
+const config = require("./config")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local UNKNOWN: number = config.unknownType
-local typeSigns = config.typeSigns
-local VECTOR: number = config.dynamicVectorType == "Vector3" and typeSigns.vector3 or typeSigns.vector
-local INT32: number = typeSigns.int32
-local INT16: number = typeSigns.int16
-local INT8: number = typeSigns.int8
-local UINT32: number = typeSigns.uint32
-local UINT16: number = typeSigns.uint16
-local UINT8: number = typeSigns.uint8
-local FLOAT: number = typeSigns.float32
-local BOOL: number = typeSigns.boolean
-local STR: number = typeSigns.string
-local STR255: number = typeSigns.string255
-local VOID: number = typeSigns.void
-local ARRAY: number = typeSigns.array
-local MAP: number = typeSigns.map
-local ARRAY255: number = typeSigns.array255
-local CFRAME: number = typeSigns.cframe
-local VECTOR2: number = typeSigns.vector2
-local COLOR3: number = typeSigns.color3
-local INSTANCE: number = config.dynamicInstanceType == "instance" and typeSigns.instance or typeSigns.serInstance
+const UNKNOWN: number = config.unknownType
+const typeSigns = config.typeSigns
+const VECTOR: number = config.dynamicVectorType == "Vector3" and typeSigns.vector3 or typeSigns.vector
+const INT32: number = typeSigns.int32
+const INT16: number = typeSigns.int16
+const INT8: number = typeSigns.int8
+const UINT32: number = typeSigns.uint32
+const UINT16: number = typeSigns.uint16
+const UINT8: number = typeSigns.uint8
+const FLOAT: number = typeSigns.float32
+const BOOL: number = typeSigns.boolean
+const STR: number = typeSigns.string
+const STR255: number = typeSigns.string255
+const VOID: number = typeSigns.void
+const ARRAY: number = typeSigns.array
+const MAP: number = typeSigns.map
+const ARRAY255: number = typeSigns.array255
+const CFRAME: number = typeSigns.cframe
+const VECTOR2: number = typeSigns.vector2
+const COLOR3: number = typeSigns.color3
+const INSTANCE: number = config.dynamicInstanceType == "instance" and typeSigns.instance or typeSigns.serInstance
+const ENUM: number = typeSigns.enum
 -----------------------------------------------------
 -- LOCALIZATIONS                                   --
 -----------------------------------------------------
-local TYPE = typeof
+const TYPE: <T>(T) -> string = typeof
 
 @native
-local function inferValueType(element: any): number
-	local type = TYPE(element)
+const function inferValueType<T>(element: T): number
+	const type: string = TYPE(element)
 
 	if type == "number" then
-		local isInteger: boolean = element // 1 == element
+		const isInteger: boolean = element // 1 == element
 		if isInteger then
 			if element >= 0 then
-				-- unsigned Logic
+				-- unsigned logic
 				if element <= 0xFF then
 					return UINT8
 				elseif element <= 0xFFFF then
@@ -76,7 +78,7 @@ local function inferValueType(element: any): number
 					return UINT32
 				end
 			else
-				-- signed Logic
+				-- signed logic
 				if element >= -128 and element <= 127 then
 					return INT8
 				elseif element >= -32768 and element <= 32767 then
@@ -93,13 +95,13 @@ local function inferValueType(element: any): number
 	elseif type == "string" then
 		return #element <= 255 and STR255 or STR
 	elseif type == "table" then
-		local len: number = #element
+		const len: number = #element
 		-- empty table or a map
 		if len == 0 then
 			return next(element) == nil and VOID or MAP
 		end
 
-		local isMap: boolean = next(element, #element) ~= nil
+		const isMap: boolean = next(element, #element) ~= nil
 		return if isMap then MAP else len <= 255 and ARRAY255 or ARRAY
 	elseif type == "Vector3" then
 		return VECTOR
@@ -111,6 +113,8 @@ local function inferValueType(element: any): number
 		return COLOR3
 	elseif type == "Instance" then
 		return INSTANCE
+	elseif type == "EnumItem" then
+		return ENUM
 	end
 
 	return UNKNOWN

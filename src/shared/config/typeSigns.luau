@@ -1,8 +1,8 @@
 --!strict
+--!optimize 2
 --[[
 	VoidSentry2 Type Signs
 	Maps type names to their 1-byte discriminator values written on the wire.
-	No dependencies — safe to require at any time.
 ]]
 return {
 	-- NUMBER TYPES
@@ -52,4 +52,5 @@ return {
 	vector3f16 = 36,
 	instance = 37,
 	serInstance = 38,
+	enum = 39,
 }

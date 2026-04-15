@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Boolean
 	1 byte
@@ -7,43 +8,54 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "boolean"
+const VAL_TYPE: string = "boolean"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.U8
-local READ = reader.U8
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.U8
+const READ: () -> (number, number?) = reader.U8
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
-	write = @native function(value: boolean): number
-		if TYPE(value) ~= VAL_TYPE then
-			return FAIL
-		end
-		if not NEED(1) then
-			return FAIL
-		end
-		WRITE(value and 1 or 0)
-		return SUCCESS
-	end,
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function boolean_write(value: boolean): number
+	const vType: string = TYPE(value)
+	if vType ~= VAL_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Boolean type – "boolean" expected, got "{vType}"`)
+		return FAIL
+	end
+	if not NEED(1) then
+		return FAIL
+	end
+	WRITE(value and 1 or 0)
+	return SUCCESS
+end
 
-	read = @native function(): (number, boolean?)
-		local flag: number, value: number? = READ()
-		if flag == FAIL then
-			return flag, nil
-		end
-		return flag, value == 1
-	end,
-}
+@native
+const function boolean_read(): (number, boolean?)
+	const flag: number, value: number? = READ()
+	if flag == FAIL then
+		return flag, nil
+	end
+	return flag, value == 1
+end
+
+return table.freeze({
+	write = boolean_write,
+	read = boolean_read,
+})

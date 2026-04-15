@@ -1,38 +1,53 @@
 --!strict
+--[[
+	Float64
+	8 bytes
+
+	IEEE 754 double precision float
+]]
+--!optimize 2
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local NUM_TYPE: string = "number"
+const NUM_TYPE: string = "number"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.F64
-local READ = reader.F64
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.F64
+const READ: () -> (number, number?) = reader.F64
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
-	write = @native function(value: number): number
-		if TYPE(value) ~= NUM_TYPE then
-			return FAIL
-		end
-		if not NEED(8) then
-			return FAIL
-		end
-		WRITE(value)
-		return SUCCESS
-	end,
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function float64_write(value: number): number
+	const vType: string = TYPE(value)
+	if vType ~= NUM_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Float64 type – "number" expected, got "{vType}"`)
+		return FAIL
+	end
+	if not NEED(8) then
+		return FAIL
+	end
+	WRITE(value)
+	return SUCCESS
+end
 
+return table.freeze({
+	write = float64_write,
 	read = READ, -- avoid possible extra function call
-}
+})

@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	VoidSentry2 Constants
 	Static configuration values with no dependencies.
@@ -13,7 +14,9 @@ return {
 	-- If false: failures warn and return FAIL/nil style instead.
 	strictMode = true,
 
+	-- Which type will be inferred when the input value is a vector
 	dynamicVectorType = "vector" :: "Vector3" | "vector",
+	-- Which value will be inferred when the input value is an instance
 	dynamicInstanceType = "instance" :: "serInstance" | "instance",
 
 	-- internal

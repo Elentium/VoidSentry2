@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	vector
 	luau primitive vector type
@@ -8,52 +9,62 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "vector"
+const VAL_TYPE: string = "vector"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.F32
-local READ = reader.F32
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.F32
+const READ: (...any) -> (number, number?) = reader.F32
+const NEW: (number, number, number?) -> vector = vector.create
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-local NEW = vector.create
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function vector_write(value: vector): number
+	const vType: string = TYPE(value)
+	if vType ~= VAL_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Vector type – "vector" expected, got "{vType}"`)
+		return FAIL
+	end
+	if not NEED(12) then
+		return FAIL
+	end
+	WRITE(value.x)
+	WRITE(value.y)
+	WRITE(value.z)
+	return SUCCESS
+end
 
-return {
-	write = @native function(value: vector): number
-		if TYPE(value) ~= VAL_TYPE then
-			return FAIL
-		end
-		if not NEED(12) then
-			return FAIL
-		end
-		WRITE(value.x)
-		WRITE(value.y)
-		WRITE(value.z)
-		return SUCCESS
-	end,
+@native
+const function vector_read(): (number, vector?)
+	local flag: number, x: number?, y: number?, z: number?
 
-	read = @native function(): (number, vector?)
-		local flag: number, x: number?, y: number?, z: number?
+	flag, x = READ()
+	flag, y = READ()
+	flag, z = READ()
+	if flag == FAIL then
+		return FAIL, nil
+	end
 
-		flag, x = READ()
-		flag, y = READ()
-		flag, z = READ()
-		if flag == FAIL then
-			return FAIL, nil
-		end
+	return flag, NEW(x :: number, y :: number, z :: number)
+end
 
-		return flag, NEW(x :: number, y :: number, z :: number)
-	end,
-}
+return table.freeze({
+	write = vector_write,
+	read = vector_read,
+})

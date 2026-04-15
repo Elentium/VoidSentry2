@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	Optional mark
 	1 + nodeSize? bytes
@@ -10,59 +11,68 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
-local exports = require("../shared/exports")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
+const exports = require("../shared/exports")
 
 -----------------------------------------------------
 -- TYPES                                           --
 -----------------------------------------------------
-type typeNode = exports.typeNode
+type typeNode<T = any> = exports.typeNode<T>
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local NEED = writer.NEED
-local WRITE = writer.U8
-local READ = reader.U8
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (number) -> () = writer.U8
+const READ: () -> (number, number?) = reader.U8
 
 @native
-local function optionalNodeBuild(node: typeNode): typeNode
-	local write = node.write
-	local read = node.read
-	return {
-		write = @native function(value: any?): number
-			if not NEED(1) then
-				return FAIL
-			end
-			local sign: number = value ~= nil and 1 or 0
-			WRITE(sign)
+const function optionalNodeBuild<T>(node: typeNode<T>): typeNode<T?>
+	const innerWrite: (T?) -> number = node.write
+	const innerRead: (number?) -> (number, T?) = node.read
 
-			if value ~= nil then
-				return write(value)
-			end
-			return SUCCESS
-		end,
+	-----------------------------------------------------
+	-- READ/WRITE                                      --
+	-----------------------------------------------------
+	@native
+	const function optional_write(value: T?): number
+		if not NEED(1) then
+			return FAIL
+		end
+		const sign: number = value ~= nil and 1 or 0
+		WRITE(sign)
 
-		read = @native function(): (number, any?)
-			local flag: number, sign: number? = READ()
-			if flag == FAIL then
-				return FAIL
-			end
+		if value ~= nil then
+			return innerWrite(value)
+		end
+		return SUCCESS
+	end
 
-			if sign == 1 then
-				return read()
-			end
-			return flag, nil
-		end,
-	}
+	@native
+	const function optional_read(): (number, T?)
+		const flag: number, sign: number? = READ()
+		if flag == FAIL then
+			return FAIL, nil
+		end
+
+		if sign == 1 then
+			return innerRead()
+		end
+		return flag, nil
+	end
+
+	return table.freeze({
+		write = optional_write,
+		read = optional_read,
+	}) :: typeNode<T?>
 end
 
 return optionalNodeBuild

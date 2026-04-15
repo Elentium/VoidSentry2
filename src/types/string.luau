@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	string
 	2 + strlen bytes
@@ -8,44 +9,55 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local config = require("../shared/config")
-local writer = require("../buffer/writer")
-local reader = require("../buffer/reader")
+const config = require("../shared/config")
+const writer = require("../buffer/writer")
+const reader = require("../buffer/reader")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
 -----------------------------------------------------
-local SUCCESS: number = config.success
-local FAIL: number = config.fail
+const SUCCESS: number = config.success
+const FAIL: number = config.fail
 
-local VAL_TYPE: string = "string"
+const VAL_TYPE: string = "string"
 
-local LEN_LIMIT: number = 0xFFFF
+const LEN_LIMIT: number = 0xFFFF
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
-local TYPE = type
-local NEED = writer.NEED
-local WRITE = writer.STR
-local READ = reader.STR
+const TYPE: <T>(T) -> string = type
+const NEED: (number) -> boolean = writer.NEED
+const WRITE: (string, number) -> () = writer.STR
+const READ: () -> (number, string?) = reader.STR
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
-return {
-	write = @native function(value: string): number
-		if TYPE(value) ~= VAL_TYPE then
-			return FAIL
-		end
+-----------------------------------------------------
+-- READ/WRITE                                      --
+-----------------------------------------------------
+@native
+const function string_write(value: string): number
+	const vType: string = TYPE(value)
+	if vType ~= VAL_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize String type – "string" expected, got "{vType}"`)
+		return FAIL
+	end
 
-		local len: number = #value
-		if len > LEN_LIMIT then
-			return FAIL
-		end
-		if not NEED(2 + len) then
-			return FAIL
-		end
-		WRITE(value, len)
-		return SUCCESS
-	end,
+	const len: number = #value
+	if len > LEN_LIMIT then
+		FAIL_FN(
+			`[VoidSentry2]: Failed to serialize String type – String max length is 65535, input value length is {len}`
+		)
+		return FAIL
+	end
+	if not NEED(2 + len) then
+		return FAIL
+	end
+	WRITE(value, len)
+	return SUCCESS
+end
 
+return table.freeze({
+	write = string_write,
 	read = READ, -- avoid possible extra function call
-}
+})

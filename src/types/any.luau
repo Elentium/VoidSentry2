@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 --[[
 	any
 	supported types:
@@ -28,9 +29,9 @@
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-local dynanode = require("../shared/dynanode")
+const dynanode = require("../shared/dynanode")
 
-return {
+return table.freeze({
 	write = dynanode.write,
 	read = dynanode.read,
-}
+})

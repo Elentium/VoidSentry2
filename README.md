@@ -1,3 +1,6 @@
-# VoidSentry2
+# VoidSentry 2
 
-# UNFINISHED
+## High Performance buffer serialization library for roblox
+
+
+# DOCUMENTATION: https://elentium.github.io/VoidSentry2
