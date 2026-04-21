@@ -74,16 +74,16 @@ return table.freeze({
 			-----------------------------------------------------
 			-- UNKNOWN HANDLING                                --
 			-----------------------------------------------------
-			FAIL_FN(`[VoidSentry2]: Dynamic write failed – Unknown/Unsupported type {typeof(value)}`)
+			FAIL_FN(`[VoidSentry2]: Dynamic write failed – Unknown/Unsupported type {typeof(value)}`, 0)
 			return FAIL
 		end
 		local node: possibleNode = SIGNMAP[sign]
 
 		if not node then
-			FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid type sign ({sign})`)
+			FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid type sign ({sign})`, 0)
 			return FAIL
 		elseif not NEED(1) then
-			FAIL_FN(`[VoidSentry2]: Dynamic write failed – Buffer access out of bounds`)
+			FAIL_FN(`[VoidSentry2]: Dynamic write failed – Buffer access out of bounds`, 0)
 			return FAIL
 		end
 
@@ -103,7 +103,7 @@ return table.freeze({
 				const isign: number = SER_INSTANCE_NAMEMAP[className]
 				-- the sign will always exist (if it does not – the node constructor will error)
 				if not NEED(1) then
-					FAIL_FN(`[VoidSentry2]: Dynamic write failed – Buffer access out of bounds`)
+					FAIL_FN(`[VoidSentry2]: Dynamic write failed – Buffer access out of bounds`, 0)
 				end
 				WRITE_SIGN(isign)
 			elseif sign == ENUM_ID then
@@ -122,18 +122,20 @@ return table.freeze({
 		if typesModule == nil then
 			typesModule = require("../types" :: string)
 			serInstanceSigns = require("../static/serInstanceSigns")
+			SER_INSTANCE_NAMEMAP = serInstanceSigns.nameLookup
+			SER_INSTANCE_SIGNMAP = serInstanceSigns.signLookup
 			SIGNMAP = typesModule.signMap
 			ANY_NODE = SIGNMAP[ANYID]
 		end
 		local flag: number, sign: number? = READ_SIGN()
 		if flag == FAIL then
-			FAIL_FN(`[VoidSentry2]: Dynamic sign read failed`)
+			FAIL_FN(`[VoidSentry2]: Dynamic sign read failed`, 0)
 			return flag
 		end
 
 		local node: possibleNode = SIGNMAP[sign :: number]
 		if not node then
-			FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid type sign ({sign})`)
+			FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid type sign ({sign})`, 0)
 			return FAIL
 		end
 
@@ -146,12 +148,12 @@ return table.freeze({
 				local isign: number
 				flag, isign = READ_SIGN()
 				if flag == FAIL then
-					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read serInstance sign`)
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read serInstance sign`, 0)
 					return FAIL
 				end
 				const className: string = SER_INSTANCE_SIGNMAP[isign]
 				if not className then
-					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid serInstance sign ({isign})`)
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Invalid serInstance sign ({isign})`, 0)
 					return FAIL
 				end
 				node = node(className)
@@ -159,12 +161,12 @@ return table.freeze({
 				local id: number?
 				flag, id = READ_ID()
 				if flag == FAIL then
-					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read enum sign`)
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – Failed to read enum sign`, 0)
 					return FAIL
 				end
 				const enum: Enum = enumIdMap[id :: number]
 				if not enum then
-					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – The enum ID is invalid {id}`)
+					FAIL_FN(`[VoidSentry2]: Dynamic node build failed – The enum ID is invalid {id}`, 0)
 					return FAIL
 				end
 				node = node(enum)

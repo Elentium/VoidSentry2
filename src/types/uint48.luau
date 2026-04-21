@@ -1,10 +1,8 @@
 --!strict
 --!optimize 2
 --[[
-	vector3
-	roblox Vector3 type
-	9 bytes
-	each axis is serialized as float24
+	Unsigned 48-bit integer
+	6 bytes
 ]]
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
@@ -19,36 +17,36 @@ const reader = require("../buffer/reader")
 const SUCCESS: number = config.success
 const FAIL: number = config.fail
 
-const VAL_TYPE: string = "vector"
+const NUM_TYPE: string = "number"
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = type
 const NEED: (number) -> boolean = writer.NEED
-const WRITE_VEC: (vector | Vector3) -> () = writer.VF24
-const READ_VEC: () -> (number, vector?) = reader.VF24
+const WRITE: (number) -> () = writer.U48
+const READ: () -> (number, number?) = reader.U48
 const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
 -- READ/WRITE                                      --
 -----------------------------------------------------
 @native
-const function vector3f24_write(value: Vector3): number
+const function uint48_write(value: number): number
 	const vType: string = TYPE(value)
-	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Vector3F24 type – "Vector3" expected, got "{vType}"`, 0)
+	if vType ~= NUM_TYPE then
+		FAIL_FN(`[VoidSentry2]: Failed to serialize UInt48 type – "number" expected, got "{vType}"`, 0)
 		return FAIL
 	end
-	if not NEED(9) then
+	if not NEED(6) then
 		return FAIL
 	end
-	WRITE_VEC(value)
+	WRITE(value)
 	return SUCCESS
 end
 
 return table.freeze({
-	write = vector3f24_write,
-	read = READ_VEC,
-	exType = "Vector3"
+	write = uint48_write,
+	read = READ,
+	exType = "int",
 })

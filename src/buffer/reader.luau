@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-    BufferReader V0.1.0
+    BufferReader V0.1.1
 
 	Middleware for deserializing the current buffer
 	manages overflow handling, offset pointer(cursor), extra types(float16, float24, uint24, int24)
@@ -43,6 +43,24 @@ const AND: (...number) -> number = bit32.band
 const OR: (...number) -> number = bit32.bor
 const LSHIFT: (number, number) -> number = bit32.lshift
 const EXTRACT: (number, number, number?) -> number = bit32.extract
+
+const VECTOR2_NEW: (number?, number?) -> Vector2 = Vector2.new
+const VECTOR_CREATE: (number, number, number?) -> vector = vector.create
+const COLOR3_FROM_RGB: (number?, number?, number?) -> Color3 = Color3.fromRGB
+const CFRAME_NEW: (() -> CFrame) & ((Vector3) -> CFrame) & ((Vector3, Vector3) -> CFrame) & ((number, number, number) -> CFrame) & ((number, number, number, number, number, number, number) -> CFrame) & ((
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number
+) -> CFrame) = CFrame.new
 
 -----------------------------------------------------
 -- API                                             --
@@ -320,6 +338,293 @@ const function reads65(): (number, string?)
 	return cursor == len and EOR or SUCCESS, value
 end
 
+@native const function readu40(): (number, number?)
+	if cursor + 5 > len then
+		return FAIL, nil
+	end
+	const lower: number = READ_U32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const upper: number = READ_U8(currentBuffer :: buffer, cursor)
+	cursor += 1
+
+	const value: number = upper * 0x100000000 + lower
+
+	return cursor == len and EOR or SUCCESS, value
+end
+
+@native const function readi40(): (number, number?)
+	if cursor + 5 > len then
+		return FAIL, nil
+	end
+	const lower: number = READ_U32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const upper: number = READ_U8(currentBuffer :: buffer, cursor)
+	cursor += 1
+
+	local value: number = upper * 0x100000000 + lower
+	if upper >= 0x80 then
+		value -= 0x10000000000
+	end
+
+	return cursor == len and EOR or SUCCESS, value
+end
+
+@native const function readu48(): (number, number?)
+	if cursor + 6 > len then
+		return FAIL, nil
+	end
+	const lower: number = READ_U32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const upper: number = READ_U16(currentBuffer :: buffer, cursor)
+	cursor += 2
+
+	const value: number = upper * 0x100000000 + lower
+
+	return cursor == len and EOR or SUCCESS, value
+end
+
+@native const function readi48(): (number, number?)
+	if cursor + 6 > len then
+		return FAIL, nil
+	end
+	const lower: number = READ_U32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const upper: number = READ_U16(currentBuffer :: buffer, cursor)
+	cursor += 2
+
+	local value: number = upper * 0x100000000 + lower
+	if upper >= 0x8000 then
+		value -= 0x1000000000000
+	end
+
+	return cursor == len and EOR or SUCCESS, value
+end
+
+@native const function readv2f32(): (number, Vector2?)
+	if cursor + 8 > len then
+		return FAIL, nil
+	end
+	const x: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const y: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	return cursor == len and EOR or SUCCESS, VECTOR2_NEW(x, y)
+end
+
+@native const function readv2f24(): (number, Vector2?)
+	if cursor + 6 > len then
+		return FAIL, nil
+	end
+	const _, vx = readf24()
+	const __, vy = readf24()
+	return cursor == len and EOR or SUCCESS, VECTOR2_NEW(vx :: number, vy :: number)
+end
+
+@native const function readv2f16(): (number, Vector2?)
+	if cursor + 4 > len then
+		return FAIL, nil
+	end
+	const _, vx = readf16()
+	const __, vy = readf16()
+	return cursor == len and EOR or SUCCESS, VECTOR2_NEW(vx :: number, vy :: number)
+end
+
+@native const function readvf32(): (number, vector?)
+	if cursor + 12 > len then
+		return FAIL, nil
+	end
+	const x: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const y: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const z: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	return cursor == len and EOR or SUCCESS, VECTOR_CREATE(x, y, z)
+end
+
+@native const function readvf24(): (number, vector?)
+	if cursor + 9 > len then
+		return FAIL, nil
+	end
+	const _, x = readf24()
+	const __, y = readf24()
+	const ___, z = readf24()
+	return cursor == len and EOR or SUCCESS, VECTOR_CREATE(x :: number, y :: number, z :: number)
+end
+
+@native const function readvf16(): (number, vector?)
+	if cursor + 6 > len then
+		return FAIL, nil
+	end
+	const _, x = readf16()
+	const __, y = readf16()
+	const ___, z = readf16()
+	return cursor == len and EOR or SUCCESS, VECTOR_CREATE(x :: number, y :: number, z :: number)
+end
+
+@native const function readcolor3(): (number, Color3?)
+	if cursor + 3 > len then
+		return FAIL, nil
+	end
+	const r: number = READ_U8(currentBuffer :: buffer, cursor)
+	cursor += 1
+	const g: number = READ_U8(currentBuffer :: buffer, cursor)
+	cursor += 1
+	const b: number = READ_U8(currentBuffer :: buffer, cursor)
+	cursor += 1
+	return cursor == len and EOR or SUCCESS, COLOR3_FROM_RGB(r, g, b)
+end
+
+@native const function readcf32(): (number, CFrame?)
+	if cursor + 48 > len then
+		return FAIL, nil
+	end
+	const x: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const y: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const z: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R0: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R01: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R02: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R10: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R11: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R12: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R20: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R21: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const R22: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	return cursor == len and EOR or SUCCESS, CFRAME_NEW(x, y, z, R0, R01, R02, R10, R11, R12, R20, R21, R22)
+end
+
+@native const function readcf24(): (number, CFrame?)
+	if cursor + 36 > len then
+		return FAIL, nil
+	end
+	const _, x = readf24()
+	const __, y = readf24()
+	const ___, z = readf24()
+	const ____, R0 = readf24()
+	const _____, R01 = readf24()
+	const ______, R02 = readf24()
+	const _______, R10 = readf24()
+	const ________, R11 = readf24()
+	const _________, R12 = readf24()
+	const __________, R20 = readf24()
+	const ___________, R21 = readf24()
+	const ____________, R22 = readf24()
+	return cursor == len and EOR or SUCCESS,
+		CFRAME_NEW(
+			x :: number,
+			y :: number,
+			z :: number,
+			R0 :: number,
+			R01 :: number,
+			R02 :: number,
+			R10 :: number,
+			R11 :: number,
+			R12 :: number,
+			R20 :: number,
+			R21 :: number,
+			R22 :: number
+		)
+end
+
+@native const function readcf16(): (number, CFrame?)
+	if cursor + 24 > len then
+		return FAIL, nil
+	end
+	const _, x = readf16()
+	const __, y = readf16()
+	const ___, z = readf16()
+	const ____, R0 = readf16()
+	const _____, R01 = readf16()
+	const ______, R02 = readf16()
+	const _______, R10 = readf16()
+	const ________, R11 = readf16()
+	const _________, R12 = readf16()
+	const __________, R20 = readf16()
+	const ___________, R21 = readf16()
+	const ____________, R22 = readf16()
+	return cursor == len and EOR or SUCCESS,
+		CFRAME_NEW(
+			x :: number,
+			y :: number,
+			z :: number,
+			R0 :: number,
+			R01 :: number,
+			R02 :: number,
+			R10 :: number,
+			R11 :: number,
+			R12 :: number,
+			R20 :: number,
+			R21 :: number,
+			R22 :: number
+		)
+end
+
+@native const function readqcf32(): (number, CFrame?)
+	if cursor + 28 > len then
+		return FAIL, nil
+	end
+	const x: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const y: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const z: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const qx: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const qy: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const qz: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	const qw: number = READ_F32(currentBuffer :: buffer, cursor)
+	cursor += 4
+	return cursor == len and EOR or SUCCESS, CFRAME_NEW(x, y, z, qx, qy, qz, qw)
+end
+
+@native const function readqcf24(): (number, CFrame?)
+	if cursor + 21 > len then
+		return FAIL, nil
+	end
+	const _, x = readf24()
+	const __, y = readf24()
+	const ___, z = readf24()
+	const ____, qx = readf24()
+	const _____, qy = readf24()
+	const ______, qz = readf24()
+	const _______, qw = readf24()
+	return cursor == len and EOR or SUCCESS, CFRAME_NEW(x :: number, y :: number, z :: number, qx :: number, qy :: number, qz :: number, qw :: number)
+end
+
+@native const function readqcf16(): (number, CFrame?)
+	if cursor + 14 > len then
+		return FAIL, nil
+	end
+	const _, x = readf16()
+	const __, y = readf16()
+	const ___, z = readf16()
+	const ____, qx = readf16()
+	const _____, qy = readf16()
+	const ______, qz = readf16()
+	const _______, qw = readf16()
+	return cursor == len and EOR or SUCCESS, CFRAME_NEW(x :: number, y :: number, z :: number, qx :: number, qy :: number, qz :: number, qw :: number)
+end
+
+@native const function getcursor(): number
+	return cursor
+end
+
 return table.freeze({
 	U8 = readu8,
 	I8 = readi8,
@@ -332,10 +637,29 @@ return table.freeze({
 	U32 = readu32,
 	I32 = readi32,
 	F32 = readf32,
+	U40 = readu40,
+	I40 = readi40,
+	U48 = readu48,
+	I48 = readi48,
 	F64 = readf64,
 	STR_S = reads255,
 	STR = reads65,
 
+	V2F32 = readv2f32,
+	V2F24 = readv2f24,
+	V2F16 = readv2f16,
+	VF32 = readvf32,
+	VF24 = readvf24,
+	VF16 = readvf16,
+	COLOR3 = readcolor3,
+	CF32 = readcf32,
+	CF24 = readcf24,
+	CF16 = readcf16,
+	QCF32 = readqcf32,
+	QCF24 = readqcf24,
+	QCF16 = readqcf16,
+
 	START = start,
 	FINISH = finish,
+	GETCURSOR = getcursor,
 })

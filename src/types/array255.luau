@@ -50,7 +50,7 @@ const function arrayNodeBuild<T>(valueType: typeNode<T>): typeNode<{ T }>
 	const function array255_write(value: { T }): number
 		const vType: string = TYPE(value)
 		if vType ~= VAL_TYPE then
-			FAIL_FN(`[VoidSentry2]: Failed to serialize Array255 type – "table" expected, got "{vType}"`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Array255 type – "table" expected, got "{vType}"`, 0)
 			return FAIL
 		end
 
@@ -59,7 +59,8 @@ const function arrayNodeBuild<T>(valueType: typeNode<T>): typeNode<{ T }>
 			return FAIL
 		elseif len > MAX_LEN then
 			FAIL_FN(
-				`[VoidSentry2]: Failed to serialize Array255 type – array length exceeds max limit; length: {len}, limit: {MAX_LEN}`
+				`[VoidSentry2]: Failed to serialize Array255 type – array length exceeds max limit; length: {len}, limit: {MAX_LEN}`,
+				0
 			)
 			return FAIL
 		end
@@ -94,6 +95,7 @@ const function arrayNodeBuild<T>(valueType: typeNode<T>): typeNode<{ T }>
 	return table.freeze({
 		write = array255_write,
 		read = array255_read,
+		exType = "array"
 	}) :: typeNode<{ T }>
 end
 

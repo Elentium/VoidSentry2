@@ -36,7 +36,7 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function boolean_write(value: boolean): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Boolean type – "boolean" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Boolean type – "boolean" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(1) then
@@ -58,4 +58,5 @@ end
 return table.freeze({
 	write = boolean_write,
 	read = boolean_read,
+	exType = "boolean"
 })

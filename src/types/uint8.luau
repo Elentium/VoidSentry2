@@ -35,7 +35,7 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function uint8_write(value: number): number
 	const vType: string = TYPE(value)
 	if vType ~= NUM_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize UInt8 type – "number" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize UInt8 type – "number" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(1) then
@@ -48,4 +48,5 @@ end
 return table.freeze({
 	write = uint8_write,
 	read = READ, -- avoid possible extra function call
+	exType = "int"
 })

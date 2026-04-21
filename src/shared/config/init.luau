@@ -16,6 +16,8 @@ return {
 	success = constants.success,
 	fail = constants.fail,
 	eor = constants.eor,
+	unsupportedUnionExTypes = constants.unsupportedUnionExTypes,
+	instanceIdAttribute = constants.instanceIdAttribute,
 
 	-- type signs
 	typeSigns = typeSigns,

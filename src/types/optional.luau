@@ -72,6 +72,7 @@ const function optionalNodeBuild<T>(node: typeNode<T>): typeNode<T?>
 	return table.freeze({
 		write = optional_write,
 		read = optional_read,
+		exType = "optional"
 	}) :: typeNode<T?>
 end
 

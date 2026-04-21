@@ -38,14 +38,15 @@ const FAIL_FN = config.strictMode and error or warn
 const function string255_write(value: string): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize String255 type – "string" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize String255 type – "string" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 
 	const len: number = #value
 	if len > LEN_LIMIT then
 		FAIL_FN(
-			`[VoidSentry2]: Failed to serialize String255 type – String255 max length is 255, input value length is {len}`
+			`[VoidSentry2]: Failed to serialize String255 type – String255 max length is 255, input value length is {len}`,
+			0
 		)
 		return FAIL
 	end
@@ -59,4 +60,5 @@ end
 return table.freeze({
 	write = string255_write,
 	read = READ, -- avoid possible extra function call
+	exType = "string"
 })

@@ -1,6 +1,8 @@
 # VoidSentry 2
 
-## High Performance buffer serialization library for roblox
+## High Performance SerDes library for roblox
 
 
-# DOCUMENTATION: https://elentium.github.io/VoidSentry2
+### DOCUMENTATION: https://elentium.github.io/VoidSentry2
+### WALLY: https://wally.run/package/elentium/voidsentry2
+### CREATOR STORE: https://create.roblox.com/store/asset/109800466320728

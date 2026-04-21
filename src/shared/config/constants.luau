@@ -19,9 +19,17 @@ return {
 	-- Which value will be inferred when the input value is an instance
 	dynamicInstanceType = "instance" :: "serInstance" | "instance",
 
-	-- internal
+	-- Instance unique id attribute name
+	instanceIdAttribute = "_VSID",
+
 	unknownType = 0,
 	success = 0,
 	fail = 1,
 	eor = 2,
+	unsupportedUnionExTypes = {
+		union = true,
+		any = true,
+		void = true,
+		optional = true,
+	},
 }

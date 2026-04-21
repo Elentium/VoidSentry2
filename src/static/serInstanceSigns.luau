@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-	SerInstanceSigns v0.1.0
+	SerInstanceSigns v0.1.1
 
 	Contains serialized instances type signs, 
 ]]

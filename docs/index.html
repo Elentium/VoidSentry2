@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoidSentry2 — Documentation</title>
     <link rel="stylesheet" href="style/style.css">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
         <nav class="sidebar" aria-label="Primary">
             <div class="logo">
                 <h1>VoidSentry2</h1>
-                <p class="version">v0.1.0</p>
+                <p class="version">v0.1.1</p>
                 <div class="logo-links">
                     <a href="https://github.com/Elentium/VoidSentry2" target="_blank" rel="noopener" class="logo-link">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -23,7 +23,7 @@
                         Wally
                     </a>
                     <a href="https://create.roblox.com/store/asset/109800466320728" target="_blank" rel="noopener" class="logo-link logo-link--creator" title="Creator Store listing">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+                        <img class="logo-link__studio-icon" src="assets/roblox-studio-icon.svg" width="26" height="26" alt="" decoding="async" />
                         Creator Store
                     </a>
                 </div>
@@ -47,40 +47,29 @@
             <section id="intro" class="page active">
                 <div class="page-content">
                     <h1 class="page-title">VoidSentry2</h1>
-                    <p class="tagline">Powerful &amp; Performant <code class="inline-code">buffer</code> serialization library, successor to <a class="tagline-github-link" href="https://github.com/Elentium/VoidSentry" target="_blank" rel="noopener"><svg class="tagline-github-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><span>VoidSentry</span></a>.</p>
+                    <p class="tagline">Efficient <code class="inline-code">SerDes</code> Library for Roblox. Successor to <a class="tagline-github-link" href="https://github.com/Elentium/VoidSentry" target="_blank" rel="noopener"><svg class="tagline-github-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><span>VoidSentry</span></a>.</p>
 
                     <div class="section">
-                        <h2>What it does</h2>
-                        <p>The library serializes Luau and Roblox data into <code class="inline-code">buffer</code> and reads it back. It supports <strong>35+</strong> types, an easy-to-use API, and optional <strong>Zstd</strong> compression via Roblox <code class="inline-code">EncodingService</code>.</p>
-                        <div class="feature-grid">
-                            <div class="feature-card">
-                                <h3>Schematized Serialization</h3>
-                                <p>You define the way the data is serialized. The library writes and reads bytes in that fixed order — smaller payloads and predictable layout when both sides share the same schema.</p>
-                            </div>
-                            <div class="feature-card">
-                                <h3>Schemaless serialization</h3>
-                                <p>You pass plain values and the library infers their types at runtime, storing a small tag before each value. Handy when the list of values changes call to call without maintaining a separate schema for every combination.</p>
-                            </div>
-                            <div class="feature-card">
-                                <h3>Rich Types Support</h3>
-                                <p>Numbers, strings, vectors, <code class="inline-code">CFrame</code>, <code class="inline-code">Color3</code>, <code class="inline-code">enum(...)</code>, arrays, maps, <code class="inline-code">optional</code>, <code class="inline-code">any</code>, <code class="inline-code">instance</code> (id map), and <code class="inline-code">serInstance</code> after <code class="inline-code">registerInstanceSchema</code>.</p>
-                            </div>
-                            <div class="feature-card">
-                                <h3>Configurable</h3>
-                                <p>Strict mode, dynamic instance/vector behavior, buffer cap — see the <strong>Configuration</strong> page for more info.</p>
-                            </div>
-                            <div class="feature-card">
-                                <h3>Quality Oriented</h3>
-                                <p>Strong Luau typing for clear autocomplete and safer refactors, hot paths tuned for performance, and a large built-in test suite run under stress to catch regressions.</p>
-                            </div>
-                        </div>
+                        <h2>What it is</h2>
+                        <p>Sending Luau tables or JSON over remotes is convenient but costly: payloads grow quickly and every value carries type metadata on the wire. VoidSentry2 converts the same data into a compact, typed byte layout using the Luau <code class="inline-code">buffer</code> type, so the bytes you ship match the shape of the data you actually store.</p>
+                        <p>Two usage modes cover most cases. <strong>Static</strong>: you declare the exact shape once as a type node and reuse it to serialize and deserialize — smallest size, lowest CPU, predictable layout. <strong>Dynamic</strong>: you pass a variable list of values and the library tags each with a 1-byte type id so the receiver can decode them without a shared schema.</p>
+
+                        <h2>Highlights</h2>
+                        <ul class="types-list doc-ol">
+                            <li>Static (schema) and dynamic (tagged) serialization in one module.</li>
+                            <li>45+ built-in types: fixed-width integers and floats (including 16/24-bit variants), strings, vectors, <code class="inline-code">CFrame</code> (matrix and quaternion, full and compressed), <code class="inline-code">Color3</code>, <code class="inline-code">EnumItem</code>, arrays, maps, structs, <code class="inline-code">optional</code>, <code class="inline-code">union</code>, <code class="inline-code">any</code>, <code class="inline-code">boolPacked</code>, plus <code class="inline-code">instance</code> (by-reference) and <code class="inline-code">serInstance</code> (by-snapshot).</li>
+                            <li>Optional Zstd compression through Roblox <code class="inline-code">EncodingService</code>.</li>
+                            <li>Configurable: buffer cap, strict vs lax failure mode, dynamic inference for instances and vectors, instance-id attribute name.</li>
+                            <li>Fully typed Luau API so generics, autocomplete, and refactors work through the call sites.</li>
+                            <li>Manual cursor API (<code class="inline-code">writeStart</code> / <code class="inline-code">writeFinish</code>, <code class="inline-code">readStart</code> / <code class="inline-code">readFinish</code>) if you want to interleave VoidSentry2 writes with your own bytes.</li>
+                        </ul>
                     </div>
 
                     <div class="section">
                         <h2>Quick start</h2>
                         <h3>Static</h3>
                         <div class="code-block">
-                            <pre><code class="language-lua">--!strict
+                            <pre><code class="language-luau">--!strict
 local VS = require(path.to.VoidSentry2)
 local T = VS.types
 local static = VS.static
@@ -96,7 +85,7 @@ local out = static.deserialize(row, buf, nil, nil)</code></pre>
                         <h3>Dynamic</h3>
                         <p>Each value you pass becomes one tagged chunk in the buffer. The receiver reads the same number of values in the same order.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local VS = require(path.to.VoidSentry2)
+                            <pre><code class="language-luau">local VS = require(path.to.VoidSentry2)
 local dynamic = VS.dynamic
 
 -- Example: send a name, a user id, a position, and whether sprint is on — no struct definition.
@@ -132,7 +121,7 @@ local name, id, pos, sprinting = dynamic.deserialize(nil, nil, buf)
                         <p>Add the dependency and run the installer.</p>
                         <div class="code-block">
                             <pre><code class="language-toml">[dependencies]
-VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
+VoidSentry2 = "elentium/voidsentry2@0.1.1"</code></pre>
                         </div>
                         <p>Then run <code class="inline-code">wally install</code> and <code class="inline-code">require</code> the module from your tree (for example <code class="inline-code">game.ReplicatedStorage.Packages.VoidSentry2</code> depending on layout).</p>
                     </div>
@@ -152,7 +141,7 @@ VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
                         <p>The library is published as a Creator Store asset so you can add it from the toolbox.</p>
                         <div class="logo-links logo-links--installation">
                             <a href="https://create.roblox.com/store/asset/109800466320728" target="_blank" rel="noopener" class="logo-link logo-link--creator" title="Creator Store listing">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
+                                <img class="logo-link__studio-icon" src="assets/roblox-studio-icon.svg" width="26" height="26" alt="" decoding="async" />
                                 Creator Store
                             </a>
                         </div>
@@ -180,26 +169,56 @@ VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
             <section id="configuration" class="page">
                 <div class="page-content">
                     <h1 class="page-title">Configuration</h1>
-                    <p class="tagline">Defaults live in the package; change them to match your game’s needs.</p>
+                    <p class="tagline">All switches live in <code class="inline-code">src/shared/config/constants.luau</code>. Edit a vendored or forked copy so Wally updates do not overwrite your changes.</p>
 
                     <div class="section">
-                        <h2>Where to edit</h2>
-                        <p>Main switches are in <code class="inline-code">src/shared/config/constants.luau</code>. If you use Wally, edit a <strong>vendored or forked copy</strong> of the library (or override via your own build pipeline) so updates do not wipe your changes. If you clone from GitHub, change the file in your repo before syncing to Studio.</p>
-                    </div>
+                        <h2>Options</h2>
 
-                    <div class="section">
-                        <h2>Common options</h2>
-                        <ul class="types-list doc-ol">
-                            <li><strong><code class="inline-code">strictMode</code></strong> — <code class="inline-code">true</code>: bad input usually throws. <code class="inline-code">false</code>: many failures warn and return <code class="inline-code">nil</code>.</li>
-                            <li><strong><code class="inline-code">maxBufferSize</code></strong> — Upper bound for the internal scratch buffer; serialization fails if a payload would exceed it.</li>
-                            <li><strong><code class="inline-code">dynamicInstanceType</code></strong> — In <strong>dynamic</strong> mode only: how a plain <code class="inline-code">Instance</code> is written. <code class="inline-code">"instance"</code> encodes a numeric id using <code class="inline-code">_VSID</code> and your instance map (same object on deserialize). <code class="inline-code">"serInstance"</code> uses registered schemas and property snapshots. Static schemas ignore this — they use whichever node you put in the <code class="inline-code">struct</code> (<code class="inline-code">T.instance</code> vs <code class="inline-code">T.serInstance(...)</code>).</li>
-                            <li><strong><code class="inline-code">dynamicVectorType</code></strong> — In <strong>dynamic</strong> mode only: how a vector object is inferred(luau vector or roblox Vector3)</li>
-                        </ul>
+                        <div class="api-item">
+                            <h3 class="api-signature">maxBufferSize</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">10_000_000</code> bytes. <strong>Effect:</strong> hard cap for the internal scratch buffer used during a single serialize call. If a payload would exceed it, serialization fails.</p>
+                            <p><strong>Change when:</strong> you know your payloads never approach this size (reduce to catch bugs earlier) or you legitimately serialize larger snapshots (raise it).</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">strictMode</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">true</code>. <strong>Effect:</strong> type mismatches, missing fields, buffer overflows, invalid input, etc. throw an error. With <code class="inline-code">false</code> the same conditions <code class="inline-code">warn</code> and <code class="inline-code">serialize</code>/<code class="inline-code">deserialize</code> return <code class="inline-code">nil</code>.</p>
+                            <p><strong>Change when:</strong> shipping to production and you want best-effort failure tolerance (network payloads, corrupted save data). Keep <code class="inline-code">true</code> during development to fail loudly.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">dynamicVectorType</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">"vector"</code>. <strong>Values:</strong> <code class="inline-code">"vector"</code> or <code class="inline-code">"Vector3"</code>. <strong>Effect:</strong> when the <strong>dynamic</strong> serializer infers a vector value, it chooses the Luau <code class="inline-code">vector</code> node or the Roblox <code class="inline-code">Vector3</code> node. Both are 12 bytes; the difference is which Luau type is produced on deserialize.</p>
+                            <p><strong>Change when:</strong> your codebase prefers one native type over the other. Ignored by the static serializer — static schemas always use whichever node you put in them.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">dynamicInstanceType</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">"instance"</code>. <strong>Values:</strong> <code class="inline-code">"instance"</code> or <code class="inline-code">"serInstance"</code>. <strong>Effect:</strong> when the <strong>dynamic</strong> serializer encounters an <code class="inline-code">Instance</code>, <code class="inline-code">"instance"</code> writes its numeric id and looks the same object up on the peer; <code class="inline-code">"serInstance"</code> writes a property snapshot using the registered schema for the instance's class.</p>
+                            <p><strong>Change when:</strong> dynamic messages should carry property snapshots by default (e.g. template replication) instead of live references. Ignored by the static serializer.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">instanceIdAttribute</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">"_VSID"</code>. <strong>Effect:</strong> attribute name used by <code class="inline-code">types.instance</code> and the server/client instance-map scripts to tag and look up instances. Both sides must agree on this name.</p>
+                            <p><strong>Change when:</strong> the default collides with your own attribute names or you want a shorter name. Set once, before any instance is tagged.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">unsupportedUnionExTypes</h3>
+                            <p><strong>Default:</strong> <code class="inline-code">{ union, any, void, optional }</code>. <strong>Effect:</strong> set of <code class="inline-code">exType</code> strings that cannot appear as a variant of <code class="inline-code">T.union(...)</code>; the builder throws if you try.</p>
+                            <p><strong>Change when:</strong> almost never. These are blocked because they do not round-trip cleanly through <code class="inline-code">extypeof</code> (unions cannot distinguish them from other variants).</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">Internal status codes</h3>
+                            <p><code class="inline-code">unknownType</code>, <code class="inline-code">success</code>, <code class="inline-code">fail</code>, <code class="inline-code">eor</code> are the numeric flags returned by reader/writer primitives. Do not change.</p>
+                        </div>
                     </div>
 
                     <div class="section">
                         <h2>Related code</h2>
-                        <p><code class="inline-code">src/shared/config/init.luau</code> re-exports constants for the rest of the library. You normally do not require it from game code — only adjust <code class="inline-code">constants.luau</code> when you maintain your own copy of VoidSentry2.</p>
+                        <p><code class="inline-code">src/shared/config/init.luau</code> re-exports the constants plus <code class="inline-code">typeSigns</code> for the rest of the package. Game code does not <code class="inline-code">require</code> it directly — the module is only touched when you maintain a fork of VoidSentry2.</p>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -226,118 +245,268 @@ VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
                     <h1 class="page-title">API reference</h1>
 
                     <nav class="api-toc" aria-label="API sections">
-                        <a href="#api-module">Module</a>
-                        <a href="#api-static">Static</a>
-                        <a href="#api-dynamic">Dynamic</a>
-                        <a href="#api-instance">Instances</a>
-                        <a href="#api-types-table">Type catalog</a>
+                        <a href="#api-module">Library properties</a>
+                        <a href="#api-static">Static API</a>
+                        <a href="#api-dynamic">Dynamic API</a>
+                        <a href="#api-types-table">Types</a>
                     </nav>
 
                     <div class="section" id="api-module">
-                        <h2>Module exports</h2>
+                        <h2>Library properties</h2>
+                        <p>Top-level members of the module returned by <code class="inline-code">require(VoidSentry2)</code>.</p>
+
                         <div class="api-item">
-                            <h3 class="api-signature">VoidSentry2.types</h3>
-                            <p>Table of type factories / nodes (<code class="inline-code">int32</code>, <code class="inline-code">struct({ ... })</code>, <code class="inline-code">array(...)</code>, etc.). Each node exposes <code class="inline-code">write</code> / <code class="inline-code">read</code> internally; you pass nodes to <code class="inline-code">static.serialize</code> / <code class="inline-code">deserialize</code>.</p>
+                            <h3 class="api-signature">.types</h3>
+                            <p>Table of built-in type nodes and factories (<code class="inline-code">int32</code>, <code class="inline-code">struct(...)</code>, <code class="inline-code">array(T)</code>, <code class="inline-code">union(...)</code>, etc.). You pass these to the static serializer. See <a href="#api-types-table" class="inline-ref">Types</a> for the full list.</p>
                         </div>
+
                         <div class="api-item">
-                            <h3 class="api-signature">VoidSentry2.static</h3>
-                            <p><code class="inline-code">staticSerializer</code> with:</p>
+                            <h3 class="api-signature">.static</h3>
+                            <p>Schema-based serializer: <code class="inline-code">{ serialize, deserialize }</code>. You supply a root <code class="inline-code">typeNode</code> that describes the whole payload. See <a href="#api-static" class="inline-ref">Static API</a>.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">.dynamic</h3>
+                            <p>Schemaless serializer: <code class="inline-code">{ serialize, deserialize }</code>. You pass a variable list of values; each is tagged with a 1-byte type id on the wire. See <a href="#api-dynamic" class="inline-ref">Dynamic API</a>.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">.registerInstanceSchema(className, schema)</h3>
+                            <p><code>registerInstanceSchema(className: string, schema: { [string]: typeNode }) -&gt; ()</code></p>
+                            <p>Declares which properties of <code class="inline-code">className</code> should be captured by <code class="inline-code">types.serInstance(className)</code>. Keys are property names; values are type nodes (e.g. <code class="inline-code">Name = T.string255</code>). Call once at startup per class, before any serialize that references it.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">.combine(t1, t2)</h3>
+                            <p><code>combine&lt;T1, T2&gt;(t1: T1, t2: T2) -&gt; T1 &amp; T2</code></p>
+                            <p>Shallow merge helper. Useful for composing struct field tables at module scope. Not serialization-specific.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">Manual cursor API</h3>
+                            <p>Low-level hooks for advanced users who want to mix VoidSentry2 writes with their own bytes, or batch several type-node writes under one buffer.</p>
                             <ul class="types-list" style="margin-top:1rem;">
-                                <li><code>serialize&lt;T&gt;(serdes: typeNode&lt;T&gt;, input: T, offset: number?, compressionLevel: number?) -&gt; buffer?</code></li>
-                                <li><code>deserialize&lt;T&gt;(serdes: typeNode&lt;T&gt;, input: buffer, offset: number?, wasCompressed: boolean?) -&gt; T?</code></li>
+                                <li><code>writeStart(offset: number?) -&gt; ()</code> — reset the scratch buffer cursor.</li>
+                                <li><code>writeFinish() -&gt; buffer</code> — copy bytes <code>[0, cursor)</code> into a new exact-sized buffer.</li>
+                                <li><code>getWriteCursor() -&gt; number</code> — current write position.</li>
+                                <li><code>readStart(buf: buffer, offset: number?) -&gt; ()</code> — bind the reader to <code class="inline-code">buf</code>.</li>
+                                <li><code>readFinish() -&gt; ()</code> — release the current read buffer.</li>
+                                <li><code>getReadCursor() -&gt; number</code> — current read position.</li>
                             </ul>
-                        </div>
-                        <div class="api-item">
-                            <h3 class="api-signature">VoidSentry2.dynamic</h3>
-                            <p><code class="inline-code">dynamicSerializer</code>:</p>
-                            <ul class="types-list" style="margin-top:1rem;">
-                                <li><code>serialize&lt;T...&gt;(compressionLevel: number?, offset: number?, T...) -&gt; buffer?</code></li>
-                                <li><code>deserialize(wasCompressed: boolean?, offset: number?, input: buffer) -&gt; ...any?</code> — first <strong>argument</strong> <code class="inline-code">wasCompressed</code>: pass <code class="inline-code">true</code> if the buffer was produced with a non-<code class="inline-code">nil</code> compression level on <code class="inline-code">serialize</code>.</li>
-                            </ul>
-                        </div>
-                        <div class="api-item">
-                            <h3 class="api-signature">VoidSentry2.registerInstanceSchema(className: string, schema: { [string]: typeNode })</h3>
-                            <p>Registers a property layout for <code class="inline-code">types.serInstance(className)</code> and for dynamic inference when <code class="inline-code">dynamicInstanceType</code> is set to serInstance mode.</p>
-                        </div>
-                        <div class="api-item">
-                            <h3 class="api-signature">VoidSentry2.combine(t1: table, t2: table) -&gt; table</h3>
-                            <p>Shallow merge of two tables (used for convenience; not serialization-specific).</p>
+                            <p>If you only call <code class="inline-code">static</code> / <code class="inline-code">dynamic</code> you never touch these.</p>
                         </div>
                     </div>
 
                     <div class="section" id="api-static">
-                        <h2>Static serializer</h2>
-                        <p>Each call has exactly one <strong>root</strong> type node. To send several logical values in one go, put them in a single <code class="inline-code">struct</code> (or an <code class="inline-code">array</code> / <code class="inline-code">map</code>) — that is the normal pattern for “multiple fields” on the wire.</p>
+                        <h2>Static API</h2>
+                        <p>Each static call has exactly <strong>one root</strong> type node. To send multiple logical fields, wrap them in a single <code class="inline-code">struct</code> (or <code class="inline-code">array</code> / <code class="inline-code">map</code>).</p>
+
                         <div class="api-item">
-                            <h3 class="api-signature">Offset</h3>
-                            <p>Writing starts at byte index <code class="inline-code">offset</code> (default <code class="inline-code">0</code>) inside an internal scratch buffer. The returned buffer length equals the <strong>final write cursor</strong>. Bytes <strong>before</strong> <code class="inline-code">offset</code> are zero-filled in the returned buffer so you can overwrite them with a header, version, or magic value after <code class="inline-code">serialize</code>. On <code class="inline-code">deserialize</code>, pass the same start index so reading begins after your metadata.</p>
+                            <h3 class="api-signature">static.serialize(serdes, input, offset?, compressionLevel?) -&gt; buffer?</h3>
+                            <p><code>&lt;T&gt;(serdes: typeNode&lt;T&gt;, input: T, offset: number?, compressionLevel: number?) -&gt; buffer?</code></p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code class="inline-code">serdes</code> — root type node describing the payload shape.</li>
+                                <li><code class="inline-code">input</code> — the Luau value matching <code class="inline-code">serdes</code>.</li>
+                                <li><code class="inline-code">offset</code> (optional, default <code class="inline-code">0</code>) — number of bytes to reserve at the start of the returned buffer. These bytes are zero-filled; you can overwrite them with a header, magic value, or version after the call. Deserialize with the same value.</li>
+                                <li><code class="inline-code">compressionLevel</code> (optional) — Zstd level passed to <code class="inline-code">EncodingService</code>. When set, the full payload is compressed. When <code class="inline-code">nil</code>, no compression.</li>
+                            </ul>
+                            <p>Returns the packed buffer, or <code class="inline-code">nil</code> in lax mode when the input fails validation.</p>
                         </div>
+
                         <div class="api-item">
-                            <h3 class="api-signature">Compression</h3>
-                            <p>If <code class="inline-code">compressionLevel</code> on <code class="inline-code">serialize</code> is a number, the whole payload is Zstd-compressed. On <code class="inline-code">deserialize</code>, pass <code class="inline-code">wasCompressed = true</code> to decompress first; pass <code class="inline-code">nil</code> or <code class="inline-code">false</code> for uncompressed buffers.</p>
+                            <h3 class="api-signature">static.deserialize(serdes, buf, offset?, wasCompressed?) -&gt; T?</h3>
+                            <p><code>&lt;T&gt;(serdes: typeNode&lt;T&gt;, buf: buffer, offset: number?, wasCompressed: boolean?) -&gt; T?</code></p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code class="inline-code">serdes</code> — same type node used on the sender side.</li>
+                                <li><code class="inline-code">buf</code> — the buffer to decode.</li>
+                                <li><code class="inline-code">offset</code> — must match the <code class="inline-code">offset</code> passed to <code class="inline-code">serialize</code>.</li>
+                                <li><code class="inline-code">wasCompressed</code> — <code class="inline-code">true</code> only when <code class="inline-code">serialize</code> was called with a non-<code class="inline-code">nil</code> <code class="inline-code">compressionLevel</code>.</li>
+                            </ul>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">Example</h3>
+                            <div class="code-block">
+                                <pre><code class="language-luau">local T = VS.types
+local static = VS.static
+
+local Player = T.struct({
+    id = T.uint32,
+    name = T.string255,
+    hp = T.float32,
+})
+
+local buf = static.serialize(Player, { id = 1, name = "Aria", hp = 100 })
+local back = static.deserialize(Player, buf)</code></pre>
+                            </div>
                         </div>
                     </div>
 
                     <div class="section" id="api-dynamic">
-                        <h2>Dynamic serializer</h2>
-                        <p>Each value is stored with a small type id byte before its bytes so the reader knows what to decode next. If you used Zstd on <code class="inline-code">serialize</code>, pass <code class="inline-code">wasCompressed = true</code> on <code class="inline-code">deserialize</code>; otherwise pass <code class="inline-code">nil</code> or <code class="inline-code">false</code>.</p>
-                    </div>
+                        <h2>Dynamic API</h2>
+                        <p>Dynamic packs a variable list of values. Each value is tagged with a 1-byte type id so the receiver can decode without a shared schema. No root node; decode order matches encode order. Leading arguments are options, not values.</p>
 
-                    <div class="section" id="api-instance">
-                        <h2>Instances</h2>
                         <div class="api-item">
-                            <h3 class="api-signature">types.instance</h3>
-                            <p>Serializes a registered Roblox <code class="inline-code">Instance</code> by numeric id (<code class="inline-code">_VSID</code> attribute + server/client instance map). Round-trip restores the <strong>same</strong> object reference.</p>
+                            <h3 class="api-signature">dynamic.serialize(compressionLevel?, offset?, ...) -&gt; buffer?</h3>
+                            <p><code>&lt;T...&gt;(compressionLevel: number?, offset: number?, T...) -&gt; buffer?</code></p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code class="inline-code">compressionLevel</code> — Zstd level, or <code class="inline-code">nil</code> for no compression. <strong>First positional argument.</strong></li>
+                                <li><code class="inline-code">offset</code> — header-reservation, same semantics as the static API. <strong>Second positional argument.</strong></li>
+                                <li><code class="inline-code">...</code> — the values to pack, in order.</li>
+                            </ul>
                         </div>
+
                         <div class="api-item">
-                            <h3 class="api-signature">types.serInstance("ClassName")</h3>
-                            <p>Requires a prior <code class="inline-code">registerInstanceSchema</code>. Produces a <strong>new</strong> instance on deserialize with properties read from the buffer.</p>
+                            <h3 class="api-signature">dynamic.deserialize(wasCompressed?, offset?, buf) -&gt; ...any?</h3>
+                            <p><code>(wasCompressed: boolean?, offset: number?, buf: buffer) -&gt; ...any?</code></p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li><code class="inline-code">wasCompressed</code> — <code class="inline-code">true</code> when the buffer was produced with a compression level; otherwise <code class="inline-code">nil</code>/<code class="inline-code">false</code>.</li>
+                                <li><code class="inline-code">offset</code> — must match the <code class="inline-code">offset</code> passed to <code class="inline-code">serialize</code>.</li>
+                                <li><code class="inline-code">buf</code> — the buffer to decode.</li>
+                            </ul>
+                            <p>Returns the unpacked values in the order they were written.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">Inference notes</h3>
+                            <p>The dynamic serializer picks a type for each value via <code class="inline-code">src/shared/inferValueType.luau</code>. Integers are chosen by magnitude; numbers with a fractional part become <code class="inline-code">float32</code>; tables with sequential integer keys become <code class="inline-code">array</code>, otherwise <code class="inline-code">map</code>. Empty tables become <code class="inline-code">void</code>. <code class="inline-code">Instance</code> and vector inference follow <code class="inline-code">dynamicInstanceType</code> / <code class="inline-code">dynamicVectorType</code> in the config. Wider integer widths (<code class="inline-code">uint40</code>, <code class="inline-code">uint48</code>) are not inferred — use the static API when you need them.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">Example</h3>
+                            <div class="code-block">
+                                <pre><code class="language-luau">local dynamic = VS.dynamic
+
+local buf = dynamic.serialize(nil, nil, "Move", 42, Vector3.new(0, 10, 0), true)
+local op, id, pos, sprint = dynamic.deserialize(nil, nil, buf)</code></pre>
+                            </div>
                         </div>
                     </div>
 
                     <div class="section" id="api-types-table">
-                        <h2>Type catalog (sizes / notes)</h2>
-                        <h3>Integers &amp; floats</h3>
+                        <h2>Types</h2>
+                        <p>Every member of <code class="inline-code">VoidSentry2.types</code>. Sizes below are for the payload only; collection types also write a length or count prefix as noted.</p>
+
+                        <h3>Integers</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Size</th><th>Range</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>int8</code> / <code>uint8</code></td><td>1 B</td><td>−128..127 / 0..255</td></tr>
+                                <tr><td><code>int16</code> / <code>uint16</code></td><td>2 B</td><td>−32 768..32 767 / 0..65 535</td></tr>
+                                <tr><td><code>int24</code> / <code>uint24</code></td><td>3 B</td><td>±8 M / 0..16 M</td></tr>
+                                <tr><td><code>int32</code> / <code>uint32</code></td><td>4 B</td><td>±2.1 B / 0..4.2 B</td></tr>
+                                <tr><td><code>int40</code> / <code>uint40</code></td><td>5 B</td><td>±549 B / 0..1.1 T</td></tr>
+                                <tr><td><code>int48</code> / <code>uint48</code></td><td>6 B</td><td>±140 T / 0..281 T</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Floats</h3>
                         <table class="types-table">
                             <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
                             <tbody>
-                                <tr><td><code>int8</code> … <code>uint32</code></td><td>1–4 B</td><td>Fixed-width integers (includes <code>int24</code>, <code>uint24</code>).</td></tr>
-                                <tr><td><code>float16</code>, <code>float24</code>, <code>float32</code>, <code>float64</code></td><td>2–8 B</td><td>IEEE half/single/double; <code>float24</code> is custom reduced precision.</td></tr>
+                                <tr><td><code>float16</code></td><td>2 B</td><td>IEEE half.</td></tr>
+                                <tr><td><code>float24</code></td><td>3 B</td><td>Custom reduced-precision float (1 sign + 8 exp + 15 mantissa).</td></tr>
+                                <tr><td><code>float32</code></td><td>4 B</td><td>IEEE single.</td></tr>
+                                <tr><td><code>float64</code></td><td>8 B</td><td>IEEE double.</td></tr>
                             </tbody>
                         </table>
+
                         <h3>Primitives &amp; strings</h3>
                         <table class="types-table">
-                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
                             <tbody>
-                                <tr><td><code>boolean</code></td><td>1 byte.</td></tr>
-                                <tr><td><code>string</code></td><td>16-bit length; max 65535 payload bytes.</td></tr>
-                                <tr><td><code>string255</code></td><td>8-bit length; max 255 bytes.</td></tr>
-                                <tr><td><code>vector</code></td><td>Luau <code>vector</code>, 12 bytes (float32 axes).</td></tr>
-                                <tr><td><code>nothing</code></td><td><code>nil</code>, 0 bytes.</td></tr>
-                                <tr><td><code>void</code></td><td>Empty table <code>{}</code>, 0 bytes.</td></tr>
+                                <tr><td><code>boolean</code></td><td>1 B</td><td>Single bool.</td></tr>
+                                <tr><td><code>boolPacked</code></td><td>1 B</td><td>Eight booleans packed into one byte; the array contains 8 entries no matter if a smaller amount of booleans was provided.</td></tr>
+                                <tr><td><code>string</code></td><td>2 B + N</td><td>uint16 length prefix; max 65 535 bytes.</td></tr>
+                                <tr><td><code>string255</code></td><td>1 B + N</td><td>uint8 length prefix; max 255 bytes. Use this for short strings.</td></tr>
+                                <tr><td><code>nothing</code></td><td>0 B</td><td>Represents <code>nil</code>; carries no bytes.</td></tr>
+                                <tr><td><code>void</code></td><td>0 B</td><td>Represents the empty table <code>{}</code>; carries no bytes.</td></tr>
                             </tbody>
                         </table>
-                        <h3>Roblox &amp; math types</h3>
+
+                        <h3>Vectors &amp; CFrames</h3>
                         <table class="types-table">
-                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
                             <tbody>
-                                <tr><td><code>vector2</code>, <code>vector3</code></td><td>Full precision; <code>vector*f16</code> / <code>vector*f24</code> variants for smaller wire size.</td></tr>
-                                <tr><td><code>cframe</code>, <code>cframef24</code>, <code>qcframe</code>, <code>qcframef24</code></td><td>Matrix vs quaternion layouts.</td></tr>
-                                <tr><td><code>color3</code></td><td>3 bytes (uint8 channels).</td></tr>
-                                <tr><td><code>enum(Enum.X)</code></td><td><code>EnumItem</code>, 2-byte wire value.</td></tr>
+                                <tr><td><code>vector</code></td><td>12 B</td><td>Luau <code>vector</code>, three float32 axes.</td></tr>
+                                <tr><td><code>vector2</code></td><td>8 B</td><td>Roblox <code>Vector2</code>, two float32 axes.</td></tr>
+                                <tr><td><code>vector2f24</code></td><td>6 B</td><td>Vector2 with float24 axes.</td></tr>
+                                <tr><td><code>vector2f16</code></td><td>4 B</td><td>Vector2 with float16 axes.</td></tr>
+                                <tr><td><code>vector3</code></td><td>12 B</td><td>Roblox <code>Vector3</code>, three float32 axes.</td></tr>
+                                <tr><td><code>vector3f24</code></td><td>9 B</td><td>Vector3 with float24 axes.</td></tr>
+                                <tr><td><code>vector3f16</code></td><td>6 B</td><td>Vector3 with float16 axes.</td></tr>
+                                <tr><td><code>color3</code></td><td>3 B</td><td>One uint8 per channel; suitable for 8-bit color.</td></tr>
+                                <tr><td><code>cframe</code></td><td>48 B</td><td>Position (3×float32) + full rotation matrix (9×float32).</td></tr>
+                                <tr><td><code>cframef24</code></td><td>36 B</td><td>Same layout as <code>cframe</code> using float24.</td></tr>
+                                <tr><td><code>cframef16</code></td><td>24 B</td><td>Same layout using float16.</td></tr>
+                                <tr><td><code>qcframe</code></td><td>28 B</td><td>Position (3×float32) + rotation quaternion (4×float32). Smaller than matrix CFrames; slightly slower on decode.</td></tr>
+                                <tr><td><code>qcframef24</code></td><td>21 B</td><td>Quaternion CFrame with float24.</td></tr>
+                                <tr><td><code>qcframef16</code></td><td>14 B</td><td>Quaternion CFrame with float16.</td></tr>
                             </tbody>
                         </table>
-                        <h3>Collections &amp; specials</h3>
+
+                        <h3>Collections</h3>
                         <table class="types-table">
-                            <thead><tr><th>Type</th><th>Notes</th></tr></thead>
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
                             <tbody>
-                                <tr><td><code>array(T)</code>, <code>array255(T)</code></td><td>Length-prefixed lists (uint16 vs uint8 count).</td></tr>
-                                <tr><td><code>map(K,V)</code>, <code>map255(K,V)</code></td><td>Dictionary; count then each key–value pair (pair order follows table iteration).</td></tr>
-                                <tr><td><code>struct({ key = T })</code></td><td>Fixed record; field order on the wire is sorted by key name.</td></tr>
-                                <tr><td><code>optional(T)</code></td><td>Presence flag + optional payload; deserialized absent value is <code>nil</code> (same as failure unless you use context / strict mode).</td></tr>
-                                <tr><td><code>any</code></td><td>Discriminator + dynamic inner layout.</td></tr>
+                                <tr><td><code>array(T)</code></td><td>2 B + elems</td><td>uint16 length prefix + elements. Max 65 535 entries.</td></tr>
+                                <tr><td><code>array255(T)</code></td><td>1 B + elems</td><td>uint8 length prefix + elements. Max 255 entries.</td></tr>
+                                <tr><td><code>map(K, V)</code></td><td>2 B + pairs</td><td>uint16 pair count + <code>(K, V)</code> pairs in table iteration order.</td></tr>
+                                <tr><td><code>map255(K, V)</code></td><td>1 B + pairs</td><td>uint8 pair count; max 255 pairs.</td></tr>
+                                <tr><td><code>struct({ k = T, … })</code></td><td>sum of fields</td><td>Fixed record. Field order on the wire is sorted by key name — no per-field tags, no length prefix.</td></tr>
                             </tbody>
                         </table>
+
+                        <h3>Roblox-specific</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>enum(Enum.X)</code></td><td>2 B</td><td>Writes <code>EnumItem.Value</code> as uint16. Bind to a specific <code>Enum</code> at schema-build time.</td></tr>
+                                <tr><td><code>instance</code></td><td>3 B</td><td>Writes a uint24 id from the <code>instanceIdAttribute</code>. Resolves the <strong>same</strong> object on the peer via the shared instance map. Use for live references.</td></tr>
+                                <tr><td><code>serInstance(className)</code></td><td>sum of fields</td><td>Writes a snapshot of the properties registered via <code>registerInstanceSchema</code>. Deserialize constructs a <strong>new</strong> <code>Instance.new(className)</code>.</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Specials</h3>
+                        <table class="types-table">
+                            <thead><tr><th>Type</th><th>Size</th><th>Notes</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>optional(T)</code></td><td>1 B + maybe T</td><td>Presence byte; payload only when the value is present. Absent round-trips as <code>nil</code>.</td></tr>
+                                <tr><td><code>any</code></td><td>1 B + value</td><td>Writes a 1-byte type sign via the dynamic inference path, then the value. Use when a field can hold multiple unrelated shapes.</td></tr>
+                                <tr><td><code>union(v1, v2, …)</code></td><td>1 B + variant</td><td>Writes a 1-byte variant index + the chosen variant's payload. Dispatches on runtime <code>exType</code>. See <a href="#api-union" class="inline-ref">union details</a>.</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="api-item" id="api-union" style="margin-top:2rem;">
+                            <h3 class="api-signature">union(v1, v2, …) — in depth</h3>
+                            <p><code class="inline-code">T.union(...)</code> builds a typeNode that accepts any one of the provided variant nodes. On the wire it emits a 1-byte variant index followed by the chosen variant's payload, so the total size is <code class="inline-code">1 byte + variant size</code> and the upper bound is 255 variants.</p>
+
+                            <p><strong>How dispatch works.</strong> At write time, the library calls <code class="inline-code">extypeof(value)</code> and looks the returned string up in the union's internal <code class="inline-code">exType → variantNode</code> table. The chosen variant's <code class="inline-code">write</code> runs; the variant's position in the argument list is stored as the index byte. At read time that byte selects the variant and its <code class="inline-code">read</code> runs.</p>
+
+                            <p><strong>exType rules (enforced at build time).</strong></p>
+                            <ul class="types-list">
+                                <li>Each variant's <code class="inline-code">exType</code> must be unique within the union — the dispatch table rejects duplicates.</li>
+                                <li>Type families that share an <code class="inline-code">exType</code> therefore collapse into one slot: all integer widths share <code class="inline-code">"int"</code>; all floats share <code class="inline-code">"float"</code>; <code class="inline-code">string</code> and <code class="inline-code">string255</code> share <code class="inline-code">"string"</code>; every <code class="inline-code">CFrame</code> encoding shares <code class="inline-code">"CFrame"</code>; every <code class="inline-code">Vector3</code> encoding shares <code class="inline-code">"Vector3"</code>; <code class="inline-code">struct</code> and <code class="inline-code">map</code> share <code class="inline-code">"map"</code>; <code class="inline-code">instance</code> and <code class="inline-code">serInstance</code> share <code class="inline-code">"Instance"</code>. Pick the width/encoding you want, once per union.</li>
+                                <li>Variants whose <code class="inline-code">exType</code> is listed in <code class="inline-code">config.unsupportedUnionExTypes</code> (<code class="inline-code">union</code>, <code class="inline-code">any</code>, <code class="inline-code">void</code>, <code class="inline-code">optional</code>) are rejected — these cannot participate because their runtime shape does not round-trip through <code class="inline-code">extypeof</code>.</li>
+                                <li>A value whose <code class="inline-code">extypeof</code> result matches no variant is a serialization error in strict mode (or a warn + <code class="inline-code">nil</code> buffer in lax mode).</li>
+                            </ul>
+
+                            <p><strong>What <code class="inline-code">extypeof</code> returns.</strong> Numbers become <code class="inline-code">"int"</code> or <code class="inline-code">"float"</code> by value (integer-valued floats go to <code class="inline-code">"int"</code>). Tables are <code class="inline-code">"array"</code> if sequential, otherwise <code class="inline-code">"map"</code>. <code class="inline-code">EnumItem</code> becomes <code class="inline-code">"Enum." .. EnumType</code>. Everything else is the raw <code class="inline-code">typeof</code> string (<code class="inline-code">"string"</code>, <code class="inline-code">"boolean"</code>, <code class="inline-code">"Vector3"</code>, <code class="inline-code">"CFrame"</code>, <code class="inline-code">"Instance"</code>, …).</p>
+
+                            <div class="code-block">
+<pre><code class="language-luau">-- Three-way union: integer | float | string
+local MessageField = T.union(T.int32, T.float64, T.string255)
+
+static.serialize(MessageField, 42)         -- routes via "int"    → int32  branch
+static.serialize(MessageField, math.pi)    -- routes via "float"  → float64 branch
+static.serialize(MessageField, "hi")       -- routes via "string" → string255 branch
+
+-- Build-time error: both widths share exType "int".
+-- T.union(T.int32, T.int16)</code></pre>
+                            </div>
+
+                            <p>To route a value shape that <code class="inline-code">extypeof</code> does not distinguish (e.g. two different kinds of non-sequential table), extend <code class="inline-code">extypeof</code> to return a new tag and add a variant whose <code class="inline-code">exType</code> equals that tag. See <a href="#custom-types-extending-union" class="inline-ref">Extending union</a>.</p>
+                        </div>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -362,37 +531,44 @@ VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
             <section id="usage" class="page">
                 <div class="page-content">
                     <h1 class="page-title">Usage</h1>
-                    <p class="tagline">How to think about the library before you copy examples — <strong>static</strong> vs <strong>dynamic</strong>, errors, compression, offsets, and config flags.</p>
+                    <p class="tagline">Choosing between static and dynamic, handling failure, and interleaving your own bytes with VoidSentry2 payloads.</p>
 
                     <div class="section">
-                        <h2>When VoidSentry2 helps</h2>
-                        <p>If you already send Luau tables through remotes or store big JSON-like structures, you pay for table encoding and larger network IO. A <code class="inline-code">buffer</code> is compact and fast to read back, as long as <strong>both sides agree on the layout</strong> (static schema) or on the <strong>order and compression flag</strong> (dynamic). It does not replace Roblox’s built-in replication; it is for your own byte payloads.</p>
+                        <h2>Static vs dynamic — how to choose</h2>
+                        <p>Use <strong>static</strong> when the layout is stable across calls: gameplay state, inventory snapshots, save blobs, RPC payloads with a fixed shape. The wire carries no per-field type metadata, so the result is smaller and faster than dynamic and matches what the code already knows about the data.</p>
+                        <p>Use <strong>dynamic</strong> when the values or their types change call-to-call: debug tooling, admin commands, "send whatever mix I have right now". You pay one tag byte per value plus any extra metadata (enum id, serInstance class id) but avoid maintaining a schema per shape.</p>
+                        <p>A static <code class="inline-code">struct</code> covers the "many fields, one message" case without reaching for dynamic.</p>
                     </div>
 
                     <div class="section">
                         <h2>Type nodes and one root value</h2>
-                        <p><code class="inline-code">VoidSentry2.types</code> exposes factories like <code class="inline-code">T.uint32</code>, <code class="inline-code">T.struct({ ... })</code>, <code class="inline-code">T.array(T)</code>. Each value is a small object the library uses internally. You almost never call <code class="inline-code">write</code>/<code class="inline-code">read</code> yourself — you pass the node to <code class="inline-code">static.serialize</code> / <code class="inline-code">static.deserialize</code>. One serialize call = <strong>one</strong> root value (often one table shaped like your <code class="inline-code">struct</code>).</p>
+                        <p>Entries in <code class="inline-code">VoidSentry2.types</code> are small internal objects. You build them at module scope and pass them to <code class="inline-code">static.serialize</code> / <code class="inline-code">static.deserialize</code>. One static call = one root value — usually a <code class="inline-code">struct</code> wrapping the real fields.</p>
+                        <div class="code-block">
+                            <pre><code class="language-luau">local T = VS.types
+local Packet = T.struct({ id = T.uint16, name = T.string255 })</code></pre>
+                        </div>
                     </div>
 
                     <div class="section">
-                        <h2>Static vs dynamic</h2>
-                        <p><strong>Static</strong> — You pick the exact wire shape. Smallest size and least CPU usage when the schema is stable (player state, inventory snapshot, weapon stats). Use <code class="inline-code">struct</code> for “many fields in one message”.</p>
-                        <p><strong>Dynamic</strong> — You pass a variable list of values; each gets a one-byte type tag (plus payload). Easier for debug tools, admin commands, or “send whatever mix of primitives I have right now”. Payload is larger than static for the same data.</p>
+                        <h2>Strict vs lax failure (<code class="inline-code">strictMode</code>)</h2>
+                        <p>With <code class="inline-code">strictMode = true</code> (default), invalid input or buffer overflows throw. With <code class="inline-code">false</code>, they <code class="inline-code">warn</code> and <code class="inline-code">serialize</code>/<code class="inline-code">deserialize</code> return <code class="inline-code">nil</code>. In lax mode every call site must check the result.</p>
+                        <p>Important: an absent <code class="inline-code">optional(T)</code> legally decodes to <code class="inline-code">nil</code> on success. In lax mode a <code class="inline-code">nil</code> result from <code class="inline-code">deserialize</code> is ambiguous — use strict mode, an outer length/checksum, or protocol context to distinguish "absent" from "failed".</p>
                     </div>
 
                     <div class="section">
-                        <h2>Strict vs lax (<code class="inline-code">strictMode</code>)</h2>
-                        <p>In <code class="inline-code">src/shared/config/constants.luau</code>, <code class="inline-code">strictMode = true</code> (default in source) makes most bad input <strong>throw</strong>. With <code class="inline-code">false</code>, many failures <strong>warn</strong> and <code class="inline-code">serialize</code>/<code class="inline-code">deserialize</code> return <code class="inline-code">nil</code>. Lax mode needs discipline: every call site should check for <code class="inline-code">nil</code>. Also remember <code class="inline-code">optional(T)</code> can legally deserialize to <code class="inline-code">nil</code> when the value is absent — that is not always an error.</p>
+                        <h2>Headers with <code class="inline-code">offset</code></h2>
+                        <p>Pass a positive <code class="inline-code">offset</code> to reserve that many leading bytes for your own header (magic, protocol version, chunk length). The returned buffer's bytes <code class="inline-code">[0, offset)</code> are zero-filled and yours to overwrite. Deserialize with the same value so reading begins after the header.</p>
+                        <p>If keeping the header in the same buffer is inconvenient, serialize with <code class="inline-code">offset = 0</code> and frame the payload yourself.</p>
                     </div>
 
                     <div class="section">
-                        <h2>Compression (Zstd)</h2>
-                        <p>Both serializers use Roblox <code class="inline-code">EncodingService</code>. Compression uses extra CPU on send and receive. On <code class="inline-code">serialize</code> you pass an optional numeric level; on <code class="inline-code">deserialize</code> you pass whether the buffer was compressed (see API reference). Try it on real payloads — small messages sometimes shrink little or not at all.</p>
+                        <h2>Compression choices</h2>
+                        <p>Zstd (via Roblox <code class="inline-code">EncodingService</code>) costs CPU on both ends and rarely shrinks small payloads meaningfully. Measure on real traffic: it helps the most on repetitive or string-heavy blobs, less on mostly-numeric packets that are already compact.</p>
                     </div>
 
                     <div class="section">
-                        <h2>Offsets and custom headers</h2>
-                        <p>If you want <strong>some number of bytes</strong> of your own data at the start of the same buffer (for example a protocol version, magic value, or chunk length) before the VoidSentry2 payload, call <code class="inline-code">serialize(..., headerByteCount, nil)</code> then write your header into indices <code class="inline-code">0 .. headerByteCount - 1</code>. Deserialize with the same offset so reading starts after your header. You can also keep headers in a separate buffer and pass only the payload with offset <code class="inline-code">0</code>.</p>
+                        <h2>Manual buffer mode</h2>
+                        <p>The manual cursor API (<code class="inline-code">writeStart</code>/<code class="inline-code">writeFinish</code>, <code class="inline-code">readStart</code>/<code class="inline-code">readFinish</code>) exposes the same scratch buffer used internally. You can call a type node's <code class="inline-code">write</code>/<code class="inline-code">read</code> directly between <code class="inline-code">writeStart</code> and <code class="inline-code">writeFinish</code> to interleave your own <code class="inline-code">buffer.write*</code> calls with VoidSentry2 nodes. This is an escape hatch — prefer the static API for everything that fits in a single schema.</p>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -421,7 +597,7 @@ VoidSentry2 = "elentium/voidsentry2@0.1.0"</code></pre>
                         <h2>Player snapshot (static)</h2>
                         <p>Assume <code class="inline-code">local VS = require(...)</code>, <code class="inline-code">local T = VS.types</code>, <code class="inline-code">local static = VS.static</code> for each block below.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local T = VS.types
+                            <pre><code class="language-luau">local T = VS.types
 local static = VS.static
 
 local Player = T.struct({
@@ -445,7 +621,7 @@ local round = static.deserialize(Player, buf, nil, nil)</code></pre>
                         <h2>Batched entities + Zstd</h2>
                         <p>Serialize with a numeric level; deserialize with <code class="inline-code">wasCompressed = true</code>.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local EntityList = T.array(T.struct({
+                            <pre><code class="language-luau">local EntityList = T.array(T.struct({
     id = T.uint16,
     x = T.float32,
     y = T.float32,
@@ -459,7 +635,7 @@ local out = static.deserialize(EntityList, buf, nil, true)</code></pre>
                         <h2>Offset: reserve bytes, then write a header</h2>
                         <p>First <code class="inline-code">HEADER</code> bytes stay zero until you fill magic/version; payload starts at <code class="inline-code">HEADER</code>. Deserialize with the same offset.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local HEADER = 8
+                            <pre><code class="language-luau">local HEADER = 8
 local Payload = T.struct({ score = T.uint16, name = T.string255 })
 
 local buf = static.serialize(Payload, { score = 10, name = "Ann" }, HEADER, nil)
@@ -473,7 +649,7 @@ local data = static.deserialize(Payload, buf, HEADER, nil)</code></pre>
                         <h2>Dynamic with Zstd</h2>
                         <p>First argument to <code class="inline-code">serialize</code> is the compression level (or <code class="inline-code">nil</code> for none). First argument to <code class="inline-code">deserialize</code> is <code class="inline-code">true</code> if that buffer was compressed.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local dynamic = VS.dynamic
+                            <pre><code class="language-luau">local dynamic = VS.dynamic
 
 local bigString = string.rep("x", 4000)
 -- First arg = Zstd level 4; then offset nil; then the values to pack.
@@ -488,7 +664,7 @@ local label, payload = dynamic.deserialize(true, nil, buf)
                     <div class="section">
                         <h2>Static “RPC-shaped” packet (several fields, one struct)</h2>
                         <div class="code-block">
-                            <pre><code class="language-lua">local Rpc = T.struct({
+                            <pre><code class="language-luau">local Rpc = T.struct({
     op = T.string255,
     playerId = T.uint32,
     amount = T.float32,
@@ -504,7 +680,7 @@ local buf = static.serialize(Rpc, {
                     <div class="section">
                         <h2><code class="inline-code">enum</code> (Roblox <code class="inline-code">EnumItem</code>)</h2>
                         <div class="code-block">
-                            <pre><code class="language-lua">local MaterialField = T.enum(Enum.Material)
+                            <pre><code class="language-luau">local MaterialField = T.enum(Enum.Material)
 local Row = T.struct({ mat = MaterialField })
 
 local buf = static.serialize(Row, { mat = Enum.Material.Slate }, nil, nil)
@@ -515,7 +691,7 @@ local back = static.deserialize(Row, buf, nil, nil)</code></pre>
                         <h2>Dynamic RPC-style tuple</h2>
                         <p>Uncompressed dynamic buffer: first two arguments to <code class="inline-code">serialize</code> are <code class="inline-code">nil</code> (no Zstd, no write offset). Receiver unpacks in order.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local dynamic = VS.dynamic
+                            <pre><code class="language-luau">local dynamic = VS.dynamic
 
 local playerId = 42
 local targetPos = Vector3.new(1, 0, 0)
@@ -531,7 +707,7 @@ local opName, id, pos, wantsJump = dynamic.deserialize(nil, nil, b)
                         <h2>Optional fields + nested struct</h2>
                         <p>Model “maybe present” values with <code class="inline-code">optional</code>; nest <code class="inline-code">struct</code> for grouped fields.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local T = VS.types
+                            <pre><code class="language-luau">local T = VS.types
 local static = VS.static
 
 local Profile = T.struct({
@@ -555,7 +731,7 @@ local buf = static.serialize(Profile, {
                     <div class="section">
                         <h2>String keys → numbers (<code class="inline-code">map</code>)</h2>
                         <div class="code-block">
-                            <pre><code class="language-lua">local T = VS.types
+                            <pre><code class="language-luau">local T = VS.types
 local static = VS.static
 
 local Scores = T.map(T.string255, T.float32)
@@ -569,9 +745,13 @@ local out = static.deserialize(Scores, buf, nil, nil)</code></pre>
                     </div>
                     <div class="section">
                         <h2><code class="inline-code">void</code>, <code class="inline-code">nothing</code>, and <code class="inline-code">any</code></h2>
-                        <p><code class="inline-code">void</code> is an empty table <code class="inline-code">{}</code> marker (zero payload bytes). <code class="inline-code">nothing</code> is Luau <code class="inline-code">nil</code> with zero bytes. <code class="inline-code">any</code> stores a discriminator plus an inner value — useful when one field can hold several shapes.</p>
+                        <p><code class="inline-code">void</code> is an empty table <code class="inline-code">{}</code> marker (zero payload bytes). <code class="inline-code">nothing</code> is Luau <code class="inline-code">nil</code> with zero bytes. <code class="inline-code">any</code> stores a one-byte type id plus the inner value — useful when one field can hold several shapes.</p>
+                        <div class="warning-item">
+                            <h3><code class="inline-code">void</code> and <code class="inline-code">nothing</code> are niche</h3>
+                            <p>They exist mainly so the <strong>dynamic</strong> serializer can represent empty tables and <code class="inline-code">nil</code> without extra tag bytes in those cases — saving bandwidth when you pack values that inference picks as <code class="inline-code">void</code> or <code class="inline-code">nothing</code>. They are not aimed at typical <strong>static</strong> schemas; prefer <code class="inline-code">optional(T)</code> or a concrete type when you control the layout.</p>
+                        </div>
                         <div class="code-block">
-                            <pre><code class="language-lua">local Ping = T.struct({ kind = T.string255, payload = T.any })
+                            <pre><code class="language-luau">local Ping = T.struct({ kind = T.string255, payload = T.any })
 local buf = static.serialize(Ping, { kind = "int", payload = 42 }, nil, nil)
 local back = static.deserialize(Ping, buf, nil, nil)</code></pre>
                         </div>
@@ -580,7 +760,7 @@ local back = static.deserialize(Ping, buf, nil, nil)</code></pre>
                         <h2><code class="inline-code">serInstance</code>: register schema, then serialize</h2>
                         <p>Run <code class="inline-code">registerInstanceSchema</code> once per class name (usually at module load). Then use <code class="inline-code">types.serInstance("ClassName")</code> in your static schema. Deserialization creates a <strong>new</strong> Instance and assigns properties from the buffer.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local VS = require(game.ReplicatedStorage.VoidSentry2)
+                            <pre><code class="language-luau">local VS = require(game.ReplicatedStorage.VoidSentry2)
 local T = VS.types
 local static = VS.static
 
@@ -606,7 +786,7 @@ local copy = static.deserialize(PartSnapshot, buf, nil, nil)
                         <h2>Mixing <code class="inline-code">instance</code> (by reference) and static structs</h2>
                         <p><code class="inline-code">types.instance</code> writes a numeric id and resolves the same object on the peer via your <code class="inline-code">instanceMap</code> and <code class="inline-code">_VSID</code> — use for live object graphs. <code class="inline-code">serInstance</code> snapshots property bags into new instances — use for templates or reconstructed props.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">-- instance: same Part reference round-trips if both sides share instanceMap + _VSID
+                            <pre><code class="language-luau">-- instance: same Part reference round-trips if both sides share instanceMap + _VSID
 local RefPayload = T.struct({ target = T.instance })
 
 -- serInstance: wire carries property values; deserialize builds a fresh Instance
@@ -637,9 +817,9 @@ local ClonePayload = T.struct({ cloneOfPart = T.serInstance("Part") })</code></p
                 <div class="page-content">
                     <h1 class="page-title">Benchmarks</h1>
                     <div class="note-box">
-                        <h4>Format</h4>
-                        <p>Each section maps test titles to <strong>average microseconds per operation</strong>.</p>
-                        <p class="muted" style="margin-top:0.75rem;">Numbers vary by device and Studio version — treat them as a rough guide, not a guarantee.</p>
+                        <h4>What this is</h4>
+                        <p>A <strong>short summary</strong> of typical hot-path cost (≈ average µs per serialize→deserialize in the static rows; dynamic rows match the schemaless API). It is <strong>not</strong> the full <code class="inline-code">voidSentry2_Test</code> matrix.</p>
+                        <p class="muted" style="margin-top:0.75rem;">The results highly depend on the hardware.</p>
                     </div>
                     <div id="benchmarks-root" class="section"></div>
 
@@ -681,11 +861,19 @@ local ClonePayload = T.struct({ cloneOfPart = T.serInstance("Part") })</code></p
                     <div class="warning-item">
                         <h3>Changing your schema breaks old bytes</h3>
                         <p><strong>Caution:</strong> adding/removing/reordering <code class="inline-code">struct</code> fields or switching node kinds changes the wire layout. Old clients or old save files will mis-read data if you do not migrate.</p>
-                        <p><strong>Tip:</strong> add a <code class="inline-code">version = T.uint8</code> (or wider) field at the start of your root <code class="inline-code">struct</code>, bump it when you change layout, and branch reads or run a one-time migration.</p>
+                        <p><strong>Tip:</strong> if you care about backwards compatibility, use a non-zero <code class="inline-code">offset</code> on <code class="inline-code">static.serialize</code> so the buffer has room at the front for your own header. Write metadata there (for example a schema version), then parse that header first and call <code class="inline-code">static.deserialize</code> with the matching <code class="inline-code">offset</code> so the typed payload aligns with the version you expect. Branch reads or migrate once based on that version instead of stuffing a version field inside the root <code class="inline-code">struct</code>.</p>
                     </div>
                     <div class="warning-item">
                         <h3><code class="inline-code">nil</code> from <code class="inline-code">optional</code> vs <code class="inline-code">nil</code> from failure</h3>
                         <p>An absent <code class="inline-code">optional(T)</code> decodes as <code class="inline-code">nil</code> on success. In lax mode, failures can also yield <code class="inline-code">nil</code>. Use <code class="inline-code">strictMode</code>, outer framing (length + checksum), or protocol context to tell the cases apart when it matters.</p>
+                    </div>
+                    <div class="practice-item">
+                        <h3>Pick <code class="inline-code">instance</code> vs <code class="inline-code">serInstance</code> deliberately</h3>
+                        <p>Use <code class="inline-code">types.instance</code> when the peer already holds the same live object (replicated parts, player characters). Use <code class="inline-code">types.serInstance</code> when you want a property snapshot that reconstructs a fresh Instance on the other side. Mixing them in the same packet is fine — pick per field.</p>
+                    </div>
+                    <div class="practice-item">
+                        <h3>Prefer <code class="inline-code">struct</code> over multiple dynamic values</h3>
+                        <p>When a message's shape is stable, a single <code class="inline-code">struct</code> through the static API is smaller and faster than sending the same fields via <code class="inline-code">dynamic.serialize</code>. Reserve dynamic for genuinely variable argument lists.</p>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -709,74 +897,95 @@ local ClonePayload = T.struct({ cloneOfPart = T.serInstance("Part") })</code></p
 
             <section id="custom-types" class="page">
                 <div class="page-content">
-                    <h1 class="page-title">Custom shapes &amp; Roblox instances</h1>
-                    <p class="tagline">Most of the time, combining built-in type nodes and calling <code class="inline-code">registerInstanceSchema</code> for <code class="inline-code">serInstance</code> is the right approach. Editing the library source is only for brand-new wire encodings.</p>
+                    <h1 class="page-title">Custom types</h1>
+                    <p class="tagline">Most games only need to compose built-in nodes. Forking the library is for brand-new wire encodings.</p>
 
                     <div class="section">
-                        <h2>1. Composable schemas (recommended): <code class="inline-code">struct</code> + primitives</h2>
-                        <p><strong>What it is.</strong> You describe the wire layout by combining built-in nodes: <code class="inline-code">struct</code>, <code class="inline-code">array</code>, <code class="inline-code">map</code>, <code class="inline-code">optional</code>, numbers, strings, vectors, <code class="inline-code">enum</code>, <code class="inline-code">any</code>, etc. No changes to the VoidSentry2 package — only your game code.</p>
-                        <p><strong>When to use it.</strong> Almost always: gameplay state, RPC payloads, configs, save blobs with a stable field set. If the shape varies at runtime, combine <code class="inline-code">optional</code>, <code class="inline-code">any</code>, or the <strong>dynamic</strong> serializer instead of inventing a new primitive.</p>
+                        <h2>1. Compose built-in nodes (recommended)</h2>
+                        <p>Describe the wire shape by combining existing nodes: <code class="inline-code">struct</code>, <code class="inline-code">array</code>, <code class="inline-code">map</code>, <code class="inline-code">optional</code>, <code class="inline-code">union</code>, numbers, strings, vectors, <code class="inline-code">enum</code>, <code class="inline-code">any</code>. No package changes. Use this for almost every gameplay, RPC, or save-blob shape.</p>
                         <div class="code-block">
-                            <pre><code class="language-lua">local T = VS.types
+                            <pre><code class="language-luau">local T = VS.types
 local static = VS.static
 
--- "Custom" in the sense of your game: a fixed record + list of sub-records
 local InventorySlot = T.struct({
     itemId = T.uint16,
     count = T.uint8,
 })
 
 local PlayerSave = T.struct({
-    version = T.uint8,
     coins = T.uint32,
     slots = T.array(InventorySlot),
 })
 
-local buf = static.serialize(PlayerSave, saveTable, nil, nil)</code></pre>
+local buf = static.serialize(PlayerSave, saveTable)</code></pre>
                         </div>
                     </div>
 
                     <div class="section">
-                        <h2>2. Extending the library (fork): buffer primitives vs type nodes</h2>
-                        <p>VoidSentry2 splits <strong>raw bytes</strong> and <strong>named wire types</strong> into two layers. They are related but not the same file.</p>
+                        <h2>2. <code class="inline-code">serInstance</code>: snapshot Roblox instances</h2>
+                        <p><code class="inline-code">types.serInstance(className)</code> serializes a declared set of properties for a given class. Flow:</p>
+                        <ol class="types-list doc-ol">
+                            <li><strong>Register once per class.</strong> <code class="inline-code">VoidSentry2.registerInstanceSchema(className, { PropName = typeNode, ... })</code>. Keys are property names as strings; values are type nodes. Call at startup, before any serialize.</li>
+                            <li><strong>Reference in schemas.</strong> Use <code class="inline-code">T.serInstance(className)</code> inside a <code class="inline-code">struct</code> or collection.</li>
+                            <li><strong>Serialize.</strong> Pass a real Instance of that class; the library reads the registered properties and writes them.</li>
+                            <li><strong>Deserialize.</strong> The library constructs a <strong>new</strong> <code class="inline-code">Instance.new(className)</code> and assigns properties from the buffer. Object identity is not preserved.</li>
+                        </ol>
+                        <p><strong>Versus <code class="inline-code">types.instance</code>.</strong> <code class="inline-code">instance</code> writes a numeric id (from <code class="inline-code">instanceIdAttribute</code>) and resolves the <strong>same</strong> live object on the peer via the shared instance map. Use <code class="inline-code">instance</code> for live references, <code class="inline-code">serInstance</code> for templates or fresh clones.</p>
+                    </div>
 
-                        <h3>2a. Primitive encodings — <code class="inline-code">src/buffer/writer.luau</code> &amp; <code class="inline-code">src/buffer/reader.luau</code></h3>
-                        <p><strong>What they are.</strong> Low-level helpers (<code class="inline-code">writef32</code>, <code class="inline-code">writef24</code>, <code class="inline-code">writeu16</code>, <code class="inline-code">NEED</code>, <code class="inline-code">START</code>/<code class="inline-code">FINISH</code>, etc.) that advance the shared scratch buffer cursor and read/write bytes. They do <strong>not</strong> assign type discriminators and are not ”VoidSentry2 types” — they are building blocks.</p>
-                        <p><strong>When to change them.</strong> When you need a <strong>new byte layout</strong> that does not exist yet (e.g. another packed float size, a custom fixed-width blob). Pair every new <code class="inline-code">write*</code> with a matching <code class="inline-code">read*</code> in the reader.</p>
-                        <p><strong>Example in-tree.</strong> <code class="inline-code">writef24</code> / the matching read path implement the float24 wire format; <code class="inline-code">src/types/float24.luau</code> then <em>calls</em> those primitives from its type node’s <code class="inline-code">write</code>/<code class="inline-code">read</code>.</p>
-
-                        <h3>2b. Type nodes — <code class="inline-code">src/types/&lt;name&gt;.luau</code> + <code class="inline-code">src/shared/config/typeSigns.luau</code></h3>
-                        <p><strong>What they are.</strong> Each file exports a frozen <code class="inline-code">typeNode</code>: <code class="inline-code">{ write = …, read = … }</code> that validates Luau/Roblox values, calls <code class="inline-code">writer.NEED</code>, then buffer primitives. This is where <code class="inline-code">float32</code>, <code class="inline-code">struct</code>, <code class="inline-code">qcframe</code>, etc. live.</p>
-                        <p><strong>How they are registered (important).</strong> Root <code class="inline-code">src/init.luau</code> loops every entry in <code class="inline-code">typeSigns.luau</code> and does <code class="inline-code">require("@self/types/" .. name)</code>. The <strong>key</strong> in <code class="inline-code">typeSigns</code> must match the <strong>filename</strong> (e.g. <code class="inline-code">float32 = 11</code> → <code class="inline-code">src/types/float32.luau</code>). Those modules fill <code class="inline-code">signMap</code> and the exported <code class="inline-code">types</code> table. The small <code class="inline-code">src/types/init.luau</code> file only declares empty tables; it does <strong>not</strong> register types — that happens in <code class="inline-code">src/init.luau</code>.</p>
-                        <p><strong>What you add for a new wire type.</strong> (1) A new unique byte id in <code class="inline-code">typeSigns.luau</code>. (2) A new <code class="inline-code">src/types/&lt;name&gt;.luau</code> whose name matches that key, implementing <code class="inline-code">write</code>/<code class="inline-code">read</code> like <code class="inline-code">src/types/uint8.luau</code> or <code class="inline-code">src/types/float32.luau</code>.</p>
-
-                        <h3>2c. Dynamic serializer &amp; inference</h3>
-                        <p>In <strong>dynamic</strong> mode, <code class="inline-code">dynanode</code> writes a <strong>one-byte type sign</strong> (from <code class="inline-code">typeSigns</code>) before each value’s payload. If your new type should be <strong>chosen automatically</strong> from plain Luau values, you may also need to extend <code class="inline-code">src/shared/inferValueType.luau</code>. <strong>Static</strong> schemas call the node directly and do not emit that per-root sign — they still use the same <code class="inline-code">typeNode</code> tables.</p>
-
-                        <p><strong>When to bother.</strong> Only for wire formats or runtime inference you cannot build from existing nodes (section 1). Otherwise prefer composition and keep upstream merges easy.</p>
+                    <div class="section" id="custom-types-extending-union">
+                        <h2>3. Extending <code class="inline-code">union</code> with a custom variant</h2>
+                        <p>Once you have a union use-case that the built-in variants don't cover, you can add your own. See <a href="#api-union" class="inline-ref">union details</a> for how dispatch works; this section focuses on the extension steps.</p>
 
                         <div class="code-block">
-                            <pre><code class="language-lua">-- Conceptual split:
+                            <pre><code>value  →  extypeof(value)  →  exTypeMap[exType]  →  variant typeNode  →  write / read</code></pre>
+                        </div>
 
--- src/buffer/writer.luau  →  add writeMyBits(...) / reader symmetry
--- src/types/myformat.luau →  write = function(v) NEED(n) … writeMyBits(v) … end
--- src/shared/config/typeSigns.luau →  myformat = 40  -- next free id
+                        <h3>Checklist</h3>
+                        <ol class="types-list doc-ol">
+                            <li><strong>Write the variant node.</strong> A frozen table <code class="inline-code">{ write, read, exType }</code>. The idiomatic home for a reusable node is a new file under <code class="inline-code">src/types/&lt;name&gt;.luau</code> (matching the convention of every built-in type and allowing <code class="inline-code">T.&lt;name&gt;</code> access) — use any existing file there as a template. Defining the node inline with <code class="inline-code">table.freeze({ ... })</code> next to the union that uses it is acceptable for a genuine one-off where promoting it to a first-class type would be noise. Either way, <code class="inline-code">exType</code> must be unique within the union and must not appear in <code class="inline-code">config.unsupportedUnionExTypes</code> (<code class="inline-code">union</code>, <code class="inline-code">any</code>, <code class="inline-code">void</code>, <code class="inline-code">optional</code>).</li>
+                            <li><strong>Make <code class="inline-code">extypeof</code> return that string for your values.</strong> If your variant's values already fall into an existing category (<code class="inline-code">"int"</code>, <code class="inline-code">"float"</code>, <code class="inline-code">"array"</code>, <code class="inline-code">"map"</code>, <code class="inline-code">"Enum.&lt;T&gt;"</code>, or a raw <code class="inline-code">typeof</code> string), set <code class="inline-code">exType</code> to that category and remember only one variant per category may appear in a union. If your variant handles a shape the defaults don't distinguish, add a branch at the top of <code class="inline-code">src/shared/extypeof.luau</code> that returns your custom tag.</li>
+                            <li><strong>Use it.</strong> Pass the variant to <code class="inline-code">T.union(variantA, variantB, yourVariant)</code>. Writes look up your node by <code class="inline-code">exType</code> and emit a 1-byte variant index; reads use the same index to pick the variant.</li>
+                        </ol>
 
--- Optional for dynamic auto-pick:
--- src/shared/inferValueType.luau → map typeof(value) / tags to typeSigns.myformat</code></pre>
+                        <h3>Example: routing a tagged Luau table to a dedicated variant</h3>
+                        <p>Two shapes both arrive as non-sequential tables but must serialize differently. The defaults map both to <code class="inline-code">"map"</code>. Extend <code class="inline-code">extypeof</code> to look at a tag field and return a distinct string for one of them.</p>
+                        <div class="code-block">
+                            <pre><code class="language-luau">-- 1. Your variant node. Prefer src/types/myTagged.luau for reuse;
+--    the inline form below is fine for a single-call-site one-off.
+local MyTaggedNode = table.freeze({
+    write = function(value) --[[ ... ]] return 0 end,
+    read = function() --[[ ... ]] return 0, value end,
+    exType = "myTagged",
+})
+
+-- 2. Patch src/shared/extypeof.luau (simplified):
+--    if vType == "table" and rawget(value, "_tag") == "MY_TAGGED" then
+--        return "myTagged"
+--    end
+
+-- 3. Compose a union that can hold the custom variant alongside plain maps:
+local Packet = T.union(T.map(T.string255, T.int32), MyTaggedNode)</code></pre>
                         </div>
                     </div>
 
                     <div class="section">
-                        <h2>3. <code class="inline-code">serInstance</code> end-to-end</h2>
-                        <p><strong><code class="inline-code">types.serInstance(className)</code></strong> serializes a <strong>fixed set of properties</strong> you declare per class. Flow:</p>
-                        <ol class="types-list doc-ol">
-                            <li><strong>Register once per class name.</strong> <code class="inline-code">VoidSentry2.registerInstanceSchema(className, { PropName = typeNode, ... })</code> — keys are <strong>property names</strong> as strings; values are type nodes (e.g. <code class="inline-code">T.string255</code>, <code class="inline-code">T.vector3</code>). Call during server/client startup before any serialize.</li>
-                            <li><strong>Reference in schemas.</strong> Use <code class="inline-code">T.serInstance("Part")</code> (same string as <code class="inline-code">className</code>) inside </li>
-                            <li><strong>Serialize.</strong> Pass a real Instance of that class; the library reads each registered property from the object and writes bytes.</li>
-                            <li><strong>Deserialize.</strong> The library creates a <strong>new</strong> Instance with <code class="inline-code">Instance.new(className)</code>, then assigns properties from the buffer. It is not the same object identity as the source.</li>
-                        </ol>
-                        <p><strong>Contrast with <code class="inline-code">types.instance</code>.</strong> That encodes a <strong>reference</strong> (numeric id + <code class="inline-code">_VSID</code> + shared <code class="inline-code">instanceMap</code>) so the <strong>same</strong> Instance round-trips on both sides. Use references for live replication; use <code class="inline-code">serInstance</code> when you want a property snapshot or a fresh clone from wire data.</p>
+                        <h2>4. Forking: adding a brand-new wire type</h2>
+                        <p>Only needed when the byte layout you want does not exist in any built-in node. Two layers are involved.</p>
+
+                        <h3>4a. Buffer primitives — <code class="inline-code">src/buffer/writer.luau</code> and <code class="inline-code">src/buffer/reader.luau</code></h3>
+                        <p>Low-level helpers that advance the cursor and write/read raw bytes (<code class="inline-code">U8</code>, <code class="inline-code">U16</code>, <code class="inline-code">writef32</code>, <code class="inline-code">NEED</code>, …). Not typed, no dispatch. Add symmetric <code class="inline-code">write*</code> / <code class="inline-code">read*</code> helpers here if you need a new byte pattern.</p>
+
+                        <h3>4b. Type node — <code class="inline-code">src/types/&lt;name&gt;.luau</code></h3>
+                        <p>Exports a frozen <code class="inline-code">{ write, read, exType }</code>. Validates input, calls <code class="inline-code">NEED(n)</code>, then writes using the buffer primitives. On read, checks the status and returns <code class="inline-code">(flag, value)</code>. Use <code class="inline-code">src/types/uint8.luau</code> or <code class="inline-code">src/types/float32.luau</code> as a template.</p>
+
+                        <h3>4c. Registration — <code class="inline-code">src/shared/config/typeSigns.luau</code></h3>
+                        <p>Add a unique 1-byte id: <code class="inline-code">myformat = 48</code>. The key must match the filename. <code class="inline-code">src/init.luau</code> iterates <code class="inline-code">typeSigns</code> and loads each matching <code class="inline-code">src/types/&lt;name&gt;.luau</code> into <code class="inline-code">signMap</code> and <code class="inline-code">types</code>.</p>
+
+                        <h3>4d. Optional: dynamic inference — <code class="inline-code">src/shared/inferValueType.luau</code></h3>
+                        <p>Only needed if the dynamic serializer should <em>automatically</em> pick your type from plain Luau values. Static schemas reference nodes directly and do not need this step.</p>
+
+                        <p>After adding all four pieces, the new type is available as <code class="inline-code">T.myformat</code>, works in <code class="inline-code">struct</code>/<code class="inline-code">array</code>/<code class="inline-code">map</code>, and (if added to <code class="inline-code">inferValueType</code>) can be chosen by the dynamic path.</p>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -802,7 +1011,23 @@ local buf = static.serialize(PlayerSave, saveTable, nil, nil)</code></pre>
                 <div class="page-content">
                     <h1 class="page-title">Update logs</h1>
                     <div class="changelog-item latest">
-                        <h3 class="version-badge">VoidSentry2 v0.1.0 – initial release</h3>
+                        <h3 class="version-badge">VoidSentry2 v0.1.1</h3>
+                        <ul>
+                            <li>New types: <code class="inline-code">union</code> (discriminated variants, up to 255 branches) and <code class="inline-code">boolPacked</code> (eight booleans in one byte).</li>
+                            <li>New integer widths: <code class="inline-code">uint40</code>, <code class="inline-code">int40</code>, <code class="inline-code">uint48</code>, <code class="inline-code">int48</code>.</li>
+                            <li>New CFrame layouts: <code class="inline-code">cframef16</code> and <code class="inline-code">qcframef16</code>.</li>
+                            <li><code class="inline-code">Color3</code>, <code class="inline-code">CFrame</code> family, Luau <code class="inline-code">vector</code>, and <code class="inline-code">Vector2</code>/<code class="inline-code">Vector3</code> (including compact float variants) now share fast paths in the buffer reader/writer layer.</li>
+                            <li>Manual serialization: <code class="inline-code">writeStart</code>, <code class="inline-code">writeFinish</code>, <code class="inline-code">readStart</code>, <code class="inline-code">readFinish</code>, plus <code class="inline-code">getWriteCursor</code> and <code class="inline-code">getReadCursor</code>.</li>
+                            <li>Type export fix: <code class="inline-code">getItemType</code> works correctly with the Luau LSP.</li>
+                            <li>Documentation refresh, general code quality, and small performance tweaks.</li>
+                            <li>Benchmarks are now more concise.</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-item">
+                        <h3 class="version-badge">VoidSentry2 v0.1.0 </h3>
+                        <ul>
+                            <li>Initial release</li>
+                        </ul>
                     </div>
 
                     <nav class="page-nav" aria-label="Adjacent pages">
@@ -856,6 +1081,7 @@ local buf = static.serialize(PlayerSave, saveTable, nil, nil)</code></pre>
 
     <script src="js/benchmarks.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" crossorigin></script>
+    <script defer src="https://unpkg.com/highlightjs-luau@1.0.2/dist/luau.min.js" crossorigin></script>
     <script defer src="js/app.js"></script>
 </body>
 </html>

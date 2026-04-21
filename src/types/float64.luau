@@ -37,7 +37,7 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function float64_write(value: number): number
 	const vType: string = TYPE(value)
 	if vType ~= NUM_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Float64 type – "number" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Float64 type – "number" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(8) then
@@ -50,4 +50,5 @@ end
 return table.freeze({
 	write = float64_write,
 	read = READ, -- avoid possible extra function call
+	exType = "float"
 })

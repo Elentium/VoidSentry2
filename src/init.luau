@@ -2,7 +2,7 @@
 --!native
 --[[
 	================================================================================
-	  VoidSentry2  |  v0.1.0  |  Apache-2.0  |  by IAMNOTULTRA3
+	  VoidSentry2  |  v0.1.1  |  Apache-2.0  |  by IAMNOTULTRA3
 	================================================================================
 	  Buffer serialization library for Roblox. Converts Luau & Roblox values into
 	buffers and back. Supports schema-based (static) and schemaless
@@ -10,10 +10,17 @@
 	================================================================================
 	  API
 	================================================================================
-	  VoidSentry2.types    -- named type nodes/factories; pass as schema arguments
-	  VoidSentry2.static   -- schema-based serializer; fastest, layout known upfront
-	  VoidSentry2.dynamic  -- schemaless serializer; tags each value at runtime
-	  VoidSentry2.instanceSchemas -- container for serialized instances schemas;
+	  VoidSentry2.types              -- named type nodes/factories; pass as schema arguments
+	  VoidSentry2.static             -- schema-based serializer; fastest, layout known upfront
+	  VoidSentry2.dynamic            -- schemaless serializer; tags each value at runtime
+	  VoidSentry2.registerInstanceSchema(className, schema) -> ()  -- register layouts for types.serInstance(...)
+	  VoidSentry2.combine(t1, t2) -> T1 & T2                       -- shallow merge two tables
+	  VoidSentry2.writeStart(offset?) -> ()						  -- start the write operation
+	  writeFinish() -> buffer									  -- finish the write operation
+	  getWriteCursor() -> number								  -- get the current write position
+	  readStart(buf, offset?) -> ()								  -- start the read operation
+	  readFinish() -> ()										  -- finish the read operation
+	  getReadCursor() -> number								      -- get the current read position
 
 	  static.serialize(serdes, value, offset?, compressionLevel?) -> buffer?
 	  static.deserialize(serdes, buf, offset?, wasCompressed?) -> value?
@@ -32,6 +39,10 @@
 	    uint24            3 B      0 .. 16777215
 	    int32             4 B      -2147483648 .. 2147483647
 	    uint32            4 B      0 .. 4294967295
+	    int40             5 B      -549755813888 .. 549755813887
+	    uint40            5 B      0 .. 1099511627775
+	    int48             6 B      -140737488355328 .. 140737488355327
+	    uint48            6 B      0 .. 281474976710655
 
 	  FLOATS              size     notes
 	    float16           2 B      half-precision (IEEE 754)
@@ -41,6 +52,7 @@
 
 	  PRIMITIVES          size     notes
 	    boolean           1 B      true or false
+	    boolPacked        1 B      eight booleans packed in one byte
 	    string            2+n B    raw byte string; max 65535 bytes
 	    string255         1+n B    raw byte string; max 255 bytes
 	    vector            12 B     Luau vector (X Y Z as float32)
@@ -56,6 +68,7 @@
 	    void              0 B      empty table {}; no bytes written
 	    struct({k=T})     sum(T)   values only, keys sorted, no names on wire
 	    optional(T)       1+T?     1 B presence flag; inner T only if present
+	    union(T...)       1+T      1 B variant index (max 255 variants); each variant must have a unique exType
 	    any               1+T      1 B discriminator + dynamically inferred value
 
 	  ROBLOX TYPES        size     notes
@@ -68,9 +81,17 @@
 	    color3             3 B     Color3 (R G B as uint8, 0-255 per channel)
 	    cframe            48 B     CFrame 3x4 matrix (float32 components)
 	    cframef24         36 B     CFrame 3x4 matrix (float24 components)
+	    cframef16         24 B     CFrame 3x4 matrix (float16 components)
 	    qcframe           28 B     CFrame quaternion + position (float32)
 	    qcframef24        21 B     CFrame quaternion + position (float24)
+	    qcframef16        14 B     CFrame quaternion + position (float16)
 		enum			  2  B     Roblox Enumeration (2 bytes for writing the EnumItem Value)
+	================================================================================
+	  LINKS
+	================================================================================
+	• Github: https://github.com/Elentium/VoidSentry2
+	• Wally: "elentium/voidsentry2@0.1.1" https://wally.run/package/elentium/voidsentry2
+	• Creator Store: https://create.roblox.com/store/asset/109800466320728
 ]]
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
@@ -83,6 +104,8 @@ const instanceSchemas = require("@self/static/instanceSchemas")
 const typesModule = require("@self/types")
 const config = require("@self/shared/config")
 const serInstanceSigns = require("@self/static/serInstanceSigns")
+const writer = require("@self/buffer/writer")
+const reader = require("@self/buffer/reader")
 
 -----------------------------------------------------
 -- TYPES                                           --
@@ -93,7 +116,6 @@ export type types = exports.voidSentryTypes
 export type voidSentry2 = exports.voidSentry2
 export type possibleNode = exports.possibleNode
 export type typeNode<T = any> = exports.typeNode<T>
-export type extractTypeNode<T> = exports.extractTypeNode<T>
 
 -----------------------------------------------------
 -- VARIABLES                                       --
@@ -176,6 +198,12 @@ const VoidSentry2 = {
 	dynamic = dynamic,
 	registerInstanceSchema = registerInstanceSchema,
 	combine = combine,
+	writeStart = writer.START,
+	readStart = reader.START,
+	writeFinish = writer.FINISH,
+	readFinish = reader.FINISH,
+	getWriteCursor = writer.GETCURSOR,
+	getReadCursor = reader.GETCURSOR
 }
 
 return VoidSentry2 :: voidSentry2

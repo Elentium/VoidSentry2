@@ -48,7 +48,7 @@ const function mapNodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V>):
 	const function map_write(value: { [K]: V }): number
 		const vType: string = TYPE(value)
 		if vType ~= VAL_TYPE then
-			FAIL_FN(`[VoidSentry2]: Failed to serialize Map type – "table" expected, got "{vType}"`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Map type – "table" expected, got "{vType}"`, 0)
 			return FAIL
 		end
 
@@ -60,7 +60,8 @@ const function mapNodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V>):
 			return FAIL
 		elseif len > 0xFFFF then
 			FAIL_FN(
-				`[VoidSentry2]: Failed to serialize Map type – Map max length is 65535, the input value length is {len}`
+				`[VoidSentry2]: Failed to serialize Map type – Map max length is 65535, the input value length is {len}`,
+				0
 			)
 			return FAIL
 		end
@@ -100,6 +101,7 @@ const function mapNodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V>):
 	return table.freeze({
 		write = map_write,
 		read = map_read,
+		exType = "map"
 	}) :: typeNode<{ [K]: V }>
 end
 

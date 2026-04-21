@@ -21,6 +21,7 @@ const SUCCESS: number = config.success
 const FAIL: number = config.fail
 
 const VAL_TYPE: string = "Instance"
+const ID_ATTRIBUTE: string = config.instanceIdAttribute
 
 -----------------------------------------------------
 -- LOCALIZING                                      --
@@ -38,16 +39,17 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function instance_write(value: Instance): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Instance type – "Instance" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Instance type – "Instance" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 
-	const id: number? = value:GetAttribute("_VSID") :: any
+	const id: number? = value:GetAttribute(ID_ATTRIBUTE) :: any
 	if not NEED(3) then
 		return FAIL
 	elseif not id then
 		FAIL_FN(
-			`[VoidSentry2]: Failed to serialize Instance type – The provided instance does not have "_VSID" identifier attribute`
+			`[VoidSentry2]: Failed to serialize Instance type – The provided instance does not have "{ID_ATTRIBUTE}" identifier attribute`,
+			0
 		)
 		return FAIL
 	end
@@ -65,7 +67,8 @@ const function instance_read(): (number, Instance?)
 	const inst: Instance? = instanceMap[id :: number]
 	if not inst then
 		FAIL_FN(
-			`[VoidSentry2]: Failed to deserialize Instance type – The instance was not found in the instanceMap`
+			`[VoidSentry2]: Failed to deserialize Instance type – The instance was not found in the instanceMap`,
+			0
 		)
 		return FAIL, nil
 	end
@@ -76,4 +79,5 @@ end
 return table.freeze({
 	write = instance_write,
 	read = instance_read,
+	exType = "Instance"
 })

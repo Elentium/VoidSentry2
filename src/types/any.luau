@@ -34,4 +34,5 @@ const dynanode = require("../shared/dynanode")
 return table.freeze({
 	write = dynanode.write,
 	read = dynanode.read,
+	exType = "any"
 })

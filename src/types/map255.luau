@@ -48,7 +48,7 @@ const function map255NodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V
 	const function map255_write(value: { [K]: V }): number
 		const vType: string = TYPE(value)
 		if vType ~= VAL_TYPE then
-			FAIL_FN(`[VoidSentry2]: Failed to serialize Map255 type – "table" expected, got "{vType}"`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Map255 type – "table" expected, got "{vType}"`, 0)
 			return FAIL
 		end
 
@@ -60,7 +60,8 @@ const function map255NodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V
 			return FAIL
 		elseif len > 0xFF then
 			FAIL_FN(
-				`[VoidSentry2]: Failed to serialize Map255 type – Map255 max length is 255, input value length is {len}`
+				`[VoidSentry2]: Failed to serialize Map255 type – Map255 max length is 255, input value length is {len}`,
+				0
 			)
 			return FAIL
 		end
@@ -100,6 +101,7 @@ const function map255NodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V
 	return table.freeze({
 		write = map255_write,
 		read = map255_read,
+		exType = "map"
 	}) :: typeNode
 end
 

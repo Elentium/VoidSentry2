@@ -6,7 +6,8 @@
 		ValidityPass   – round-trip / rejection checks passed (no crash)
 		PerformancePass – average µs per iteration is within the per-test budget
 		Avg µs         – average microseconds per timed iteration
-		Budget µs      – performance ceiling used for PerformancePass (scaled by PERF_BUDGET_SCALE)
+		Budget µs      – performance ceiling used for PerformancePass (scaled by PERF_BUDGET_SCALE);
+		                 base µs per test come from CONFIG.BUDGETS[testName]
 
 	Section summary shows:
 		ValidityPass    – all correctness checks in the section passed
@@ -33,6 +34,267 @@ const CONFIG = {
 
 	-- Line width for separators.
 	SEPARATOR_WIDTH = 80,
+
+
+	-- Per-test performance budget (µs per op).
+	BUDGETS = {
+
+		-- ─── Static · Integer Types ───
+		["int8 – zero"] = 3,
+		["int8 – boundary min (-128)"] = 3,
+		["int8 – boundary max (127)"] = 3,
+		["int8 – wrong type errors"] = 3,
+		["int8 – wrong type returns nil"] = 3,
+		["uint8 – boundary max (255)"] = 3,
+		["uint8 – wrong type errors"] = 3,
+		["uint8 – wrong type returns nil"] = 3,
+		["int16 – min (-32768)"] = 3,
+		["int16 – max (32767)"] = 3,
+		["uint16 – max (65535)"] = 3,
+		["int24 – negative mid-range (-8388608)"] = 3,
+		["int24 – positive max (8388607)"] = 3,
+		["uint24 – max (16777215)"] = 3,
+		["int32 – min (-2147483648)"] = 3,
+		["int32 – max (2147483647)"] = 3,
+		["uint32 – max (4294967295)"] = 3,
+		["uint40 – zero"] = 3,
+		["uint40 – max (2^40 - 1)"] = 3,
+		["uint40 – mid-range"] = 3,
+		["uint40 – wrong type errors"] = 3,
+		["uint40 – wrong type returns nil"] = 3,
+		["int40 – zero"] = 3,
+		["int40 – min (-2^39)"] = 3,
+		["int40 – max (2^39 - 1)"] = 3,
+		["int40 – -1"] = 3,
+		["int40 – wrong type errors"] = 3,
+		["int40 – wrong type returns nil"] = 3,
+
+		-- ─── Static · Float Types ───
+		["float16 – zero"] = 5,
+		["float16 – positive value (approx ±1% tol)"] = 5,
+		["float16 – negative value (approx ±1% tol)"] = 5,
+		["float24 – zero"] = 5,
+		["float24 – pi (approx 0.01 tol)"] = 5,
+		["float24 – negative large (-1234.5, 0.5 tol)"] = 5,
+		["float32 – pi (1e-5 tol)"] = 5,
+		["float32 – negative (1e-5 tol)"] = 5,
+		["float64 – exact round-trip"] = 5,
+		["float64 – very large (1e200)"] = 5,
+
+		-- ─── Static · Primitive Types ───
+		["boolean – true round-trip"] = 3,
+		["boolean – false round-trip"] = 3,
+		["boolean – wrong type errors"] = 3,
+		["boolean – wrong type returns nil"] = 3,
+		["string – empty string"] = 5,
+		["string – ASCII round-trip"] = 8,
+		["string – unicode content"] = 8,
+		["string255 – exactly 255 chars"] = 8,
+		["void – serialize always returns buffer"] = 2,
+		["void – deserialize returns empty table"] = 2,
+		["nothing – serialize always returns buffer"] = 2,
+		["nothing – deserialize returns nil"] = 2,
+		["boolPacked – 8 mixed booleans round-trip"] = 6,
+		["boolPacked – all true (byte = 0xFF)"] = 6,
+		["boolPacked – all false (byte = 0x00)"] = 6,
+		["boolPacked – fewer than 8 entries (trailing bits read as false)"] = 6,
+		["boolPacked – wrong type errors"] = 4,
+		["boolPacked – wrong type returns nil"] = 4,
+
+		-- ─── Static · Vector Types ───
+		["vector3 – zero vector"] = 6,
+		["vector3 – typical position (0.01 tol)"] = 6,
+		["vector3 – wrong type errors"] = 6,
+		["vector3 – wrong type returns nil"] = 6,
+		["vector (Luau) – round-trip axes (1e-4 tol)"] = 6,
+		["vector2 – round-trip (1e-4 tol)"] = 6,
+		["vector2f24 – round-trip (0.02 tol)"] = 6,
+		["vector2f16 – round-trip (0.05 tol)"] = 6,
+		["vector3f24 – round-trip (0.02 tol)"] = 6,
+		["vector3f16 – round-trip (0.08 tol)"] = 6,
+
+		-- ─── Static · CFrame & Color3 ───
+		["cframe – matrix form FuzzyEq"] = 12,
+		["cframef24 – FuzzyEq (max allowed tol)"] = 12,
+		["qcframe – quaternion form FuzzyEq"] = 9,
+		["qcframef24 – FuzzyEq (max allowed tol)"] = 9,
+		["color3 – exact channels"] = 6,
+		["enum – EnumItem round-trip (Material.Slate)"] = 6,
+
+		-- ─── Static · Multi-value Schemas ───
+		["5-field heterogeneous schema round-trip"] = 10,
+		["int32 + float64 + vector3 + boolean"] = 8,
+		["schema mismatch – too few args errors"] = 2,
+		["schema mismatch – too few args returns nil"] = 2,
+
+		-- ─── Static · Array Types ───
+		["array(int32) – 5 elements"] = 10,
+		["array(int32) – empty array"] = 5,
+		["array(string) – 5 string elements"] = 15,
+		["array255(float32) – 50 sine values (1e-4 tol)"] = 25,
+
+		-- ─── Static · Map & optional ───
+		["map(string255,int32) – string keys round-trip"] = 25,
+		["map255(uint8,boolean) – 50 numeric keys"] = 40,
+		["map – nested array values round-trip"] = 45,
+		["optional(int32) – absent (nil)"] = 5,
+		["optional(int32) – present"] = 5,
+		["array(map(string255,uint8)) – nested collections"] = 50,
+
+		-- ─── Static · Union Type ───
+		["union(int32|float64|string255) – integer branch"] = 8,
+		["union(int32|float64|string255) – float branch (non-integer number)"] = 9,
+		["union(int32|float64|string255) – string branch"] = 11,
+		["union(uint40|string255) – uint40 at 2^40-1"] = 8,
+		["union(uint40|string255) – string branch"] = 11,
+		["union(boolean|string|float32) – true"] = 8,
+		["union(boolean|string|float32) – false"] = 8,
+		["union(boolean|string|float32) – float (non-integer)"] = 9,
+		["union(Vector3|Color3) – Vector3 branch"] = 12,
+		["union(Vector3|Color3) – Color3 branch"] = 12,
+		["union(array|map) – non-empty array branch"] = 15,
+		["union(array|map) – map branch (string keys)"] = 30,
+		["union(array|map) – empty table {} is array (extypeof)"] = 25,
+		["union(int40|string|boolean) – int40 min edge"] = 28,
+		["union(int40|string|boolean) – boolean competes with int (distinct exTypes)"] = 22,
+		["union – duplicate ExType (int32 + int16) throws at build"] = 100,
+		["union – duplicate ExType (two string widths) throws"] = 100,
+		["union – nested union variant is unsupported (throws at build)"] = 100,
+		["union – optional variant is unsupported (throws at build)"] = 100,
+		["union – value matching no variant (number) errors on serialize"] = 12,
+		["union – value matching no variant (number) returns nil"] = 12,
+		["union – value matching no variant (table) errors"] = 15,
+		["union – value matching no variant (table) returns nil"] = 15,
+		["union(EnumItem|int|string) – EnumItem branch"] = 25,
+		["union(EnumItem|int|string) – int branch"] = 22,
+		["union – six distinct branches round-trip sample (Vector2)"] = 45,
+		["union – six distinct branches round-trip sample (Color3)"] = 40,
+
+		-- ─── Static · Struct Type ───
+		["struct – 3-field float32 struct"] = 12,
+		["struct – mixed field types (id/name/active/score)"] = 15,
+		["struct – wrong type for field errors"] = 3,
+		["struct – wrong type for field returns nil"] = 3,
+
+		-- ─── Static · Nested Structs & Arrays ───
+		["struct inside struct (entity with pos)"] = 18,
+		["array of structs – 3 entries"] = 20,
+		["3-level nested struct"] = 20,
+		["array of arrays – 3×3 uint8 matrix"] = 25,
+		["struct with array255(string255) field"] = 20,
+
+		-- ─── Static · Zstd Compression ───
+		["compressed string – round-trip identical"] = 80,
+		["compressed buffer is smaller than uncompressed"] = 80,
+		["compressed array(int32) – 200 elements round-trip"] = 200,
+
+		-- ─── Dynamic · Primitive Types ───
+		["dynamic – uint8 value 200"] = 5,
+		["dynamic – int8 value -50"] = 5,
+		["dynamic – float value 1.5 (1e-5 tol)"] = 5,
+		["dynamic – true"] = 5,
+		["dynamic – false"] = 5,
+		["dynamic – short string"] = 7,
+		["dynamic – long string (>255 chars)"] = 12,
+		["dynamic – empty table (void)"] = 5,
+
+		-- ─── Dynamic · Multiple Values ───
+		["dynamic – mixed multi-value pack (number, bool, string)"] = 15,
+		["dynamic – 6 heterogeneous values"] = 20,
+		["dynamic – empty serialize returns non-nil buffer"] = 5,
+
+		-- ─── Dynamic · Collections ───
+		["dynamic – array of numbers"] = 15,
+		["dynamic – map auto-detected"] = 20,
+
+		-- ─── Dynamic · Nested Structures ───
+		["dynamic – array of arrays"] = 25,
+		["dynamic – deeply nested: array[array[array[uint8]]]"] = 35,
+		["dynamic – map of maps (3 levels)"] = 40,
+		["dynamic – array of maps with array values"] = 45,
+		["dynamic – Vector3 round-trip"] = 15,
+		["dynamic – Luau vector round-trip"] = 15,
+		["dynamic – Vector2 round-trip"] = 12,
+		["dynamic – CFrame round-trip (FuzzyEq)"] = 35,
+
+		-- ─── Dynamic · Zstd Compression ───
+		["dynamic Zstd – multi-value round-trip (wasCompressed = true)"] = 80,
+		["dynamic Zstd – compressed buffer smaller on large string"] = 100,
+		["dynamic Zstd – wrong wasCompressed on plain buffer fails"] = 100,
+		["dynamic – uncompressed with explicit wasCompressed false"] = 15,
+
+		-- ─── Static · any Type ───
+		["any – serialize uint value 100"] = 5,
+		["any – serialize string"] = 5,
+		["any – serialize boolean true"] = 5,
+		["any – serialize float (1e-4 tol)"] = 5,
+		["any – serialize Vector3"] = 10,
+		["any – serialize Color3"] = 10,
+		["any – serialize CFrame"] = 18,
+		["any – serialize array255 of numbers"] = 15,
+		["any – serialize nested map (dynamic layout)"] = 22,
+
+		-- ─── Static · Offset Support ───
+		["offset=4: written bytes start at position 4"] = 10,
+		["offset=4: deserialize with same offset"] = 10,
+
+		-- ─── Static · Large Payload Benchmarks ───
+		["array(float64) – 500 elements serialize"] = 150,
+		["array(float64) – 500 elements round-trip exact"] = 300,
+		["array(struct{id,x,y,active}) – 100 entities round-trip"] = 150,
+		["string – 50 KB payload round-trip"] = 150,
+
+		-- ─── Static · Instance (ID-based) ───
+		["instance – registered part round-trips to same reference"] = 10,
+		["instance – buffer is exactly 3 bytes (U24 id)"] = 5,
+		["instance – unregistered instance (no _VSID) errors"] = 5,
+		["instance – unregistered instance (no _VSID) returns nil"] = 5,
+		["instance – id not in map errors on deserialize"] = 8,
+		["instance – id not in map returns nil on deserialize"] = 8,
+		["instance – wrong type value (non-Instance) errors"] = 3,
+		["instance – wrong type value (non-Instance) returns nil"] = 3,
+		["instance – two instances in one schema both round-trip"] = 12,
+
+		-- ─── Static · SerInstance (struct-based) ───
+		["serInstance(Part) – Name preserved exactly"] = 30,
+		["serInstance(Part) – numeric properties within tolerance"] = 30,
+		["serInstance(Part) – CFrame preserved (FuzzyEq)"] = 30,
+		["serInstance(Part) – Color3 channels exact (uint8 storage)"] = 30,
+		["serInstance(Part) – boolean Anchored preserved"] = 30,
+		["serInstance(Part) – deserialized value is a new Part instance"] = 30,
+		["serInstance – unsupported class name errors"] = 100,
+		["serInstance – wrong type (non-Instance) errors"] = 20,
+		["serInstance – wrong type (non-Instance) returns nil"] = 20,
+
+		-- ─── Dynamic · SerInstance / Dynamic · Instance ───
+		["dynamic – registered instance round-trips to same reference"] = 15,
+		["dynamic – instance alongside primitives"] = 18,
+		["dynamic – unregistered instance (no _VSID) errors"] = 5,
+		["dynamic – unregistered instance (no _VSID) returns nil"] = 5,
+		["dynamic – serInstance Part round-trip (new instance, props match)"] = 30,
+		["dynamic – serInstance alongside primitives"] = 35,
+		["dynamic – unsupported Instance class (Folder) errors"] = 15,
+
+		-- ─── Edge Cases ───
+		["edge – float32 math.huge round-trip"] = 5,
+		["edge – float32 -math.huge round-trip"] = 5,
+		["edge – float32 NaN identity preserved (v ~= v)"] = 5,
+		["edge – float32 negative zero sign bit preserved"] = 5,
+		["edge – float16 overflow saturates to math.huge"] = 6,
+		["edge – float16 subnormal underflow flushes to zero"] = 6,
+		["edge – string with embedded null bytes round-trips byte-exact"] = 8,
+		["edge – string255 UTF-8 multi-byte exactly 255 bytes"] = 9,
+		["edge – string255 empty boundary (length byte = 0)"] = 5,
+		["edge – array255 boundary 0 elements"] = 10,
+		["edge – array255 exactly 255 elements"] = 60,
+		["edge – CFrame identity preserved byte-exact"] = 12,
+		["edge – vector3 with math.huge on one axis"] = 6,
+		["edge – struct with every numeric extreme simultaneously"] = 20,
+		["edge – optional(optional(int32)) nested present/absent"] = 10,
+		["edge – union routes integer-valued float via \"int\" branch"] = 10,
+		["edge – map with empty-string key round-trips"] = 15,
+	} :: { [string]: number },
+
 }
 
 --------------------------------------------------------------------------------
@@ -45,22 +307,22 @@ const static = voidSentry2.static
 const dynamic = voidSentry2.dynamic
 
 -- Static helpers (API: serialize(serdes, input, offset?, compressionLevel?)).
-const function ser(sd: any, v: any): buffer?
+const function ser(sd: voidSentry2.typeNode, v: any): buffer?
 	return static.serialize(sd, v, nil, nil)
 end
-const function des(sd: any, b: buffer): any
+const function des(sd: voidSentry2.typeNode, b: buffer): any
 	return static.deserialize(sd, b, nil, nil)
 end
-const function serOff(sd: any, v: any, o: number): buffer?
+const function serOff(sd: voidSentry2.typeNode, v: any, o: number): buffer?
 	return static.serialize(sd, v, o, nil)
 end
-const function desOff(sd: any, b: buffer, o: number): any
+const function desOff(sd: voidSentry2.typeNode, b: buffer, o: number): any
 	return static.deserialize(sd, b, o, nil)
 end
-const function serZ(sd: any, v: any, z: number): buffer?
+const function serZ(sd: voidSentry2.typeNode, v: any, z: number): buffer?
 	return static.serialize(sd, v, nil, z)
 end
-const function desZ(sd: any, b: buffer): any
+const function desZ(sd: voidSentry2.typeNode, b: buffer): any
 	return static.deserialize(sd, b, nil, true)
 end
 
@@ -102,10 +364,48 @@ type SectionInfo = {
 	tests: { TestResult },
 }
 
+type SuiteStats = {
+	totalTests: number,
+	validityPct: number,
+	perfPct: number,
+	overallPct: number,
+}
+
 const allSections: { SectionInfo } = {}
 local currentSection: SectionInfo = { name = "", tests = {} }
 
 const SEP = string.rep("─", CONFIG.SEPARATOR_WIDTH)
+
+@native
+const function computeSuiteStats(): SuiteStats
+	local total = 0
+	local vOk = 0
+	local pOk = 0
+	local full = 0
+	for _, sec in allSections do
+		for _, r in sec.tests do
+			total += 1
+			if r.validityPass then
+				vOk += 1
+			end
+			if r.perfPass then
+				pOk += 1
+			end
+			if r.validityPass and r.perfPass and not r.crashed then
+				full += 1
+			end
+		end
+	end
+	if total == 0 then
+		return { totalTests = 0, validityPct = 100, perfPct = 100, overallPct = 100 }
+	end
+	return {
+		totalTests = total,
+		validityPct = (vOk / total) * 100,
+		perfPct = (pOk / total) * 100,
+		overallPct = (full / total) * 100,
+	}
+end
 
 --------------------------------------------------------------------------------
 -- BENCH HELPER
@@ -134,14 +434,16 @@ end
 
 --------------------------------------------------------------------------------
 -- TEST
--- @param name       label
--- @param cPts       correctness points (usually 2)
--- @param budgetUs   µs budget per op (before PERF_BUDGET_SCALE)
+-- @param name       label (must exist in CONFIG.BUDGETS)
 -- @param validityFn () -> bool   runs once, checks output correctness
 -- @param perfFn     () -> ()     hot path to bench (full serialize→deserialize when testing round-trip)
 --------------------------------------------------------------------------------
 @native
-const function test(name: string, _cPts: number, budgetUs: number, validityFn: () -> boolean, perfFn: () -> ())
+const function test(name: string, validityFn: () -> boolean, perfFn: () -> ())
+	local budgetUs = CONFIG.BUDGETS[name]
+	if budgetUs == nil then
+		error(`[VoidSentry2 tests]: missing CONFIG.BUDGETS entry for "{name}"`, 0)
+	end
 	local scaledBudget = budgetUs * CONFIG.PERF_BUDGET_SCALE
 
 	local validityPass = false
@@ -230,7 +532,7 @@ end
 
 -- Bench hot path: full static round-trip (must mirror roundTrip correctness path)
 @native
-const function staticRoundTripPerf(serdes: any, compressionLevel: number?, offset: number?, value: any): ()
+const function staticRoundTripPerf(serdes: voidSentry2.typeNode, compressionLevel: number?, offset: number?, value: any): ()
 	local b = static.serialize(serdes, value, offset, compressionLevel)
 	if b ~= nil then
 		static.deserialize(serdes, b, offset, compressionLevel ~= nil)
@@ -309,12 +611,17 @@ end
 -- CONSOLE PRINT
 --------------------------------------------------------------------------------
 const function printResults()
+	local st = computeSuiteStats()
 	print(SEP)
 	print(
 		string.format(
-			"  VoidSentry2 Test Results   %d iterations/test   Scale ×%.1f",
+			"  VoidSentry2 Test Results   %d iterations/test   scale ×%.1f     |     Validity %.1f%%   Perf %.1f%%   Overall %.1f%%   (n=%d)",
 			CONFIG.PERF_ITERATIONS,
-			CONFIG.PERF_BUDGET_SCALE
+			CONFIG.PERF_BUDGET_SCALE,
+			st.validityPct,
+			st.perfPct,
+			st.overallPct,
+			st.totalTests
 		)
 	)
 	print(SEP)
@@ -501,9 +808,11 @@ const function buildUI()
 	})
 	uiCorner(statsBar, 6)
 	uiPadding(statsBar, 12, 0)
+	local suiteStats = computeSuiteStats()
 	label({
-		Name = "StatsText",
-		Size = UDim2.fromScale(1, 1),
+		Name = "StatsTextLeft",
+		Size = UDim2.new(0.48, 0, 1, 0),
+		Position = UDim2.new(0, 0, 0, 0),
 		Text = string.format(
 			"Iterations per test: %d    Budget scale: ×%.1f",
 			CONFIG.PERF_ITERATIONS,
@@ -512,6 +821,24 @@ const function buildUI()
 		TextSize = 12,
 		Font = Enum.Font.Gotham,
 		TextColor3 = colors.textSec,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = statsBar,
+	})
+	label({
+		Name = "StatsTextRight",
+		Size = UDim2.new(0.52, 0, 1, 0),
+		Position = UDim2.new(0.48, 0, 0, 0),
+		Text = string.format(
+			"Validity %.1f%%  ·  Perf %.1f%%  ·  Overall %.1f%%  ·  n=%d",
+			suiteStats.validityPct,
+			suiteStats.perfPct,
+			suiteStats.overallPct,
+			suiteStats.totalTests
+		),
+		TextSize = 12,
+		Font = Enum.Font.Gotham,
+		TextColor3 = colors.textSec,
+		TextXAlignment = Enum.TextXAlignment.Right,
 		Parent = statsBar,
 	})
 
@@ -775,7 +1102,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.int8
-		test("int8 – zero", 2, 5, function()
+		test("int8 – zero", function()
 			return roundTrip(s, function(v)
 				return v == 0
 			end, 0)
@@ -783,7 +1110,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, 0)
 		end)
 
-		test("int8 – boundary min (-128)", 2, 5, function()
+		test("int8 – boundary min (-128)", function()
 			return roundTrip(s, function(v)
 				return v == -128
 			end, -128)
@@ -791,7 +1118,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, -128)
 		end)
 
-		test("int8 – boundary max (127)", 2, 5, function()
+		test("int8 – boundary max (127)", function()
 			return roundTrip(s, function(v)
 				return v == 127
 			end, 127)
@@ -801,8 +1128,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 		test(
 			if vsConfig.strictMode then "int8 – wrong type errors" else "int8 – wrong type returns nil",
-			2,
-			3,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, "oops")
@@ -821,7 +1146,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.uint8
-		test("uint8 – boundary max (255)", 2, 5, function()
+		test("uint8 – boundary max (255)", function()
 			return roundTrip(s, function(v)
 				return v == 255
 			end, 255)
@@ -831,8 +1156,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 		test(
 			if vsConfig.strictMode then "uint8 – wrong type errors" else "uint8 – wrong type returns nil",
-			2,
-			3,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, "oops")
@@ -851,14 +1174,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.int16
-		test("int16 – min (-32768)", 2, 5, function()
+		test("int16 – min (-32768)", function()
 			return roundTrip(s, function(v)
 				return v == -32768
 			end, -32768)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, -32768)
 		end)
-		test("int16 – max (32767)", 2, 5, function()
+		test("int16 – max (32767)", function()
 			return roundTrip(s, function(v)
 				return v == 32767
 			end, 32767)
@@ -869,7 +1192,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.uint16
-		test("uint16 – max (65535)", 2, 5, function()
+		test("uint16 – max (65535)", function()
 			return roundTrip(s, function(v)
 				return v == 65535
 			end, 65535)
@@ -880,14 +1203,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.int24
-		test("int24 – negative mid-range (-8388608)", 2, 5, function()
+		test("int24 – negative mid-range (-8388608)", function()
 			return roundTrip(s, function(v)
 				return v == -8388608
 			end, -8388608)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, -8388608)
 		end)
-		test("int24 – positive max (8388607)", 2, 5, function()
+		test("int24 – positive max (8388607)", function()
 			return roundTrip(s, function(v)
 				return v == 8388607
 			end, 8388607)
@@ -898,7 +1221,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.uint24
-		test("uint24 – max (16777215)", 2, 5, function()
+		test("uint24 – max (16777215)", function()
 			return roundTrip(s, function(v)
 				return v == 16777215
 			end, 16777215)
@@ -909,14 +1232,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.int32
-		test("int32 – min (-2147483648)", 2, 5, function()
+		test("int32 – min (-2147483648)", function()
 			return roundTrip(s, function(v)
 				return v == -2147483648
 			end, -2147483648)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, -2147483648)
 		end)
-		test("int32 – max (2147483647)", 2, 5, function()
+		test("int32 – max (2147483647)", function()
 			return roundTrip(s, function(v)
 				return v == 2147483647
 			end, 2147483647)
@@ -927,7 +1250,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.uint32
-		test("uint32 – max (4294967295)", 2, 5, function()
+		test("uint32 – max (4294967295)", function()
 			return roundTrip(s, function(v)
 				return v == 4294967295
 			end, 4294967295)
@@ -936,19 +1259,113 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 	end
 
-	-- ─── Static Serializer: Float Types ──────────────────────────────────────────
-	section("Static · Float Types")
-
 	do
-		local s = types.float16
-		test("float16 – zero", 2, 5, function()
+		local s = types.uint40
+		-- 40-bit unsigned max: 2^40 - 1
+		local U40_MAX = 1099511627775
+		test("uint40 – zero", function()
 			return roundTrip(s, function(v)
 				return v == 0
 			end, 0)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 0)
 		end)
-		test("float16 – positive value (approx ±1% tol)", 2, 5, function()
+		test("uint40 – max (2^40 - 1)", function()
+			return roundTrip(s, function(v)
+				return v == U40_MAX
+			end, U40_MAX)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, U40_MAX)
+		end)
+		test("uint40 – mid-range", function()
+			return roundTrip(s, function(v)
+				return v == 0xABCDEF1234
+			end, 0xABCDEF1234)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, 0xABCDEF1234)
+		end)
+		test(
+			if vsConfig.strictMode then "uint40 – wrong type errors" else "uint40 – wrong type returns nil",
+			function()
+				local ok, res = pcall(function()
+					return ser(s, "nope")
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(s, nil, nil, 0)
+				else
+					staticRoundTripPerf(s, nil, nil, "nope")
+				end
+			end
+		)
+	end
+
+	do
+		local s = types.int40
+		-- Signed 40-bit: [-2^39, 2^39 - 1]
+		local I40_MIN = -549755813888
+		local I40_MAX = 549755813887
+		test("int40 – zero", function()
+			return roundTrip(s, function(v)
+				return v == 0
+			end, 0)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, 0)
+		end)
+		test("int40 – min (-2^39)", function()
+			return roundTrip(s, function(v)
+				return v == I40_MIN
+			end, I40_MIN)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, I40_MIN)
+		end)
+		test("int40 – max (2^39 - 1)", function()
+			return roundTrip(s, function(v)
+				return v == I40_MAX
+			end, I40_MAX)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, I40_MAX)
+		end)
+		test("int40 – -1", function()
+			return roundTrip(s, function(v)
+				return v == -1
+			end, -1)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, -1)
+		end)
+		test(
+			if vsConfig.strictMode then "int40 – wrong type errors" else "int40 – wrong type returns nil",
+			function()
+				local ok, res = pcall(function()
+					return ser(s, {})
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(s, nil, nil, 0)
+				else
+					staticRoundTripPerf(s, nil, nil, {})
+				end
+			end
+		)
+	end
+
+	-- ─── Static Serializer: Float Types ──────────────────────────────────────────
+	section("Static · Float Types")
+
+	do
+		local s = types.float16
+		test("float16 – zero", function()
+			return roundTrip(s, function(v)
+				return v == 0
+			end, 0)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, 0)
+		end)
+		test("float16 – positive value (approx ±1% tol)", function()
 			-- f16 has limited mantissa; allow ~2% relative error on non-powers of two.
 			return roundTrip(s, function(v)
 				return approxEq(v, 1.5, 0.04)
@@ -956,7 +1373,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 1.5)
 		end)
-		test("float16 – negative value (approx ±1% tol)", 2, 5, function()
+		test("float16 – negative value (approx ±1% tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, -3.14, 0.12)
 			end, -3.14)
@@ -967,21 +1384,21 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.float24
-		test("float24 – zero", 2, 5, function()
+		test("float24 – zero", function()
 			return roundTrip(s, function(v)
 				return v == 0
 			end, 0)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 0)
 		end)
-		test("float24 – pi (approx 0.01 tol)", 2, 5, function()
+		test("float24 – pi (approx 0.01 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, math.pi, 0.06)
 			end, math.pi)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, math.pi)
 		end)
-		test("float24 – negative large (-1234.5, 0.5 tol)", 2, 5, function()
+		test("float24 – negative large (-1234.5, 0.5 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, -1234.5, 2.0)
 			end, -1234.5)
@@ -992,14 +1409,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.float32
-		test("float32 – pi (1e-5 tol)", 2, 5, function()
+		test("float32 – pi (1e-5 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, math.pi, 1e-5)
 			end, math.pi)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, math.pi)
 		end)
-		test("float32 – negative (1e-5 tol)", 2, 5, function()
+		test("float32 – negative (1e-5 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, -99.99, 1e-3)
 			end, -99.99)
@@ -1010,7 +1427,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.float64
-		test("float64 – exact round-trip", 2, 5, function()
+		test("float64 – exact round-trip", function()
 			local val = 1 / 3
 			return roundTrip(s, function(v)
 				return v == val
@@ -1018,7 +1435,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 1 / 3)
 		end)
-		test("float64 – very large (1e200)", 2, 5, function()
+		test("float64 – very large (1e200)", function()
 			return roundTrip(s, function(v)
 				return v == 1e200
 			end, 1e200)
@@ -1032,14 +1449,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.boolean
-		test("boolean – true round-trip", 2, 5, function()
+		test("boolean – true round-trip", function()
 			return roundTrip(s, function(v)
 				return v == true
 			end, true)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, true)
 		end)
-		test("boolean – false round-trip", 2, 5, function()
+		test("boolean – false round-trip", function()
 			return roundTrip(s, function(v)
 				return v == false
 			end, false)
@@ -1048,8 +1465,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 		test(
 			if vsConfig.strictMode then "boolean – wrong type errors" else "boolean – wrong type returns nil",
-			2,
-			3,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, 1)
@@ -1068,21 +1483,21 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.string
-		test("string – empty string", 2, 5, function()
+		test("string – empty string", function()
 			return roundTrip(s, function(v)
 				return v == ""
 			end, "")
 		end, function()
 			staticRoundTripPerf(s, nil, nil, "")
 		end)
-		test("string – ASCII round-trip", 2, 5, function()
+		test("string – ASCII round-trip", function()
 			return roundTrip(s, function(v)
 				return v == "hello world"
 			end, "hello world")
 		end, function()
 			staticRoundTripPerf(s, nil, nil, "hello world")
 		end)
-		test("string – unicode content", 2, 8, function()
+		test("string – unicode content", function()
 			local u = "こんにちは世界"
 			return roundTrip(s, function(v)
 				return v == u
@@ -1095,7 +1510,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.string255
 		local long255 = string.rep("x", 255)
-		test("string255 – exactly 255 chars", 2, 8, function()
+		test("string255 – exactly 255 chars", function()
 			return roundTrip(s, function(v)
 				return v == long255
 			end, long255)
@@ -1106,13 +1521,13 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.void
-		test("void – serialize always returns buffer", 2, 3, function()
+		test("void – serialize always returns buffer", function()
 			local b = ser(s, {})
 			return b ~= nil and buffer.len(b) == 0
 		end, function()
 			staticRoundTripPerf(s, nil, nil, {})
 		end)
-		test("void – deserialize returns empty table", 2, 3, function()
+		test("void – deserialize returns empty table", function()
 			local b = ser(s, {}) :: buffer
 			local v = des(s, b)
 			return type(v) == "table"
@@ -1124,13 +1539,13 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.nothing
-		test("nothing – serialize always returns buffer", 2, 3, function()
+		test("nothing – serialize always returns buffer", function()
 			local b = ser(s, nil)
 			return b ~= nil
 		end, function()
 			staticRoundTripPerf(s, nil, nil, nil)
 		end)
-		test("nothing – deserialize returns nil", 2, 3, function()
+		test("nothing – deserialize returns nil", function()
 			local b = ser(s, nil) :: buffer
 			local v = des(s, b)
 			return v == nil
@@ -1140,19 +1555,105 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 	end
 
+	do
+		local s = types.boolPacked
+		local mixed = { true, false, true, false, true, true, false, true }
+		test("boolPacked – 8 mixed booleans round-trip", function()
+			return roundTrip(s, function(v)
+				if type(v) ~= "table" then
+					return false
+				end
+				for i = 1, 8 do
+					if v[i] ~= mixed[i] then
+						return false
+					end
+				end
+				return true
+			end, mixed)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, mixed)
+		end)
+
+		test("boolPacked – all true (byte = 0xFF)", function()
+			local allTrue = { true, true, true, true, true, true, true, true }
+			local b = ser(s, allTrue)
+			if b == nil or buffer.len(b) ~= 1 or buffer.readu8(b, 0) ~= 0xFF then
+				return false
+			end
+			local v = des(s, b)
+			for i = 1, 8 do
+				if v[i] ~= true then
+					return false
+				end
+			end
+			return true
+		end, function()
+			staticRoundTripPerf(s, nil, nil, { true, true, true, true, true, true, true, true })
+		end)
+
+		test("boolPacked – all false (byte = 0x00)", function()
+			local allFalse = { false, false, false, false, false, false, false, false }
+			local b = ser(s, allFalse)
+			if b == nil or buffer.len(b) ~= 1 or buffer.readu8(b, 0) ~= 0x00 then
+				return false
+			end
+			local v = des(s, b)
+			for i = 1, 8 do
+				if v[i] ~= false then
+					return false
+				end
+			end
+			return true
+		end, function()
+			staticRoundTripPerf(s, nil, nil, { false, false, false, false, false, false, false, false })
+		end)
+
+		-- Fewer than 8 entries: read still returns an 8-slot table with trailing bits as false.
+		test("boolPacked – fewer than 8 entries (trailing bits read as false)", function()
+			local partial = { true, false, true } -- indices 1..3 set
+			local b = ser(s, partial)
+			if b == nil then
+				return false
+			end
+			local v = des(s, b)
+			return v[1] == true and v[2] == false and v[3] == true
+				and v[4] == false and v[5] == false and v[6] == false
+				and v[7] == false and v[8] == false
+		end, function()
+			staticRoundTripPerf(s, nil, nil, { true, false, true })
+		end)
+
+		test(
+			if vsConfig.strictMode then "boolPacked – wrong type errors" else "boolPacked – wrong type returns nil",
+			function()
+				local ok, res = pcall(function()
+					return ser(s, "not a table" :: any)
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(s, nil, nil, { true, false, true, false, true, false, true, false })
+				else
+					staticRoundTripPerf(s, nil, nil, "not a table" :: any)
+				end
+			end
+		)
+	end
+
 	-- ─── Static Serializer: Vector Types ─────────────────────────────────────────
 	section("Static · Vector Types")
 
 	do
 		local s = types.vector3
-		test("vector3 – zero vector", 2, 6, function()
+		test("vector3 – zero vector", function()
 			return roundTrip(s, function(v)
 				return v.X == 0 and v.Y == 0 and v.Z == 0
 			end, Vector3.new(0, 0, 0))
 		end, function()
 			staticRoundTripPerf(s, nil, nil, Vector3.new(0, 0, 0))
 		end)
-		test("vector3 – typical position (0.01 tol)", 2, 6, function()
+		test("vector3 – typical position (0.01 tol)", function()
 			local pos = Vector3.new(12.5, -3.75, 100.0)
 			return roundTrip(s, function(v)
 				return approxEq(v.X, pos.X, 1e-4) and approxEq(v.Y, pos.Y, 1e-4) and approxEq(v.Z, pos.Z, 1e-4)
@@ -1162,8 +1663,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 		test(
 			if vsConfig.strictMode then "vector3 – wrong type errors" else "vector3 – wrong type returns nil",
-			2,
-			3,
 			function()
 				local bad = { X = 1, Y = 0, Z = 0 }
 				local ok, res = pcall(function()
@@ -1184,7 +1683,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector
 		local v = vector.create(1, -2.5, 99.125)
-		test("vector (Luau) – round-trip axes (1e-4 tol)", 2, 8, function()
+		test("vector (Luau) – round-trip axes (1e-4 tol)", function()
 			return roundTrip(s, function(out: any)
 				-- Luau primitive vector: compare axes (typeof is "vector")
 				return approxEq(out.x, v.x, 1e-4) and approxEq(out.y, v.y, 1e-4) and approxEq(out.z, v.z, 1e-4)
@@ -1197,7 +1696,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector2
 		local p = Vector2.new(100, -33.5)
-		test("vector2 – round-trip (1e-4 tol)", 2, 8, function()
+		test("vector2 – round-trip (1e-4 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.X, p.X, 1e-4) and approxEq(v.Y, p.Y, 1e-4)
 			end, p)
@@ -1209,7 +1708,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector2f24
 		local p = Vector2.new(0.25, math.pi)
-		test("vector2f24 – round-trip (0.02 tol)", 2, 8, function()
+		test("vector2f24 – round-trip (0.02 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.X, p.X, 0.02) and approxEq(v.Y, p.Y, 0.02)
 			end, p)
@@ -1221,7 +1720,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector2f16
 		local p = Vector2.new(1.5, -2.5)
-		test("vector2f16 – round-trip (0.05 tol)", 2, 8, function()
+		test("vector2f16 – round-trip (0.05 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.X, p.X, 0.05) and approxEq(v.Y, p.Y, 0.05)
 			end, p)
@@ -1233,7 +1732,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector3f24
 		local p = Vector3.new(12.3, -4.56, 0.001)
-		test("vector3f24 – round-trip (0.02 tol)", 2, 8, function()
+		test("vector3f24 – round-trip (0.02 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.X, p.X, 0.02) and approxEq(v.Y, p.Y, 0.02) and approxEq(v.Z, p.Z, 0.02)
 			end, p)
@@ -1245,7 +1744,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.vector3f16
 		local p = Vector3.new(1, 2, 3)
-		test("vector3f16 – round-trip (0.08 tol)", 2, 8, function()
+		test("vector3f16 – round-trip (0.08 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.X, p.X, 0.08) and approxEq(v.Y, p.Y, 0.08) and approxEq(v.Z, p.Z, 0.08)
 			end, p)
@@ -1260,7 +1759,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.cframe
 		local cf = CFrame.new(3, 4, 5) * CFrame.Angles(0.2, -0.5, 1.1)
-		test("cframe – matrix form FuzzyEq", 2, 20, function()
+		test("cframe – matrix form FuzzyEq", function()
 			return roundTrip(s, function(v)
 				return typeof(v) == "CFrame" and cframeFuzzyEq(v, cf, 1e-2)
 			end, cf)
@@ -1273,7 +1772,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		local s = types.cframef24
 		local cf = CFrame.new(1, 0, -2) * CFrame.Angles(0.1, 0.1, 0.1)
 		-- Roblox FuzzyEq only allows epsilon in (0, 0.1]
-		test("cframef24 – FuzzyEq (max allowed tol)", 2, 25, function()
+		test("cframef24 – FuzzyEq (max allowed tol)", function()
 			return roundTrip(s, function(v)
 				return typeof(v) == "CFrame" and cframeFuzzyEq(v, cf, 0.1)
 			end, cf)
@@ -1285,7 +1784,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.qcframe
 		local cf = CFrame.new(-7, 8, 9) * CFrame.Angles(0.3, -0.1, 0.7)
-		test("qcframe – quaternion form FuzzyEq", 2, 18, function()
+		test("qcframe – quaternion form FuzzyEq", function()
 			return roundTrip(s, function(v)
 				return typeof(v) == "CFrame" and cframeFuzzyEq(v, cf, 1e-2)
 			end, cf)
@@ -1297,7 +1796,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.qcframef24
 		local cf = CFrame.new(0.5, 1.5, 2.5)
-		test("qcframef24 – FuzzyEq (max allowed tol)", 2, 20, function()
+		test("qcframef24 – FuzzyEq (max allowed tol)", function()
 			return roundTrip(s, function(v)
 				return typeof(v) == "CFrame" and cframeFuzzyEq(v, cf, 0.1)
 			end, cf)
@@ -1309,7 +1808,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.color3
 		local c = Color3.fromRGB(10, 200, 255)
-		test("color3 – exact channels", 2, 6, function()
+		test("color3 – exact channels", function()
 			return roundTrip(s, function(v)
 				return v.R == c.R and v.G == c.G and v.B == c.B
 			end, c)
@@ -1321,7 +1820,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = (types.enum :: any)(Enum.Material)
 		local mat = Enum.Material.Slate
-		test("enum – EnumItem round-trip (Material.Slate)", 2, 8, function()
+		test("enum – EnumItem round-trip (Material.Slate)", function()
 			return roundTrip(s, function(v)
 				return v == mat
 			end, mat)
@@ -1343,7 +1842,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		})
 		local a, b, c, d, e = 42, -300, 1.5, true, "VoidSentry"
 		local row = { u8 = a, i16 = b, f32 = c, b = d, str = e }
-		test("5-field heterogeneous schema round-trip", 2, 12, function()
+		test("5-field heterogeneous schema round-trip", function()
 			local buf = ser(s, row)
 			if buf == nil then
 				return false
@@ -1363,7 +1862,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			b = types.boolean,
 		})
 		local row = { i = -1, f = math.huge, v = Vector3.new(1, 2, 3), b = false }
-		test("int32 + float64 + vector3 + boolean", 2, 12, function()
+		test("int32 + float64 + vector3 + boolean", function()
 			local buf = ser(s, row)
 			if buf == nil then
 				return false
@@ -1385,8 +1884,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "schema mismatch – too few args errors"
 				else "schema mismatch – too few args returns nil",
-			2,
-			3,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, { a = 1 })
@@ -1409,7 +1906,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.array(types.int32)
 		local data = { 1, -2, 300, -40000, 2147483647 }
-		test("array(int32) – 5 elements", 2, 15, function()
+		test("array(int32) – 5 elements", function()
 			return roundTrip(s, function(v)
 				for i, val in data do
 					if v[i] ~= val then
@@ -1422,7 +1919,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, data)
 		end)
 
-		test("array(int32) – empty array", 2, 8, function()
+		test("array(int32) – empty array", function()
 			return roundTrip(s, function(v)
 				return #v == 0
 			end, {})
@@ -1434,7 +1931,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.array(types.string)
 		local words = { "alpha", "beta", "gamma", "delta", "epsilon" }
-		test("array(string) – 5 string elements", 2, 15, function()
+		test("array(string) – 5 string elements", function()
 			return roundTrip(s, function(v)
 				for i, w in words do
 					if v[i] ~= w then
@@ -1454,7 +1951,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		for i = 1, 50 do
 			floats[i] = math.sin(i)
 		end
-		test("array255(float32) – 50 sine values (1e-4 tol)", 2, 25, function()
+		test("array255(float32) – 50 sine values (1e-4 tol)", function()
 			return roundTrip(s, function(v)
 				for i, f in floats do
 					if not approxEq(v[i], f, 1e-4) then
@@ -1474,7 +1971,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.map(types.string255, types.int32)
 		local m = { alpha = 1, beta = -42, gamma = 2147483647 }
-		test("map(string255,int32) – string keys round-trip", 2, 25, function()
+		test("map(string255,int32) – string keys round-trip", function()
 			return roundTrip(s, function(v)
 				for k, val in pairs(m) do
 					if v[k] ~= val then
@@ -1494,7 +1991,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		for i = 1, 50 do
 			m[i] = i % 3 == 0
 		end
-		test("map255(uint8,boolean) – 50 numeric keys", 2, 40, function()
+		test("map255(uint8,boolean) – 50 numeric keys", function()
 			return roundTrip(s, function(v)
 				for k, val in pairs(m) do
 					if v[k] ~= val then
@@ -1515,7 +2012,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			b = {},
 			c = { 255, 0, 128 },
 		}
-		test("map – nested array values round-trip", 2, 45, function()
+		test("map – nested array values round-trip", function()
 			return roundTrip(s, function(v)
 				for k, arr in pairs(m) do
 					local out = v[k]
@@ -1538,14 +2035,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.optional(types.int32)
-		test("optional(int32) – absent (nil)", 2, 8, function()
+		test("optional(int32) – absent (nil)", function()
 			return roundTrip(s, function(v)
 				return v == nil
 			end, nil)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, nil)
 		end)
-		test("optional(int32) – present", 2, 8, function()
+		test("optional(int32) – present", function()
 			return roundTrip(s, function(v)
 				return v == -100000
 			end, -100000)
@@ -1561,7 +2058,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			{ a = 255 },
 			{},
 		}
-		test("array(map(string255,uint8)) – nested collections", 2, 50, function()
+		test("array(map(string255,uint8)) – nested collections", function()
 			return roundTrip(s, function(v)
 				for i, t in nested do
 					local o = v[i]
@@ -1583,6 +2080,282 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 	end
 
+	--[[
+		Union dispatch uses runtime `extypeof(value)` matched against each variant's `exType`.
+		Only one variant may use exType "int" (all integer width types share "int"), one "float", etc.
+	]]
+	-- ─── Static Serializer: Union ─────────────────────────────────────────────────
+	section("Static · Union Type")
+
+	do
+		local u = types.union(types.int32, types.float64, types.string255)
+		test("union(int32|float64|string255) – integer branch", function()
+			return roundTrip(u, function(v)
+				return v == -1234567890
+			end, -1234567890)
+		end, function()
+			staticRoundTripPerf(u, nil, nil, -1234567890)
+		end)
+		test("union(int32|float64|string255) – float branch (non-integer number)", function()
+			return roundTrip(u, function(v)
+				return approxEq(v, math.pi, 1e-10)
+			end, math.pi)
+		end, function()
+			staticRoundTripPerf(u, nil, nil, math.pi)
+		end)
+		test("union(int32|float64|string255) – string branch", function()
+			local msg = "union-payload-こんにちは"
+			return roundTrip(u, function(v)
+				return v == msg
+			end, msg)
+		end, function()
+			staticRoundTripPerf(u, nil, nil, "union-payload-こんにちは")
+		end)
+	end
+
+	do
+		local uWide = types.union(types.uint40, types.string255)
+		local U40_MAX = 1099511627775
+		test("union(uint40|string255) – uint40 at 2^40-1", function()
+			return roundTrip(uWide, function(v)
+				return v == U40_MAX
+			end, U40_MAX)
+		end, function()
+			staticRoundTripPerf(uWide, nil, nil, U40_MAX)
+		end)
+		test("union(uint40|string255) – string branch", function()
+			return roundTrip(uWide, function(v)
+				return v == "wide"
+			end, "wide")
+		end, function()
+			staticRoundTripPerf(uWide, nil, nil, "wide")
+		end)
+	end
+
+	do
+		local uBF = types.union(types.boolean, types.string255, types.float32)
+		test("union(boolean|string|float32) – true", function()
+			return roundTrip(uBF, function(v)
+				return v == true
+			end, true)
+		end, function()
+			staticRoundTripPerf(uBF, nil, nil, true)
+		end)
+		test("union(boolean|string|float32) – false", function()
+			return roundTrip(uBF, function(v)
+				return v == false
+			end, false)
+		end, function()
+			staticRoundTripPerf(uBF, nil, nil, false)
+		end)
+		test("union(boolean|string|float32) – float (non-integer)", function()
+			return roundTrip(uBF, function(v)
+				return approxEq(v, 0.25, 1e-5)
+			end, 0.25)
+		end, function()
+			staticRoundTripPerf(uBF, nil, nil, 0.25)
+		end)
+	end
+
+	do
+		local uVecCol = types.union(types.vector3, types.color3)
+		local p = Vector3.new(-0.25, 1000, 3.125)
+		local c = Color3.fromRGB(12, 200, 90)
+		test("union(Vector3|Color3) – Vector3 branch", function()
+			return roundTrip(uVecCol, function(v)
+				return typeof(v) == "Vector3"
+					and approxEq((v :: Vector3).X, p.X, 1e-3)
+					and approxEq((v :: Vector3).Y, p.Y, 1e-3)
+					and approxEq((v :: Vector3).Z, p.Z, 1e-3)
+			end, p)
+		end, function()
+			staticRoundTripPerf(uVecCol, nil, nil, p)
+		end)
+		test("union(Vector3|Color3) – Color3 branch", function()
+			return roundTrip(uVecCol, function(v)
+				return typeof(v) == "Color3" and v.R == c.R and v.G == c.G and v.B == c.B
+			end, c)
+		end, function()
+			staticRoundTripPerf(uVecCol, nil, nil, c)
+		end)
+	end
+
+	do
+		local uAM = types.union(types.array(types.uint8), types.map(types.string255, types.int32))
+		local arr = { 9, 8, 7 }
+		local m = { k = -1, zz = 42 }
+		test("union(array|map) – non-empty array branch", function()
+			return roundTrip(uAM, function(v)
+				return v[1] == 9 and v[2] == 8 and v[3] == 7
+			end, arr)
+		end, function()
+			staticRoundTripPerf(uAM, nil, nil, arr)
+		end)
+		test("union(array|map) – map branch (string keys)", function()
+			return roundTrip(uAM, function(v)
+				return (v :: any).k == -1 and (v :: any).zz == 42
+			end, m)
+		end, function()
+			staticRoundTripPerf(uAM, nil, nil, m)
+		end)
+		test("union(array|map) – empty table {} is array (extypeof)", function()
+			local empty: { number } = {}
+			return roundTrip(uAM, function(v)
+				return type(v) == "table" and #v == 0 and next(v :: any) == nil
+			end, empty)
+		end, function()
+			staticRoundTripPerf(uAM, nil, nil, {})
+		end)
+	end
+
+	do
+		local uDisc = types.union(types.int40, types.string255, types.boolean)
+		test("union(int40|string|boolean) – int40 min edge", function()
+			return roundTrip(uDisc, function(v)
+				return v == -549755813888
+			end, -549755813888)
+		end, function()
+			staticRoundTripPerf(uDisc, nil, nil, -549755813888)
+		end)
+		test("union(int40|string|boolean) – boolean competes with int (distinct exTypes)", function()
+			return roundTrip(uDisc, function(v)
+				return v == false
+			end, false)
+		end, function()
+			staticRoundTripPerf(uDisc, nil, nil, false)
+		end)
+	end
+
+	do
+		test("union – duplicate ExType (int32 + int16) throws at build", function()
+			local ok = pcall(function()
+				types.union(types.int32, types.int16)
+			end)
+			return not ok
+		end, function()
+			pcall(function()
+				types.union(types.int32, types.int16)
+			end)
+		end)
+		test("union – duplicate ExType (two string widths) throws", function()
+			local ok = pcall(function()
+				types.union(types.string, types.string255)
+			end)
+			return not ok
+		end, function()
+			pcall(function()
+				types.union(types.string, types.string255)
+			end)
+		end)
+		test("union – nested union variant is unsupported (throws at build)", function()
+			local ok = pcall(function()
+				types.union(types.int32, types.union(types.float64, types.boolean))
+			end)
+			return not ok
+		end, function()
+			pcall(function()
+				types.union(types.int32, types.union(types.float64, types.boolean))
+			end)
+		end)
+		test("union – optional variant is unsupported (throws at build)", function()
+			local ok = pcall(function()
+				types.union(types.int32, types.optional(types.int32))
+			end)
+			return not ok
+		end, function()
+			pcall(function()
+				types.union(types.int32, types.optional(types.int32))
+			end)
+		end)
+	end
+
+	do
+		local uOnlyBS = types.union(types.boolean, types.string255)
+		test(
+			if vsConfig.strictMode
+				then "union – value matching no variant (number) errors on serialize"
+				else "union – value matching no variant (number) returns nil",
+			function()
+				local ok, res = pcall(function()
+					return ser(uOnlyBS, 999)
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(uOnlyBS, nil, nil, true)
+				else
+					staticRoundTripPerf(uOnlyBS, nil, nil, 999)
+				end
+			end
+		)
+		test(
+			if vsConfig.strictMode
+				then "union – value matching no variant (table) errors"
+				else "union – value matching no variant (table) returns nil",
+			function()
+				local ok, res = pcall(function()
+					return ser(uOnlyBS, { 1, 2 })
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(uOnlyBS, nil, nil, false)
+				else
+					staticRoundTripPerf(uOnlyBS, nil, nil, { 1, 2 })
+				end
+			end
+		)
+	end
+
+	do
+		local uEnum = types.union((types.enum :: any)(Enum.HorizontalAlignment) :: voidSentry2.typeNode<Enum.HorizontalAlignment>, types.int32, types.string255)
+		test("union(EnumItem|int|string) – EnumItem branch", function()
+			local item = Enum.HorizontalAlignment.Center
+			return roundTrip(uEnum, function(v)
+				return v == item
+			end, item)
+		end, function()
+			staticRoundTripPerf(uEnum, nil, nil, Enum.HorizontalAlignment.Center)
+		end)
+		test("union(EnumItem|int|string) – int branch", function()
+			return roundTrip(uEnum, function(v)
+				return v == 424242
+			end, 424242)
+		end, function()
+			staticRoundTripPerf(uEnum, nil, nil, 424242)
+		end)
+	end
+
+	do
+		local many = types.union(
+			types.int32,
+			types.float32,
+			types.boolean,
+			types.string255,
+			types.vector2,
+			types.color3
+		)
+		test("union – six distinct branches round-trip sample (Vector2)", function()
+			local v2 = Vector2.new(-88.5, 1.25)
+			return roundTrip(many, function(v)
+				return typeof(v) == "Vector2" and approxEq(v.X, v2.X, 1e-3) and approxEq(v.Y, v2.Y, 1e-3)
+			end, v2)
+		end, function()
+			staticRoundTripPerf(many, nil, nil, Vector2.new(-88.5, 1.25))
+		end)
+		test("union – six distinct branches round-trip sample (Color3)", function()
+			local col = Color3.fromHSV(0.55, 0.2, 0.95)
+			return roundTrip(many, function(v)
+				return typeof(v) == "Color3"
+			end, col)
+		end, function()
+			local col = Color3.fromHSV(0.55, 0.2, 0.95)
+			staticRoundTripPerf(many, nil, nil, col)
+		end)
+	end
+
 	-- ─── Static Serializer: Struct ────────────────────────────────────────────────
 	section("Static · Struct Type")
 
@@ -1593,7 +2366,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			z = types.float32,
 		})
 		local point = { x = 1.1, y = -2.2, z = 3.3 }
-		test("struct – 3-field float32 struct", 2, 12, function()
+		test("struct – 3-field float32 struct", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.x, point.x, 1e-4) and approxEq(v.y, point.y, 1e-4) and approxEq(v.z, point.z, 1e-4)
 			end, point)
@@ -1610,7 +2383,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			score = types.float32,
 		})
 		local record = { id = 99999, name = "PlayerOne", active = true, score = 4200.5 }
-		test("struct – mixed field types (id/name/active/score)", 2, 15, function()
+		test("struct – mixed field types (id/name/active/score)", function()
 			return roundTrip(s, function(v)
 				return v.id == record.id
 					and v.name == record.name
@@ -1631,8 +2404,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "struct – wrong type for field errors"
 				else "struct – wrong type for field returns nil",
-			2,
-			3,
 			function()
 				local bad = { name = "ok", wrong = "not a number" }
 				local ok, res = pcall(function()
@@ -1663,7 +2434,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			name = types.string255,
 		})
 		local entity = { pos = { x = 15.5, y = -22.0 }, hp = 1000, name = "Boss" }
-		test("struct inside struct (entity with pos)", 2, 18, function()
+		test("struct inside struct (entity with pos)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v.pos.x, entity.pos.x, 1e-3)
 					and approxEq(v.pos.y, entity.pos.y, 1e-3)
@@ -1687,7 +2458,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			{ id = 3, value = 0 },
 		}
 		
-		test("array of structs – 3 entries", 2, 20, function()
+		test("array of structs – 3 entries", function()
 			return roundTrip(s, function(v)
 				for i, e in entries do
 					if v[i].id ~= e.id then
@@ -1716,7 +2487,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			count = types.uint8,
 		})
 		local deep = { outer = { mid = { leaf = -42 }, tag = "deep" }, count = 7 }
-		test("3-level nested struct", 2, 20, function()
+		test("3-level nested struct", function()
 			return roundTrip(s, function(v)
 				return v.outer.mid.leaf == deep.outer.mid.leaf
 					and v.outer.tag == deep.outer.tag
@@ -1731,7 +2502,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		-- Array of arrays
 		local s = types.array(types.array(types.uint8))
 		local matrix = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } }
-		test("array of arrays – 3×3 uint8 matrix", 2, 25, function()
+		test("array of arrays – 3×3 uint8 matrix", function()
 			return roundTrip(s, function(v)
 				for i = 1, 3 do
 					for j = 1, 3 do
@@ -1754,7 +2525,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			priority = types.uint8,
 		})
 		local item = { tags = { "fire", "magic", "rare" }, priority = 5 }
-		test("struct with array255(string255) field", 2, 20, function()
+		test("struct with array255(string255) field", function()
 			return roundTrip(s, function(v)
 				if v.priority ~= item.priority then
 					return false
@@ -1777,7 +2548,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local strSerde = types.string
 		local payload = string.rep("aaabbbccc", 200)
-		test("compressed string – round-trip identical", 2, 80, function()
+		test("compressed string – round-trip identical", function()
 			local b = serZ(strSerde, payload, 3)
 			if b == nil then
 				return false
@@ -1787,7 +2558,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(strSerde, 3, nil, payload)
 		end)
-		test("compressed buffer is smaller than uncompressed", 2, 80, function()
+		test("compressed buffer is smaller than uncompressed", function()
 			local bc = serZ(strSerde, payload, 3)
 			local bu = ser(strSerde, payload)
 			if bc == nil or bu == nil then
@@ -1805,7 +2576,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		for i = 1, 200 do
 			compressibleInts[i] = i * 4
 		end
-		test("compressed array(int32) – 200 elements round-trip", 2, 200, function()
+		test("compressed array(int32) – 200 elements round-trip", function()
 			local b = serZ(arrIntSerde, compressibleInts, 5)
 			if b == nil then
 				return false
@@ -1825,49 +2596,49 @@ const function voidSentry2_Test(createUI: boolean?): number
 	-- ─── Dynamic Serializer: Primitives ──────────────────────────────────────────
 	section("Dynamic · Primitive Types")
 
-	test("dynamic – uint8 value 200", 2, 8, function()
+	test("dynamic – uint8 value 200", function()
 		local r = dynRoundTrip(200)
 		return r ~= nil and r[1] == 200
 	end, function()
 		dynamicRoundTripPerf(200)
 	end)
 
-	test("dynamic – int8 value -50", 2, 8, function()
+	test("dynamic – int8 value -50", function()
 		local r = dynRoundTrip(-50)
 		return r ~= nil and r[1] == -50
 	end, function()
 		dynamicRoundTripPerf(-50)
 	end)
 
-	test("dynamic – float value 1.5 (1e-5 tol)", 2, 8, function()
+	test("dynamic – float value 1.5 (1e-5 tol)", function()
 		local r = dynRoundTrip(1.5)
 		return r ~= nil and approxEq(r[1], 1.5, 1e-5)
 	end, function()
 		dynamicRoundTripPerf(1.5)
 	end)
 
-	test("dynamic – true", 2, 8, function()
+	test("dynamic – true", function()
 		local r = dynRoundTrip(true)
 		return r ~= nil and r[1] == true
 	end, function()
 		dynamicRoundTripPerf(true)
 	end)
 
-	test("dynamic – false", 2, 8, function()
+	test("dynamic – false", function()
 		local r = dynRoundTrip(false)
 		return r ~= nil and r[1] == false
 	end, function()
 		dynamicRoundTripPerf(false)
 	end)
 
-	test("dynamic – short string", 2, 8, function()
+	test("dynamic – short string", function()
 		local r = dynRoundTrip("hello")
 		return r ~= nil and r[1] == "hello"
 	end, function()
 		dynamicRoundTripPerf("hello")
 	end)
 
-	test("dynamic – long string (>255 chars)", 2, 12, function()
+	test("dynamic – long string (>255 chars)", function()
 		local big = string.rep("z", 1000)
 		local r = dynRoundTrip(big)
 		return r ~= nil and r[1] == big
@@ -1875,7 +2646,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf(string.rep("z", 1000))
 	end)
 
-	test("dynamic – empty table (void)", 2, 8, function()
+	test("dynamic – empty table (void)", function()
 		local r = dynRoundTrip({})
 		return r ~= nil and type(r[1]) == "table" and next(r[1]) == nil
 	end, function()
@@ -1885,14 +2656,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 	-- ─── Dynamic Serializer: Multiple Values ─────────────────────────────────────
 	section("Dynamic · Multiple Values")
 
-	test("dynamic – mixed multi-value pack (number, bool, string)", 2, 15, function()
+	test("dynamic – mixed multi-value pack (number, bool, string)", function()
 		local r = dynRoundTrip(42, true, "test")
 		return r ~= nil and r[1] == 42 and r[2] == true and r[3] == "test"
 	end, function()
 		dynamicRoundTripPerf(42, true, "test")
 	end)
 
-	test("dynamic – 6 heterogeneous values", 2, 20, function()
+	test("dynamic – 6 heterogeneous values", function()
 		local r = dynRoundTrip(1, 2.5, false, "abc", 255, -128)
 		return r ~= nil
 			and r[1] == 1
@@ -1905,7 +2676,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf(1, 2.5, false, "abc", 255, -128)
 	end)
 
-	test("dynamic – empty serialize returns non-nil buffer", 2, 5, function()
+	test("dynamic – empty serialize returns non-nil buffer", function()
 		local b = dynamic.serialize(nil, nil)
 		return b ~= nil
 	end, function()
@@ -1915,7 +2686,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	-- ─── Dynamic Serializer: Collections ─────────────────────────────────────────
 	section("Dynamic · Collections")
 
-	test("dynamic – array of numbers", 2, 15, function()
+	test("dynamic – array of numbers", function()
 		local arr = { 10, 20, 30, 40, 50 }
 		local r = dynRoundTrip(arr)
 		if r == nil then
@@ -1931,7 +2702,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf({ 10, 20, 30, 40, 50 })
 	end)
 
-	test("dynamic – map auto-detected", 2, 20, function()
+	test("dynamic – map auto-detected", function()
 		-- A table that is a pure dictionary (no integer keys from 1)
 		local map = { a = 10, b = 20 }
 		local r = dynRoundTrip(map)
@@ -1943,7 +2714,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	-- ─── Dynamic Serializer: Nested & Deep ───────────────────────────────────────
 	section("Dynamic · Nested Structures")
 
-	test("dynamic – array of arrays", 2, 25, function()
+	test("dynamic – array of arrays", function()
 		local matrix = { { 1, 2 }, { 3, 4 } }
 		local r = dynRoundTrip(matrix)
 		return r ~= nil and r[1][1][1] == 1 and r[1][1][2] == 2 and r[1][2][1] == 3 and r[1][2][2] == 4
@@ -1951,7 +2722,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf({ { 1, 2 }, { 3, 4 } })
 	end)
 
-	test("dynamic – deeply nested: array[array[array[uint8]]]", 2, 35, function()
+	test("dynamic – deeply nested: array[array[array[uint8]]]", function()
 		local cube = { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }
 		local r = dynRoundTrip(cube)
 		return r ~= nil and r[1][1][1][1] == 1 and r[1][2][2][2] == 8
@@ -1959,7 +2730,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf({ { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } })
 	end)
 
-	test("dynamic – map of maps (3 levels)", 2, 40, function()
+	test("dynamic – map of maps (3 levels)", function()
 		local tree = { L1 = { L2 = { leaf = 99 } } }
 		local r = dynRoundTrip(tree)
 		return r ~= nil and r[1].L1.L2.leaf == 99
@@ -1967,7 +2738,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf({ L1 = { L2 = { leaf = 99 } } })
 	end)
 
-	test("dynamic – array of maps with array values", 2, 45, function()
+	test("dynamic – array of maps with array values", function()
 		local data = { { k = { 1, 2 } }, { k = { 3 } } }
 		local r = dynRoundTrip(data)
 		return r ~= nil and r[1][1].k[1] == 1 and r[1][1].k[2] == 2 and r[1][2].k[1] == 3
@@ -1977,8 +2748,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	test(
 		if dynamicInfersVector3() then "dynamic – Vector3 round-trip" else "dynamic – Luau vector round-trip",
-		2,
-		15,
 		function()
 			local p = Vector3.new(1.25, -99, 0.001)
 			local r = dynRoundTrip(p)
@@ -1997,7 +2766,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end
 	)
 
-	test("dynamic – Vector2 round-trip", 2, 12, function()
+	test("dynamic – Vector2 round-trip", function()
 		local p = Vector2.new(50, -25.5)
 		local r = dynRoundTrip(p)
 		return r ~= nil and typeof(r[1]) == "Vector2" and approxEq(r[1].X, p.X, 1e-3) and approxEq(r[1].Y, p.Y, 1e-3)
@@ -2005,7 +2774,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamicRoundTripPerf(Vector2.new(50, -25.5))
 	end)
 
-	test("dynamic – CFrame round-trip (FuzzyEq)", 2, 35, function()
+	test("dynamic – CFrame round-trip (FuzzyEq)", function()
 		local cf = CFrame.new(10, 20, 30) * CFrame.Angles(0.5, -0.25, 0.125)
 		local r = dynRoundTrip(cf)
 		return r ~= nil and typeof(r[1]) == "CFrame" and cframeFuzzyEq(r[1], cf, 1e-2)
@@ -2016,14 +2785,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 	-- ─── Dynamic Serializer: Zstd ────────────────────────────────────────────────
 	section("Dynamic · Zstd Compression")
 
-	test("dynamic Zstd – multi-value round-trip (wasCompressed = true)", 2, 80, function()
+	test("dynamic Zstd – multi-value round-trip (wasCompressed = true)", function()
 		local r = dynRoundTripCompressed(3, "payload", false, 12345)
 		return r ~= nil and r[1] == "payload" and r[2] == false and r[3] == 12345
 	end, function()
 		dynamicRoundTripPerfCompressed(3, "payload", false, 12345)
 	end)
 
-	test("dynamic Zstd – compressed buffer smaller on large string", 2, 100, function()
+	test("dynamic Zstd – compressed buffer smaller on large string", function()
 		local payload = string.rep("abcd", 400)
 		local plain = dynamic.serialize(nil, nil, payload)
 		local zipped = dynamic.serialize(5, nil, payload)
@@ -2036,7 +2805,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		dynamic.serialize(5, nil, payload)
 	end)
 
-	test("dynamic Zstd – wrong wasCompressed on plain buffer fails", 2, 100, function()
+	test("dynamic Zstd – wrong wasCompressed on plain buffer fails", function()
 		local b = dynamic.serialize(nil, nil, 1, 2, 3)
 		if b == nil then
 			return false
@@ -2052,7 +2821,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end)
 	end)
 
-	test("dynamic – uncompressed with explicit wasCompressed false", 2, 15, function()
+	test("dynamic – uncompressed with explicit wasCompressed false", function()
 		local b = dynamic.serialize(nil, nil, 7, 8)
 		if b == nil then
 			return false
@@ -2067,35 +2836,35 @@ const function voidSentry2_Test(createUI: boolean?): number
 
 	do
 		local s = types.any
-		test("any – serialize uint value 100", 2, 10, function()
+		test("any – serialize uint value 100", function()
 			return roundTrip(s, function(v)
 				return v == 100
 			end, 100)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 100)
 		end)
-		test("any – serialize string", 2, 10, function()
+		test("any – serialize string", function()
 			return roundTrip(s, function(v)
 				return v == "abc"
 			end, "abc")
 		end, function()
 			staticRoundTripPerf(s, nil, nil, "abc")
 		end)
-		test("any – serialize boolean true", 2, 10, function()
+		test("any – serialize boolean true", function()
 			return roundTrip(s, function(v)
 				return v == true
 			end, true)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, true)
 		end)
-		test("any – serialize float (1e-4 tol)", 2, 10, function()
+		test("any – serialize float (1e-4 tol)", function()
 			return roundTrip(s, function(v)
 				return approxEq(v, 3.14, 1e-4)
 			end, 3.14)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 3.14)
 		end)
-		test("any – serialize Vector3", 2, 12, function()
+		test("any – serialize Vector3", function()
 			local p = Vector3.new(9, -8, 7.5)
 			return roundTrip(s, function(v)
 				return typeof(v) == "Vector3"
@@ -2106,7 +2875,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, Vector3.new(9, -8, 7.5))
 		end)
-		test("any – serialize Color3", 2, 10, function()
+		test("any – serialize Color3", function()
 			local c = Color3.fromRGB(5, 128, 240)
 			return roundTrip(s, function(v)
 				return typeof(v) == "Color3" and v.R == c.R and v.G == c.G and v.B == c.B
@@ -2114,7 +2883,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, Color3.fromRGB(5, 128, 240))
 		end)
-		test("any – serialize CFrame", 2, 18, function()
+		test("any – serialize CFrame", function()
 			local cf = CFrame.new(1, 2, 3) * CFrame.Angles(0.4, -0.2, 0.1)
 			return roundTrip(s, function(v)
 				return typeof(v) == "CFrame" and cframeFuzzyEq(v, cf, 1e-2)
@@ -2122,7 +2891,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, CFrame.new(1, 2, 3) * CFrame.Angles(0.4, -0.2, 0.1))
 		end)
-		test("any – serialize array255 of numbers", 2, 15, function()
+		test("any – serialize array255 of numbers", function()
 			local arr = { 1, 2, 3, 4, 5 }
 			return roundTrip(s, function(v)
 				if type(v) ~= "table" or #v ~= #arr then
@@ -2138,7 +2907,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, nil, { 1, 2, 3, 4, 5 })
 		end)
-		test("any – serialize nested map (dynamic layout)", 2, 22, function()
+		test("any – serialize nested map (dynamic layout)", function()
 			local tree = { a = { b = { c = 42 } } }
 			return roundTrip(s, function(v)
 				if type(v) ~= "table" then
@@ -2160,7 +2929,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			hi = types.uint8,
 		})
 		local pair = { lo = 0xAA, hi = 0xBB }
-		test("offset=4: written bytes start at position 4", 2, 10, function()
+		test("offset=4: written bytes start at position 4", function()
 			local b = serOff(s, pair, 4)
 			if b == nil then
 				return false
@@ -2170,7 +2939,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		end, function()
 			staticRoundTripPerf(s, nil, 4, pair)
 		end)
-		test("offset=4: deserialize with same offset", 2, 10, function()
+		test("offset=4: deserialize with same offset", function()
 			local b = serOff(s, pair, 4) :: buffer
 			local out = desOff(s, b, 4) :: any
 			return out.lo == 0xAA and out.hi == 0xBB
@@ -2188,12 +2957,12 @@ const function voidSentry2_Test(createUI: boolean?): number
 		for i = 1, 500 do
 			big[i] = math.random() * 1e6
 		end
-		test("array(float64) – 500 elements serialize", 2, 600, function()
+		test("array(float64) – 500 elements serialize", function()
 			return ser(s, big) ~= nil
 		end, function()
 			ser(s, big)
 		end)
-		test("array(float64) – 500 elements round-trip exact", 2, 1200, function()
+		test("array(float64) – 500 elements round-trip exact", function()
 			local b = ser(s, big)
 			if b == nil then
 				return false
@@ -2221,7 +2990,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		for i = 1, 100 do
 			entities[i] = { id = i, x = math.random() * 200, y = math.random() * 200, active = i % 2 == 0 }
 		end
-		test("array(struct{id,x,y,active}) – 100 entities round-trip", 2, 400, function()
+		test("array(struct{id,x,y,active}) – 100 entities round-trip", function()
 			local b = ser(s, entities)
 			if b == nil then
 				return false
@@ -2248,7 +3017,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	do
 		local s = types.string
 		local huge = string.rep("abcdefghij", 5000)
-		test("string – 50 KB payload round-trip", 2, 2000, function()
+		test("string – 50 KB payload round-trip", function()
 			local b = ser(s, huge)
 			if b == nil then
 				return false
@@ -2271,7 +3040,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		part:SetAttribute("_VSID", VSID)
 		instanceMap[VSID] = part
 
-		test("instance – registered part round-trips to same reference", 2, 10, function()
+		test("instance – registered part round-trips to same reference", function()
 			local b = ser(s, part)
 			if b == nil then
 				return false
@@ -2282,7 +3051,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, part)
 		end)
 
-		test("instance – buffer is exactly 3 bytes (U24 id)", 2, 5, function()
+		test("instance – buffer is exactly 3 bytes (U24 id)", function()
 			local b = ser(s, part)
 			return b ~= nil and buffer.len(b) == 3
 		end, function()
@@ -2293,8 +3062,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "instance – unregistered instance (no _VSID) errors"
 				else "instance – unregistered instance (no _VSID) returns nil",
-			2,
-			5,
 			function()
 				local unregistered = Instance.new("Part")
 				local ok, res = pcall(function()
@@ -2319,8 +3086,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "instance – id not in map errors on deserialize"
 				else "instance – id not in map returns nil on deserialize",
-			2,
-			8,
 			function()
 				local ok, v = pcall(function()
 					return des(s, badInstanceBuf)
@@ -2341,8 +3106,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "instance – wrong type value (non-Instance) errors"
 				else "instance – wrong type value (non-Instance) returns nil",
-			2,
-			3,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, "not an instance" :: any)
@@ -2371,7 +3134,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			second = types.instance,
 		})
 		local instRow = { first = partA, second = partB }
-		test("instance – two instances in one schema both round-trip", 2, 12, function()
+		test("instance – two instances in one schema both round-trip", function()
 			local b = ser(s2, instRow)
 			if b == nil then
 				return false
@@ -2401,7 +3164,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 		src.Anchored = true
 		src.Reflectance = 0.25
 
-		test("serInstance(Part) – Name preserved exactly", 2, 30, function()
+		test("serInstance(Part) – Name preserved exactly", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2412,7 +3175,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance(Part) – numeric properties within tolerance", 2, 30, function()
+		test("serInstance(Part) – numeric properties within tolerance", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2427,7 +3190,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance(Part) – CFrame preserved (FuzzyEq)", 2, 30, function()
+		test("serInstance(Part) – CFrame preserved (FuzzyEq)", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2441,7 +3204,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance(Part) – Color3 channels exact (uint8 storage)", 2, 30, function()
+		test("serInstance(Part) – Color3 channels exact (uint8 storage)", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2458,7 +3221,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance(Part) – boolean Anchored preserved", 2, 30, function()
+		test("serInstance(Part) – boolean Anchored preserved", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2469,7 +3232,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance(Part) – deserialized value is a new Part instance", 2, 30, function()
+		test("serInstance(Part) – deserialized value is a new Part instance", function()
 			local b = ser(s, src)
 			if b == nil then
 				return false
@@ -2480,7 +3243,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
 
-		test("serInstance – unsupported class name errors", 2, 100, function()
+		test("serInstance – unsupported class name errors", function()
 			local ok = pcall(function()
 				types.serInstance("Workspace")
 			end)
@@ -2495,8 +3258,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "serInstance – wrong type (non-Instance) errors"
 				else "serInstance – wrong type (non-Instance) returns nil",
-			2,
-			20,
 			function()
 				local ok, res = pcall(function()
 					return ser(s, "not an instance" :: any)
@@ -2524,14 +3285,14 @@ const function voidSentry2_Test(createUI: boolean?): number
 			dynPart:SetAttribute("_VSID", 9010)
 			instanceMap[9010] = dynPart
 
-			test("dynamic – registered instance round-trips to same reference", 2, 15, function()
+			test("dynamic – registered instance round-trips to same reference", function()
 				local r = dynRoundTrip(dynPart)
 				return r ~= nil and r[1] == dynPart
 			end, function()
 				dynamicRoundTripPerf(dynPart)
 			end)
 
-			test("dynamic – instance alongside primitives", 2, 18, function()
+			test("dynamic – instance alongside primitives", function()
 				local r = dynRoundTrip(42, dynPart, "hello")
 				return r ~= nil and r[1] == 42 and r[2] == dynPart and r[3] == "hello"
 			end, function()
@@ -2542,8 +3303,6 @@ const function voidSentry2_Test(createUI: boolean?): number
 				if vsConfig.strictMode
 					then "dynamic – unregistered instance (no _VSID) errors"
 					else "dynamic – unregistered instance (no _VSID) returns nil",
-				2,
-				5,
 				function()
 					local unregistered = Instance.new("Part")
 					local ok, res = pcall(function()
@@ -2572,7 +3331,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			dynPart.Anchored = true
 			dynPart.Reflectance = 0.25
 
-			test("dynamic – serInstance Part round-trip (new instance, props match)", 2, 30, function()
+			test("dynamic – serInstance Part round-trip (new instance, props match)", function()
 				local r = dynRoundTrip(dynPart)
 				if r == nil then
 					return false
@@ -2583,7 +3342,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 				dynamicRoundTripPerf(dynPart)
 			end)
 
-			test("dynamic – serInstance alongside primitives", 2, 35, function()
+			test("dynamic – serInstance alongside primitives", function()
 				local r = dynRoundTrip(42, dynPart, "hello")
 				if r == nil then
 					return false
@@ -2598,7 +3357,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 			end)
 
 			-- No schema for Folder: serInstance node build throws (independent of strictMode).
-			test("dynamic – unsupported Instance class (Folder) errors", 2, 15, function()
+			test("dynamic – unsupported Instance class (Folder) errors", function()
 				local ok = pcall(function()
 					dynamic.serialize(nil, nil, Instance.new("Folder"))
 				end)
@@ -2612,83 +3371,139 @@ const function voidSentry2_Test(createUI: boolean?): number
 	end
 
 	-- ─── Edge Cases ────────────────────────────────────────────────────────────
+	-- Each test here targets behavior that a naive implementation usually gets wrong:
+	-- float sign/inf/NaN/subnormal corners, length-prefix boundaries, UTF-8 width
+	-- vs. character count, union dispatch by extypeof, nested optional presence bytes,
+	-- empty-key maps, and struct writes where every field is at its extreme value.
 	section("Edge Cases")
 
-	do
-		local s = types.uint32
-		test("edge – buffer is not nil", 2, 5, function()
-			return ser(s, 0) ~= nil
-		end, function()
-			ser(s, 0)
-		end)
-		test("edge – uint32 value 0 round-trip", 2, 5, function()
-			return roundTrip(s, function(v)
-				return v == 0
-			end, 0)
-		end, function()
-			staticRoundTripPerf(s, nil, nil, 0)
-		end)
-	end
-
+	-- ─── Float corners (IEEE-754 oddities) ────────────────────────────────────
 	do
 		local s = types.float32
-		test("edge – serialize math.huge", 2, 5, function()
+		test("edge – float32 math.huge round-trip", function()
 			return roundTrip(s, function(v)
 				return v == math.huge
 			end, math.huge)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, math.huge)
 		end)
-		test("edge – serialize -math.huge", 2, 5, function()
+		test("edge – float32 -math.huge round-trip", function()
 			return roundTrip(s, function(v)
 				return v == -math.huge
 			end, -math.huge)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, -math.huge)
 		end)
-		test("edge – serialize NaN (NaN != NaN identity preserved)", 2, 5, function()
+		test("edge – float32 NaN identity preserved (v ~= v)", function()
 			local nan = 0 / 0
 			local b = ser(s, nan)
 			if b == nil then
 				return false
 			end
 			local v = des(s, b)
-			return v ~= v -- NaN is not equal to itself
+			return v ~= v
 		end, function()
 			staticRoundTripPerf(s, nil, nil, 0 / 0)
+		end)
+		-- -0.0 == 0.0 in Luau, but 1/-0 == -math.huge while 1/0 == math.huge.
+		-- A naive f32 encoder that normalizes zeros loses the sign bit here.
+		test("edge – float32 negative zero sign bit preserved", function()
+			local negZero = -0.0
+			local b = ser(s, negZero)
+			if b == nil then
+				return false
+			end
+			local v = des(s, b)
+			return v == 0 and (1 / v) == -math.huge
+		end, function()
+			staticRoundTripPerf(s, nil, nil, -0.0)
+		end)
+	end
+
+	do
+		local s = types.float16
+		-- f16 max finite ≈ 65504. 1e10 is far above, must saturate to +inf on write.
+		test("edge – float16 overflow saturates to math.huge", function()
+			local b = ser(s, 1e10)
+			if b == nil then
+				return false
+			end
+			local v = des(s, b)
+			return v == math.huge
+		end, function()
+			staticRoundTripPerf(s, nil, nil, 1e10)
+		end)
+		-- f16 smallest positive normal ≈ 6.1e-5. 1e-20 is far below; must flush to 0.
+		test("edge – float16 subnormal underflow flushes to zero", function()
+			local b = ser(s, 1e-20)
+			if b == nil then
+				return false
+			end
+			local v = des(s, b)
+			return v == 0
+		end, function()
+			staticRoundTripPerf(s, nil, nil, 1e-20)
+		end)
+	end
+
+	-- ─── String / length-prefix boundaries ────────────────────────────────────
+	-- Embedded NULs break C-style writers that terminate on '\0'. Luau buffers are
+	-- length-prefixed, so the payload must round-trip byte-for-byte.
+	do
+		local s = types.string
+		local payload = "a\0b\0\0c\0d"
+		test("edge – string with embedded null bytes round-trips byte-exact", function()
+			return roundTrip(s, function(v)
+				return v == payload and #v == 8
+			end, payload)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, payload)
 		end)
 	end
 
 	do
 		local s = types.string255
-		test("edge – empty string255", 2, 5, function()
-			return roundTrip(s, function(v)
-				return v == ""
-			end, "")
+		-- string255 length prefix is a single uint8. "あ" = 3 UTF-8 bytes, so
+		-- 85 repeats is exactly 255 bytes (max) but only 85 codepoints.
+		-- A naive encoder measuring code points would overflow by 3× here.
+		local utf = string.rep("あ", 85)
+		test("edge – string255 UTF-8 multi-byte exactly 255 bytes", function()
+			return #utf == 255 and roundTrip(s, function(v)
+				return v == utf and #v == 255
+			end, utf)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, utf)
+		end)
+		test("edge – string255 empty boundary (length byte = 0)", function()
+			local b = ser(s, "")
+			if b == nil or buffer.len(b) ~= 1 or buffer.readu8(b, 0) ~= 0 then
+				return false
+			end
+			return des(s, b) == ""
 		end, function()
 			staticRoundTripPerf(s, nil, nil, "")
 		end)
 	end
 
+	-- ─── Array255 length-prefix boundaries ────────────────────────────────────
 	do
-		local s = types.array(types.uint8)
-		test("edge – single-element array", 2, 6, function()
-			return roundTrip(s, function(v)
-				return #v == 1 and v[1] == 77
-			end, { 77 })
-		end, function()
-			staticRoundTripPerf(s, nil, nil, { 77 })
-		end)
-	end
-
-	do
-		-- array255 boundary: exactly 255 elements
 		local s = types.array255(types.uint8)
+		test("edge – array255 boundary 0 elements", function()
+			local b = ser(s, {})
+			if b == nil or buffer.len(b) ~= 1 or buffer.readu8(b, 0) ~= 0 then
+				return false
+			end
+			local v = des(s, b)
+			return type(v) == "table" and #v == 0
+		end, function()
+			staticRoundTripPerf(s, nil, nil, {})
+		end)
+
 		local exactly255: { number } = {}
 		for i = 1, 255 do
 			exactly255[i] = i % 256
 		end
-		test("edge – array255 with exactly 255 elements", 2, 60, function()
+		test("edge – array255 exactly 255 elements", function()
 			return roundTrip(s, function(v)
 				for i = 1, 255 do
 					if v[i] ~= exactly255[i] then
@@ -2699,6 +3514,144 @@ const function voidSentry2_Test(createUI: boolean?): number
 			end, exactly255)
 		end, function()
 			staticRoundTripPerf(s, nil, nil, exactly255)
+		end)
+	end
+
+	-- ─── CFrame identity ──────────────────────────────────────────────────────
+	-- Identity has a known-exact byte representation (translation = 0,0,0 and the
+	-- rotation axes are the canonical basis). An encoder with drift in the rotation
+	-- path will fail FuzzyEq against the source identity.
+	do
+		local s = types.cframe
+		local id = CFrame.identity
+		test("edge – CFrame identity preserved byte-exact", function()
+			return roundTrip(s, function(v)
+				return typeof(v) == "CFrame" and cframeFuzzyEq(v, id, 1e-5)
+			end, id)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, id)
+		end)
+	end
+
+	-- ─── Infinity inside a Vector3 axis ───────────────────────────────────────
+	-- Vector3 encoders that pre-normalize or clamp before writing lose math.huge.
+	do
+		local s = types.vector3
+		local inf = Vector3.new(math.huge, 0, 0)
+		test("edge – vector3 with math.huge on one axis", function()
+			return roundTrip(s, function(v)
+				return v.X == math.huge and v.Y == 0 and v.Z == 0
+			end, inf)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, inf)
+		end)
+	end
+
+	-- ─── Struct with every field at an extreme simultaneously ─────────────────
+	-- Catches field-order bugs, interaction between length prefixes and numeric
+	-- extremes, and incorrect cursor advancement around variable-width fields.
+	do
+		local s = types.struct({
+			i32min = types.int32,
+			u32max = types.uint32,
+			f32nan = types.float32,
+			f32inf = types.float32,
+			bigStr = types.string,
+			empty = types.string255,
+			flag = types.boolean,
+		})
+		local nan = 0 / 0
+		local row = {
+			i32min = -2147483648,
+			u32max = 4294967295,
+			f32nan = nan,
+			f32inf = -math.huge,
+			bigStr = string.rep("Z", 1024),
+			empty = "",
+			flag = true,
+		}
+		test("edge – struct with every numeric extreme simultaneously", function()
+			local b = ser(s, row)
+			if b == nil then
+				return false
+			end
+			local out = des(s, b) :: any
+			return out.i32min == row.i32min
+				and out.u32max == row.u32max
+				and out.f32nan ~= out.f32nan
+				and out.f32inf == -math.huge
+				and out.bigStr == row.bigStr
+				and out.empty == ""
+				and out.flag == true
+		end, function()
+			staticRoundTripPerf(s, nil, nil, row)
+		end)
+	end
+
+	-- ─── Nested optional presence bytes ───────────────────────────────────────
+	-- optional(optional(T)) emits two presence bytes. An encoder that fuses them
+	-- cannot tell absent-outer from present-outer-absent-inner.
+	do
+		local s = types.optional(types.optional(types.int32))
+		test("edge – optional(optional(int32)) nested present/absent", function()
+			-- outer absent (nil) must round-trip to nil
+			local b1 = ser(s, nil)
+			if b1 == nil then
+				return false
+			end
+			local v1 = des(s, b1)
+			if v1 ~= nil then
+				return false
+			end
+			-- outer present, inner present with a value
+			local b2 = ser(s, -12345)
+			if b2 == nil then
+				return false
+			end
+			local v2 = des(s, b2)
+			return v2 == -12345
+		end, function()
+			staticRoundTripPerf(s, nil, nil, -12345)
+		end)
+	end
+
+	-- ─── Union dispatch: integer-valued floats route via "int" ────────────────
+	-- extypeof classifies a Luau number by value, not width: 5.0 has no fractional
+	-- part and must go to the int branch (not float), else it silently widens.
+	do
+		local u = types.union(types.int32, types.float64)
+		test("edge – union routes integer-valued float via \"int\" branch", function()
+			-- 5.0 has exType "int" → int32 variant (4 bytes), +1 byte index = 5 total.
+			local b1 = ser(u, 5.0)
+			if b1 == nil or buffer.len(b1) ~= 5 then
+				return false
+			end
+			if des(u, b1) ~= 5 then
+				return false
+			end
+			-- 2.5 has exType "float" → float64 variant (8 bytes), +1 index = 9 total.
+			local b2 = ser(u, 2.5)
+			if b2 == nil or buffer.len(b2) ~= 9 then
+				return false
+			end
+			return approxEq(des(u, b2), 2.5, 1e-12)
+		end, function()
+			staticRoundTripPerf(u, nil, nil, 5.0)
+		end)
+	end
+
+	-- ─── Map with empty-string key ────────────────────────────────────────────
+	-- A key of "" is a valid Luau table key and a valid string255 payload (length
+	-- byte = 0). Encoders that treat "" as sentinel or end-of-map corrupt here.
+	do
+		local s = types.map(types.string255, types.int32)
+		local m = { [""] = 42, a = -1 }
+		test("edge – map with empty-string key round-trips", function()
+			return roundTrip(s, function(v)
+				return v[""] == 42 and v.a == -1
+			end, m)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, m)
 		end)
 	end
 

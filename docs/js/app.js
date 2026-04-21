@@ -20,7 +20,7 @@ function renderBenchmarks() {
 		html += "<th>Test</th><th class=\"num\">Avg (µs)</th>";
 		html += "</tr></thead><tbody>";
 
-		const names = Object.keys(tests).sort();
+		const names = Object.keys(tests);
 		for (const name of names) {
 			const v = tests[name];
 			const num = typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : escapeHtml(String(v));
@@ -107,15 +107,18 @@ function initNav() {
 	const navButtons = document.querySelectorAll(".nav-btn");
 	const pages = document.querySelectorAll(".page");
 
-	function goToPage(targetPage) {
+	function goToPage(targetPage, opts) {
 		if (!targetPage) return;
+		const scrollTop = !opts || opts.scrollTop !== false;
 		navButtons.forEach(function (btn) {
 			btn.classList.toggle("active", btn.getAttribute("data-page") === targetPage);
 		});
 		pages.forEach(function (page) {
 			page.classList.toggle("active", page.id === targetPage);
 		});
-		window.scrollTo(0, 0);
+		if (scrollTop) {
+			window.scrollTo(0, 0);
+		}
 		if (targetPage === "benchmarks") {
 			renderBenchmarks();
 		}
@@ -124,6 +127,56 @@ function initNav() {
 	function onNavActivate(button) {
 		const targetPage = button.getAttribute("data-page");
 		goToPage(targetPage);
+	}
+
+	/**
+	 * SPA pages are display:none until .active; plain #hash navigation cannot reveal
+	 * the target. Find the owning .page, switch to it, then scroll the element in.
+	 * Cross-page switches must defer scrolling until after layout (otherwise scroll
+	 * lands at y=0 or the wrong offset). Same-page links use smooth scroll only.
+	 */
+	function prefersReducedMotion() {
+		return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
+
+	function updateHistoryHash(id) {
+		if (window.history && typeof window.history.replaceState === "function") {
+			window.history.replaceState(null, "", "#" + id);
+		}
+	}
+
+	function scrollToHashTarget(el) {
+		const behavior = prefersReducedMotion() ? "auto" : "smooth";
+		el.scrollIntoView({ block: "start", behavior: behavior, inline: "nearest" });
+	}
+
+	function navigateToHash(rawHash) {
+		const id = String(rawHash || "").replace(/^#/, "");
+		if (!id) return;
+		let el = document.getElementById(id);
+		if (!el) return;
+		const pageSection = el.closest(".page");
+		const targetPageId = pageSection && pageSection.id ? pageSection.id : "";
+		const activePage = document.querySelector(".page.active");
+		const currentPageId = activePage && activePage.id ? activePage.id : "";
+		const switchingPage = targetPageId && targetPageId !== currentPageId;
+
+		function applyScrollAndHash() {
+			el = document.getElementById(id);
+			if (!el) return;
+			scrollToHashTarget(el);
+			updateHistoryHash(id);
+		}
+
+		if (switchingPage) {
+			goToPage(targetPageId, { scrollTop: false });
+			// .page.active uses a 0.3s fade-in; scrolling before layout/animation finishes jumps to y≈0.
+			window.setTimeout(applyScrollAndHash, 320);
+		} else {
+			window.requestAnimationFrame(function () {
+				window.requestAnimationFrame(applyScrollAndHash);
+			});
+		}
 	}
 
 	navButtons.forEach(function (button) {
@@ -137,6 +190,24 @@ function initNav() {
 			onNavActivate(button);
 		});
 	});
+
+	document.addEventListener("click", function (e) {
+		const a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
+		if (!a || !a.getAttribute) return;
+		const href = a.getAttribute("href");
+		if (!href || href === "#") return;
+		if (href.charAt(0) !== "#") return;
+		const id = href.slice(1);
+		if (!id || !document.getElementById(id)) return;
+		e.preventDefault();
+		navigateToHash(href);
+	});
+
+	if (window.location.hash && window.location.hash.length > 1) {
+		window.setTimeout(function () {
+			navigateToHash(window.location.hash);
+		}, 0);
+	}
 }
 
 document.addEventListener("DOMContentLoaded", function () {

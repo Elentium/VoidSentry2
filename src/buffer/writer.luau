@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-	BufferWriter V0.1.0
+	BufferWriter V0.1.1
 
 	Serializes into one reusable big buffer (config.maxBufferSize).
 	START sets the write cursor (with optional offset for metadata/headers)
@@ -43,6 +43,7 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 
 const HUGE: number = math.huge
 const NHUGE: number = -HUGE
+const SQRT: (number) -> number = math.sqrt
 
 -----------------------------------------------------
 -- STATE                    			           --
@@ -60,7 +61,8 @@ local off: number = 0
 const function need(size: number): boolean
 	if cursor + size > bigCap then
 		FAIL_FN(
-			`[VoidSentry2]: writer.need throw – need {size} byte(s) at cursor {cursor} but bigBuffer ends at {bigCap} (config.maxBufferSize)`
+			`[VoidSentry2]: writer.need throw – need {size} byte(s) at cursor {cursor} but bigBuffer ends at {bigCap} (config.maxBufferSize)`,
+			0
 		)
 		return false
 	end
@@ -68,11 +70,11 @@ const function need(size: number): boolean
 end
 
 @native
-const function start(offset: number?)
+const function start(offset: number?): ()
 	cursor = offset or 0
 	off = cursor
 	if cursor > bigCap then
-		FAIL_FN(`VoidSentry2 writer: offset {cursor} exceeds bigBuffer size {bigCap}`)
+		FAIL_FN(`VoidSentry2 writer: offset {cursor} exceeds bigBuffer size {bigCap}`, 0)
 		cursor = bigCap + 1 -- poison; every subsequent need() call will fail.
 	end
 end
@@ -235,10 +237,311 @@ const function writes65(value: string, len: number): ()
 	cursor += len
 end
 
+@native 
+const function writeu40(value: number): ()
+	const lower: number = value % 0x100000000
+	const upper: number = value // 0x100000000
+	WRITE_U32(bigBuffer, cursor, lower)
+	cursor += 4
+	WRITE_U8(bigBuffer, cursor, upper)
+	cursor += 1
+end
+
+@native
+const function writeu48(value: number): ()
+	const lower: number = value % 0x100000000
+	const upper: number = AND(value // 0x100000000, 0xFFFF)
+	WRITE_U32(bigBuffer, cursor, lower)
+	cursor += 4
+	WRITE_U16(bigBuffer, cursor, upper)
+	cursor += 2
+end
+
+@native
+const function writev2f32(value: Vector2): ()
+	WRITE_F32(bigBuffer, cursor, value.X)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, value.Y)
+	cursor += 4
+end
+
+@native
+const function writev2f24(value: Vector2): ()
+	writef24(value.X)
+	writef24(value.Y)
+end
+
+@native
+const function writev2f16(value: Vector2): ()
+	writef16(value.X)
+	writef16(value.Y)
+end
+
+@native
+const function writevf32(value: vector | Vector3): ()
+	WRITE_F32(bigBuffer, cursor, value.x)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, value.y)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, value.z)
+	cursor += 4
+end
+
+@native
+const function writevf24(value: vector | Vector3): ()
+	writef24(value.x)
+	writef24(value.y)
+	writef24(value.z)
+end
+
+@native
+const function writevf16(value: vector | Vector3): ()
+	writef16(value.x)
+	writef16(value.y)
+	writef16(value.z)
+end
+
+@native
+const function writecolor3(value: Color3): ()
+	WRITE_U8(bigBuffer, cursor, value.R * 255 // 1)
+	cursor += 1
+	WRITE_U8(bigBuffer, cursor, value.G * 255 // 1)
+	cursor += 1
+	WRITE_U8(bigBuffer, cursor, value.B * 255 // 1)
+	cursor += 1
+end
+
+@native
+const function writecf32(value: CFrame): ()
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+		value:GetComponents()
+	
+	WRITE_F32(bigBuffer, cursor, x)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, y)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, z)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R0)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R01)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R02)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R10)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R11)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R12)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R20)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R21)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, R22)
+	cursor += 4
+end
+
+@native
+const function writecf24(value: CFrame): ()
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+		value:GetComponents()
+	
+	writef24(x)
+	writef24(y)
+	writef24(z)
+	writef24(R0)
+	writef24(R01)
+	writef24(R02)
+	writef24(R10)
+	writef24(R11)
+	writef24(R12)
+	writef24(R20)
+	writef24(R21)
+	writef24(R22)
+end
+
+@native
+const function writecf16(value: CFrame): ()
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+		value:GetComponents()
+	
+	writef16(x)
+	writef16(y)
+	writef16(z)
+	writef16(R0)
+	writef16(R01)
+	writef16(R02)
+	writef16(R10)
+	writef16(R11)
+	writef16(R12)
+	writef16(R20)
+	writef16(R21)
+	writef16(R22)
+end
+
+@native const function writeqcf32(value: CFrame): ()
+	-- inline quaternion extracting
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+        value:GetComponents()
+
+    const trace: number = R0 + R11 + R22
+    local qx: number, qy: number, qz: number, qw: number
+
+    if trace > 0 then
+        const root = SQRT(trace + 1)
+        qw = 0.5 * root
+        const invS = 0.5 / root
+        qx = (R21 - R12) * invS
+        qy = (R02 - R20) * invS
+        qz = (R10 - R01) * invS
+    elseif (R0 > R11) and (R0 > R22) then
+        const root = SQRT(1 + R0 - R11 - R22)
+        qx = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R21 - R12) * invS
+        qy = (R01 + R10) * invS
+        qz = (R02 + R20) * invS
+    elseif R11 > R22 then
+        const root = SQRT(1 + R11 - R0 - R22)
+        qy = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R02 - R20) * invS
+        qx = (R01 + R10) * invS
+        qz = (R12 + R21) * invS
+    else
+        const root = SQRT(1 + R22 - R0 - R11)
+        qz = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R10 - R01) * invS
+        qx = (R02 + R20) * invS
+        qy = (R12 + R21) * invS
+    end
+	-----------------------------------------------------------
+
+	WRITE_F32(bigBuffer, cursor, x)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, y)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, z)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, qx)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, qy)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, qz)
+	cursor += 4
+	WRITE_F32(bigBuffer, cursor, qw)
+	cursor += 4
+end
+
+@native const function writeqcf24(value: CFrame): ()
+	-- inline quaternion extracting
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+        value:GetComponents()
+
+    const trace: number = R0 + R11 + R22
+    local qx: number, qy: number, qz: number, qw: number
+
+    if trace > 0 then
+        const root = SQRT(trace + 1)
+        qw = 0.5 * root
+        const invS = 0.5 / root
+        qx = (R21 - R12) * invS
+        qy = (R02 - R20) * invS
+        qz = (R10 - R01) * invS
+    elseif (R0 > R11) and (R0 > R22) then
+        const root = SQRT(1 + R0 - R11 - R22)
+        qx = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R21 - R12) * invS
+        qy = (R01 + R10) * invS
+        qz = (R02 + R20) * invS
+    elseif R11 > R22 then
+        const root = SQRT(1 + R11 - R0 - R22)
+        qy = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R02 - R20) * invS
+        qx = (R01 + R10) * invS
+        qz = (R12 + R21) * invS
+    else
+        const root = SQRT(1 + R22 - R0 - R11)
+        qz = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R10 - R01) * invS
+        qx = (R02 + R20) * invS
+        qy = (R12 + R21) * invS
+    end
+	-----------------------------------------------------------
+
+	writef24(x)
+	writef24(y)
+	writef24(z)
+	writef24(qx)
+	writef24(qy)
+	writef24(qz)
+	writef24(qw)
+end
+
+@native 
+const function writeqcf16(value: CFrame): ()
+	-- inline quaternion extracting
+	const x: number, y: number, z: number, R0: number, R01: number, R02: number, R10: number, R11: number, R12: number, R20: number, R21: number, R22: number =
+        value:GetComponents()
+
+    const trace: number = R0 + R11 + R22
+    local qx: number, qy: number, qz: number, qw: number
+
+    if trace > 0 then
+        const root = SQRT(trace + 1)
+        qw = 0.5 * root
+        const invS = 0.5 / root
+        qx = (R21 - R12) * invS
+        qy = (R02 - R20) * invS
+        qz = (R10 - R01) * invS
+    elseif (R0 > R11) and (R0 > R22) then
+        const root = SQRT(1 + R0 - R11 - R22)
+        qx = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R21 - R12) * invS
+        qy = (R01 + R10) * invS
+        qz = (R02 + R20) * invS
+    elseif R11 > R22 then
+        const root = SQRT(1 + R11 - R0 - R22)
+        qy = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R02 - R20) * invS
+        qx = (R01 + R10) * invS
+        qz = (R12 + R21) * invS
+    else
+        const root = SQRT(1 + R22 - R0 - R11)
+        qz = 0.5 * root
+        const invS = 0.5 / root
+        qw = (R10 - R01) * invS
+        qx = (R02 + R20) * invS
+        qy = (R12 + R21) * invS
+    end
+	-----------------------------------------------------------
+
+	writef16(x)
+	writef16(y)
+	writef16(z)
+	writef16(qx)
+	writef16(qy)
+	writef16(qz)
+	writef16(qw)
+end
+
+@native 
+const function getcursor(): number
+	return cursor
+end
+
 return table.freeze({
 	START = start,
 	FINISH = finish,
 	NEED = need,
+	GETCURSOR = getcursor,
 
 	U8 = writeu8,
 	I8 = writei8,
@@ -250,8 +553,26 @@ return table.freeze({
 	I24 = writeu24, -- write process is the same, the read isn't
 	U32 = writeu32,
 	I32 = writei32,
+	U40 = writeu40,
+	I40 = writeu40, -- same thing here, the same write process
+	U48 = writeu48,
+	I48 = writeu48,
 	F32 = writef32,
 	F64 = writef64,
 	STR_S = writes255,
 	STR = writes65,
+
+	V2F32 = writev2f32,
+	V2F24 = writev2f24,
+	V2F16 = writev2f16,
+	VF32 = writevf32,
+	VF24 = writevf24,
+	VF16 = writevf16,
+	COLOR3 = writecolor3,
+	CF32 = writecf32,
+	CF24 = writecf24,
+	CF16 = writecf16,
+	QCF32 = writeqcf32,
+	QCF24 = writeqcf24,
+	QCF16 = writeqcf16,
 })

@@ -2,7 +2,7 @@
 --!optimize 2
 --[[
     Quaternion CFrame
-	- 21 bytes
+	21 bytes
     a tiny bit less precise than matrix cframe but less bandwidth
 
     each component is serialized as float24
@@ -13,7 +13,6 @@
 const config = require("../shared/config")
 const writer = require("../buffer/writer")
 const reader = require("../buffer/reader")
-const math = require("../shared/math")
 
 -----------------------------------------------------
 -- CONSTANTS                                       --
@@ -28,24 +27,8 @@ const VAL_TYPE: string = "CFrame"
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
-const WRITE: (number) -> () = writer.F24
-const READ: (...any) -> (number, number?) = reader.F24
-const NEW: (() -> CFrame) & ((Vector3) -> CFrame) & ((Vector3, Vector3) -> CFrame) & ((number, number, number) -> CFrame) & ((number, number, number, number, number, number, number) -> CFrame) & ((
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number,
-	number
-) -> CFrame) =
-	CFrame.new
-const TOQUATER: (CFrame) -> (number, number, number, number) = math.toQuaternion
+const WRITE_QCF: (CFrame) -> () = writer.QCF24
+const READ_QCF: () -> (number, CFrame?) = reader.QCF24
 const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
@@ -55,47 +38,19 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function qcframef24_write(value: CFrame): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize QCFrameF24 type – "CFrame" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize QCFrameF24 type – "CFrame" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(21) then
 		return FAIL
 	end
-	const x: number, y: number, z: number = value.X, value.Y, value.Z
-	const qx: number, qy: number, qz: number, qw: number = TOQUATER(value)
-
-	WRITE(x)
-	WRITE(y)
-	WRITE(z)
-	WRITE(qx)
-	WRITE(qy)
-	WRITE(qz)
-	WRITE(qw)
+	WRITE_QCF(value)
 
 	return SUCCESS
 end
 
-@native
-const function qcframef24_read(): (number, CFrame?)
-	local x: number, y: number, z: number, qx: number, qy: number, qz: number, qw: number
-	local flag: number
-	flag, x = READ()
-	flag, y = READ()
-	flag, z = READ()
-	flag, qx = READ()
-	flag, qy = READ()
-	flag, qz = READ()
-	flag, qw = READ()
-	-- doing 1 check per read is redundant for most cases, as most writes are valid,
-	-- unless it's networker and exploiter spams invalid buffers, 1 check per read is worse for performance
-	if flag == FAIL then
-		return FAIL, nil
-	end
-
-	return flag, NEW(x :: number, y :: number, z :: number, qx :: number, qy :: number, qz :: number, qw :: number)
-end
-
 return table.freeze({
 	write = qcframef24_write,
-	read = qcframef24_read,
+	read = READ_QCF,
+	exType = "CFrame"
 })

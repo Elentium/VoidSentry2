@@ -81,7 +81,8 @@ const function serInstanceNodeBuild(className: string): typeNode<Instance>
 	const schema: (typeNode & { T: { [string]: typeNode } })? = getSchema(className)
 	if not schema then
 		error(
-			`[VoidSentry2]: Failed to serialize SerInstance type – Unsupported/Undefined Schema for ClassName {className}`
+			`[VoidSentry2]: Failed to serialize SerInstance type – Unsupported/Undefined Schema for ClassName {className}`,
+			0
 		)
 	end
 	-----------------------------------------------------
@@ -91,7 +92,7 @@ const function serInstanceNodeBuild(className: string): typeNode<Instance>
 	const function serInstance_write(value: Instance): number
 		const vType: string = TYPE(value)
 		if vType ~= VAL_TYPE then
-			FAIL_FN(`[VoidSentry2]: Failed to serialize SerInstance type – "Instance" expected, got "{vType}"`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize SerInstance type – "Instance" expected, got "{vType}"`, 0)
 			return FAIL
 		end
 
@@ -99,7 +100,7 @@ const function serInstanceNodeBuild(className: string): typeNode<Instance>
 		const success, err: string? =
 			pcall(TBLSET :: ({ [string]: any }, Instance, { [string]: any }) -> any, tbl, value, schema.T)
 		if not success then
-			FAIL_FN(`[VoidSentry2]: Failed to deserialize SerInstance type – Failed to fetch instance properties data, error: {err}`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize SerInstance type – Failed to fetch instance properties data, error: {err}`, 0)
 			return FAIL
 		end
 
@@ -117,7 +118,8 @@ const function serInstanceNodeBuild(className: string): typeNode<Instance>
 		const success: boolean, err: string? = pcall(INSTSET :: (Instance, { [string]: any }) -> any, inst, tbl)
 		if not success then
 			FAIL_FN(
-				`[VoidSentry2]: Failed to deserialize SerInstance type – Failed to set instance properties, error: {err}`
+				`[VoidSentry2]: Failed to deserialize SerInstance type – Failed to set instance properties, error: {err}`,
+				0
 			)
 		end
 
@@ -127,6 +129,7 @@ const function serInstanceNodeBuild(className: string): typeNode<Instance>
 	return table.freeze({
 		write = serInstance_write,
 		read = serInstance_read,
+		exType = "Instance"
 	}) :: typeNode
 end
 

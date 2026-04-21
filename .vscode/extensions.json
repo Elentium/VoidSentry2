@@ -1,13 +1,12 @@
 {
 	"recommendations": [
 		"JohnnyMorganz.luau-lsp",
-		"Kampfkarren.selene-vscode",
 		"JohnnyMorganz.stylua",
 		"eamodio.gitlens",
 		"DaltonMenezes.aura-theme",
 		"evaera.vscode-rojo",
-		"filiptibell.rojo-viewer",
 		"usernamehw.errorlens",
-		"ritwickdey.LiveServer"
+		"ritwickdey.LiveServer",
+		"littensy.charmed-icons"
 	]
 }

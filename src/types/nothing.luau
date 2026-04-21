@@ -30,4 +30,5 @@ end
 return table.freeze({
 	write = nothing_write,
 	read = nothing_read,
+	exType = "nil"
 })

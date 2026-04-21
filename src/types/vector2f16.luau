@@ -26,9 +26,8 @@ const VAL_TYPE: string = "Vector2"
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
-const WRITE: (number) -> () = writer.F16
-const READ: () -> (number, number?) = reader.F16
-const NEW: (number?, number?) -> Vector2 = Vector2.new
+const WRITE_V2: (Vector2) -> () = writer.V2F16
+const READ_V2: () -> (number, Vector2?) = reader.V2F16
 const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
@@ -38,31 +37,18 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function vector2f16_write(value: Vector2): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Vector2F16 type – "Vector2" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Vector2F16 type – "Vector2" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(4) then
 		return FAIL
 	end
-	WRITE(value.X)
-	WRITE(value.Y)
+	WRITE_V2(value)
 	return SUCCESS
-end
-
-@native
-const function vector2f16_read(): (number, Vector2?)
-	local flag: number, x: number?, y: number?
-
-	flag, x = READ()
-	flag, y = READ()
-	if flag == FAIL then
-		return FAIL, nil
-	end
-
-	return flag, NEW(x, y)
 end
 
 return table.freeze({
 	write = vector2f16_write,
-	read = vector2f16_read,
+	read = READ_V2,
+	exType = "Vector2"
 })

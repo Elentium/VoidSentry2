@@ -2,6 +2,6 @@
   "name": "voidsentry2",
   "emitLegacyScripts": false,
   "tree": {
-    "$path": "src"
+      "$path": "src"
   }
 }

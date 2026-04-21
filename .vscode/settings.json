@@ -1,3 +1,35 @@
 {
-    "stylua.targetReleaseVersion": "latest"
+    "[lua]": {
+        "editor.defaultFormatter": "JohnnyMorganz.stylua",
+        "editor.formatOnSave": true
+    },
+    "[luau]": {
+        "editor.defaultFormatter": "JohnnyMorganz.stylua",
+        "editor.formatOnSave": true
+    },
+    "workbench.editor.customLabels.patterns": {
+        "**/init.lua": "${dirname} (${filename}.${extname})",
+        "**/init.luau": "${dirname} (${filename}.${extname})"
+    },
+    "luau-lsp.sourcemap.autogenerate": true,
+    "luau-lsp.sourcemap.rojoProjectFile": "default.project.json",
+    "luau-lsp.completion.imports.enabled": true,
+    "workbench.sideBar.location": "right",
+    "editor.fontSize": 16,
+    "editor.lineHeight": 1.6,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.cursorBlinking": "expand",
+    "git.autofetch": true,
+    "luau-lsp.completion.autocompleteEnd": true,
+    "luau-lsp.completion.imports.requireStyle": "auto",
+    "luau-lsp.completion.imports.suggestRequires": true,
+    "luau-lsp.fflags.sync": true,
+    "editor.suggest.showWords": true,
+    "editor.snippetSuggestions": "bottom",
+    "luau-lsp.studioPlugin.enabled": true,
+    "luau-lsp.fflags.enableNewSolver": true,
+    "files.autoSave": "onFocusChange",
+    "workbench.colorTheme": "Aura Dark",
+    "cursor.composer.textSizeScale": 1.3,
+    "workbench.iconTheme": "charmed-warm",
 }

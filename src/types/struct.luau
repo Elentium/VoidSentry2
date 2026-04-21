@@ -51,7 +51,7 @@ const function structNodeBuild<T>(struct: T & { [string]: typeNode }): typeNode<
 	const function struct_write<V>(value: { [string]: V } & T): number
 		const vType: string = TYPE(value)
 		if vType ~= VAL_TYPE then
-			FAIL_FN(`[VoidSentry2]: Failed to serialize Struct type – "table" expected, got "{vType}"`)
+			FAIL_FN(`[VoidSentry2]: Failed to serialize Struct type – "table" expected, got "{vType}"`, 0)
 			return FAIL
 		end
 
@@ -83,6 +83,7 @@ const function structNodeBuild<T>(struct: T & { [string]: typeNode }): typeNode<
 	return table.freeze({
 		write = struct_write,
 		read = struct_read,
+		exType = "map"
 	}) :: typeNode<T>
 end
 

@@ -29,6 +29,7 @@ const FAIL: number = config.fail
 -----------------------------------------------------
 type serializer = exports.staticSerializer
 type typeNode<T = any> = exports.typeNode<T>
+type extractTypeFromTypeNode<T> = exports.extractTypeFromTypeNode<T>
 -----------------------------------------------------
 -- LOCALIZE                                        --
 -----------------------------------------------------
@@ -42,7 +43,7 @@ const R_START: (buffer, number?) -> () = reader.START
 const static = {}
 
 @native
-function static.deserialize<T>(serdes: typeNode<T>, input: buffer, offset: number?, wasCompressed: boolean?): T?
+function static.deserialize<T>(serdes: typeNode & T, input: buffer, offset: number?, wasCompressed: boolean?): extractTypeFromTypeNode<T>?
 	if wasCompressed then
 		input = EncodingService:DecompressBuffer(input, ALG)
 	end

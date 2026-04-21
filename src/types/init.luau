@@ -17,7 +17,7 @@ const exports = require("./shared/exports")
 -----------------------------------------------------
 const module = {
 	signMap = {} :: { [number]: exports.possibleNode },
-	types = {} :: exports.types,
+	types = {} :: exports.voidSentryTypes,
 }
 
 return module

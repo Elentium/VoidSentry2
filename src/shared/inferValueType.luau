@@ -1,6 +1,6 @@
 --!optimize 2
 --[[
-	InferValueType V0.1.0
+	InferValueType V0.1.1
 
 	Infers value type in a switch-like style
 
@@ -23,6 +23,7 @@
 	- vector/vector3 (configurable)
 	- vector2
 	- cframe
+	- enum
 	- color3
 	- instance
 ]]
@@ -60,12 +61,13 @@ const ENUM: number = typeSigns.enum
 -- LOCALIZATIONS                                   --
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
+const NEXT: <K, V>({ [K]: V }, K?) -> (K?, V) = next
 
 @native
 const function inferValueType<T>(element: T): number
-	const type: string = TYPE(element)
+	const vType: string = TYPE(element)
 
-	if type == "number" then
+	if vType == "number" then
 		const isInteger: boolean = element // 1 == element
 		if isInteger then
 			if element >= 0 then
@@ -90,30 +92,30 @@ const function inferValueType<T>(element: T): number
 		end
 
 		return FLOAT
-	elseif type == "boolean" then
+	elseif vType == "boolean" then
 		return BOOL
-	elseif type == "string" then
+	elseif vType == "string" then
 		return #element <= 255 and STR255 or STR
-	elseif type == "table" then
+	elseif vType == "table" then
 		const len: number = #element
 		-- empty table or a map
 		if len == 0 then
-			return next(element) == nil and VOID or MAP
+			return NEXT(element) == nil and VOID or MAP
 		end
 
-		const isMap: boolean = next(element, #element) ~= nil
+		const isMap: boolean = NEXT(element, #element) ~= nil
 		return if isMap then MAP else len <= 255 and ARRAY255 or ARRAY
-	elseif type == "Vector3" then
+	elseif vType == "Vector3" then
 		return VECTOR
-	elseif type == "Vector2" then
+	elseif vType == "Vector2" then
 		return VECTOR2
-	elseif type == "CFrame" then
+	elseif vType == "CFrame" then
 		return CFRAME
-	elseif type == "Color3" then
+	elseif vType == "Color3" then
 		return COLOR3
-	elseif type == "Instance" then
+	elseif vType == "Instance" then
 		return INSTANCE
-	elseif type == "EnumItem" then
+	elseif vType == "EnumItem" then
 		return ENUM
 	end
 

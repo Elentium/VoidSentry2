@@ -31,4 +31,5 @@ end
 return table.freeze({
 	write = void_write,
 	read = void_read,
+	exType = "void"
 })

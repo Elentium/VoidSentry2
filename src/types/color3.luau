@@ -21,16 +21,13 @@ const FAIL: number = config.fail
 
 const VAL_TYPE: string = "Color3"
 
-const RECIPROCAL: number = 1 / 255
-
 -----------------------------------------------------
 -- LOCALIZING                                      --
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
-const WRITE: (number) -> () = writer.U8
-const READ: () -> (number, number?) = reader.U8
-const NEW: (number?, number?, number?) -> Color3 = Color3.fromRGB
+const WRITE: (Color3) -> () = writer.COLOR3
+const READ: () -> (number, Color3?) = reader.COLOR3
 const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
@@ -40,33 +37,18 @@ const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strict
 const function color3_write(value: Color3): number
 	const vType: string = TYPE(value)
 	if vType ~= VAL_TYPE then
-		FAIL_FN(`[VoidSentry2]: Failed to serialize Color3 type – "Color3" expected, got "{vType}"`)
+		FAIL_FN(`[VoidSentry2]: Failed to serialize Color3 type – "Color3" expected, got "{vType}"`, 0)
 		return FAIL
 	end
 	if not NEED(3) then
 		return FAIL
 	end
-	WRITE(value.R // RECIPROCAL)
-	WRITE(value.G // RECIPROCAL)
-	WRITE(value.B // RECIPROCAL)
+	WRITE(value)
 	return SUCCESS
-end
-
-@native
-const function color3_read(): (number, Color3?)
-	local flag: number, r: number?, g: number?, b: number?
-
-	flag, r = READ()
-	flag, g = READ()
-	flag, b = READ()
-	if flag == FAIL then
-		return FAIL, nil
-	end
-
-	return flag, NEW(r, g, b)
 end
 
 return table.freeze({
 	write = color3_write,
-	read = color3_read,
+	read = READ,
+	exType = "Color3"
 })
