@@ -3,7 +3,7 @@ indent_width = 4
 syntax = "Luau"
 line_endings = "Unix"
 space_after_function_names = false
-collapse_simple_statement = true
+collapse_simple_statement = "Always"
 
 [sort_requires]
 enabled = true
