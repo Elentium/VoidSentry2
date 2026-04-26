@@ -137,11 +137,6 @@ body {
     justify-items: stretch;
 }
 
-/* Third link sits on row 2 col 1 only — span full grid width so it lines up with both buttons above */
-.logo-links > .logo-link--creator {
-    grid-column: 1 / -1;
-}
-
 .logo-link {
     display: inline-flex;
     align-items: center;

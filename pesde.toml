@@ -1,0 +1,25 @@
+name = "elentium/voidsentry2"
+version = "0.1.1"
+description = "SerDes library for Roblox"
+authors = ["IAMNOTULTRA3 ( <Elite> (https://github.com/Elentium) )"]
+repository = "https://github.com/Elentium/VoidSentry2"
+license = "APACHE-2.0"
+includes = [
+    "src/**/*.luau",
+    "docs/**/*.luau",
+    ".vscode",
+    ".gitignore",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE",
+    "pesde.toml",
+    "stylua.toml"
+]
+
+[target]
+environment = "roblox"
+lib = "src/init.luau"
+build_files = ["src"]
+
+[indices]
+default = "https://github.com/pesde-pkg/index"

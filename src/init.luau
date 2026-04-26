@@ -92,20 +92,21 @@
 	• Github: https://github.com/Elentium/VoidSentry2
 	• Wally: "elentium/voidsentry2@0.1.1" https://wally.run/package/elentium/voidsentry2
 	• Creator Store: https://create.roblox.com/store/asset/109800466320728
+	• Pesde: "pesde add elentium/voidsentry2" https://pesde.dev/packages/elentium/voidsentry2
 ]]
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
-const exports = require("@self/shared/exports")
-const static = require("@self/serializers/static")
-const dynamic = require("@self/serializers/dynamic")
-const typeSigns = require("@self/shared/config/typeSigns")
-const instanceSchemas = require("@self/static/instanceSchemas")
-const typesModule = require("@self/types")
-const config = require("@self/shared/config")
-const serInstanceSigns = require("@self/static/serInstanceSigns")
-const writer = require("@self/buffer/writer")
-const reader = require("@self/buffer/reader")
+local exports = require("@self/shared/exports")
+local static = require("@self/serializers/static")
+local dynamic = require("@self/serializers/dynamic")
+local typeSigns = require("@self/shared/config/typeSigns")
+local instanceSchemas = require("@self/static/instanceSchemas")
+local typesModule = require("@self/types")
+local config = require("@self/shared/config")
+local serInstanceSigns = require("@self/static/serInstanceSigns")
+local writer = require("@self/buffer/writer")
+local reader = require("@self/buffer/reader")
 
 -----------------------------------------------------
 -- TYPES                                           --
@@ -120,15 +121,15 @@ export type typeNode<T = any> = exports.typeNode<T>
 -----------------------------------------------------
 -- VARIABLES                                       --
 -----------------------------------------------------
-const signMap: { possibleNode } = typesModule.signMap
-const types: types = typesModule.types
-const failFn: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+local signMap: { possibleNode } = typesModule.signMap
+local types: types = typesModule.types
+local failFn: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
 
 -----------------------------------------------------
 -- INIT                                            --
 -----------------------------------------------------
 for name: string, sign: number in typeSigns :: { [string]: number } do
-	const node = require(`@self/types/{name}`)
+	local node = require(`@self/types/{name}`)
 	signMap[sign] = node
 	types[name] = node
 end
@@ -142,9 +143,9 @@ end
 	@param t2 – the second table
 	@returns t3 – a new table that contains data of both tables
 ]]
-const function combine<T1, T2>(t1: T1, t2: T2): T1 & T2
-	const firstArgType: string = type(t1)
-	const secondArgType: string = type(t2)
+local function combine<T1, T2>(t1: T1, t2: T2): T1 & T2
+	local firstArgType: string = type(t1)
+	local secondArgType: string = type(t2)
 	if firstArgType ~= "table" then
 		failFn(`[VoidSentry2]: Table combining failed – Invalid argument #1, "table" expected, got {firstArgType}`)
 		return
@@ -152,7 +153,7 @@ const function combine<T1, T2>(t1: T1, t2: T2): T1 & T2
 		failFn(`[VoidSentry2]: Table combining failed – Invalid argument #2, "table" expected, got {secondArgType}`)
 		return
 	end
-	const t3: T1 & T2 = {}
+	local t3: T1 & T2 = {}
 	for key, value in t1 do
 		t3[key] = value
 	end
@@ -168,9 +169,9 @@ end
 	@param schema – the class schema
 	@returns ()
 ]]
-const function registerInstanceSchema(className: string, schema: { [string]: typeNode }): ()
-	const firstArgType: string = type(className)
-	const secondArgType: string = type(schema)
+local function registerInstanceSchema(className: string, schema: { [string]: typeNode }): ()
+	local firstArgType: string = type(className)
+	local secondArgType: string = type(schema)
 	if firstArgType ~= "string" then
 		failFn(
 			`[VoidSentry2]: Serialized instance schema registering failed – Invalid argument #1, "string" expected, got {firstArgType}`
@@ -184,7 +185,7 @@ const function registerInstanceSchema(className: string, schema: { [string]: typ
 	end
 
 	instanceSchemas[className] = schema
-	const idx: number = #serInstanceSigns.signLookup + 1
+	local idx: number = #serInstanceSigns.signLookup + 1
 	serInstanceSigns.signLookup[idx] = className
 	serInstanceSigns.nameLookup[className] = idx
 end
@@ -192,7 +193,7 @@ end
 -----------------------------------------------------
 -- MODULE                                          --
 -----------------------------------------------------
-const VoidSentry2 = {
+local VoidSentry2 = {
 	types = types,
 	static = static,
 	dynamic = dynamic,
