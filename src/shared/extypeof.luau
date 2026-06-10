@@ -28,7 +28,7 @@ const TOSTRING: <T>(T) -> string = tostring
 -----------------------------------------------------
 
 @native
-local function extypeof<T>(value: T): string
+const function extypeof<T>(value: T): string
 	local vType: string = TYPEOF(value)
     if vType == NUMBER_TYPE then
         vType = (value :: number) // 1 == value and INT or FLOAT

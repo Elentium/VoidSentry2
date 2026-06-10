@@ -76,12 +76,11 @@ const function start(b: buffer, offset: number?): ()
 end
 
 --[[
-    Removes the buffer reference to GC the buffer
+    Removes the buffer reference to GC the buffer and zeroes the cursor/len variables
 ]]
 @native
 const function finish(): ()
-	currentBuffer = nil -- clear the reference to GC the buffer
-	-- zeroing cursor/len is unnecessary as it is just extra instructions which give no benefits
+	currentBuffer, cursor, len = nil, 0, 0
 end
 
 --[[

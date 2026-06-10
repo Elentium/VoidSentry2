@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-    InstanceMap.server V0.1.1
+    InstanceMap.server V0.1.2
 
     Initializes server instance map
 ]]
@@ -22,9 +22,12 @@ const ATTRIBUTE_NAME: string = config.instanceIdAttribute
 local i: number = 0
 
 const function onInstance(instance: Instance): ()
-	i += 1
-	instance:SetAttribute(ATTRIBUTE_NAME, i)
-	instanceMap[i] = instance
+	const success = pcall(instance.SetAttribute, instance, ATTRIBUTE_NAME, i + 1)
+
+	if success then
+		i += 1
+		instanceMap[i] = instance
+	end
 end
 
 game.DescendantAdded:Connect(onInstance)
