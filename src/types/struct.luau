@@ -30,7 +30,8 @@ const VAL_TYPE: string = "table"
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = type
 const SORT: <V>({ V }, ((V, V) -> boolean)?) -> () = table.sort
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 @native
 const function structNodeBuild<T>(struct: T & { [string]: typeNode }): typeNode<T>

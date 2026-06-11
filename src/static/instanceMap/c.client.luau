@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-    InstanceMap.client V0.1.1
+    InstanceMap.client V0.1.3
 
     Initializes client instance map
 ]]
@@ -35,11 +35,17 @@ const function deferFetch(instance: Instance): number?
 end
 
 const function onInstance(instance: Instance): ()
-	const id: number? = (instance:GetAttribute(ATTRIBUTE_NAME) :: number?) or deferFetch(instance)
-	if not id then
+	local success: boolean, id: number? = pcall(instance.GetAttribute :: (Instance, string) -> number?, instance, ATTRIBUTE_NAME)
+	if not success then
 		return
 	end
-	instanceMap[id] = instance
+	if not id then
+		id = deferFetch(instance)
+		if not id then
+			return
+		end
+	end
+	instanceMap[id :: number] = instance
 end
 
 game.DescendantAdded:Connect(onInstance)

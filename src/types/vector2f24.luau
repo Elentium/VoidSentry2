@@ -28,7 +28,8 @@ const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
 const WRITE_V2: (Vector2) -> () = writer.V2F24
 const READ_V2: () -> (number, Vector2?) = reader.V2F24
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 -----------------------------------------------------
 -- READ/WRITE                                      --

@@ -1,6 +1,13 @@
+## 0.1.3:
+- Fixed client instance map script to not throw error when attempting to get an attribute of an internal instance.
+- Added `setConstant` for managing configurations.
+- Added `updateBigBuffer` for updating the internal scratch buffer when `maxBufferSize` constant changes.
+- Made the codebase compatible with the constants editing
+
 ## 0.1.2:
-- Fixed server instance map script to not throw error when attemping to set an attribute on an internal instance.
+- Fixed server instance map script to not throw error when attempting to set an attribute on an internal instance.
 - Minor polishes.
+
 ## 0.1.1:
 - Added Union, BoolPacked type
 - Color3, CFrame(and its variants), vector(and its variants), Vector2(and its variants) are now primitives(moved into bufferWriter & bufferReader)

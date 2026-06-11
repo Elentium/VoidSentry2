@@ -34,7 +34,8 @@ const UNSUPPORTED_EXTYPES: { [string]: boolean } = config.unsupportedUnionExType
 -----------------------------------------------------
 const WRITE: (number) -> () = writer.U8
 const READ: () -> (number, number?) = reader.U8
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 const NEED: (number) -> boolean = writer.NEED
 
 -----------------------------------------------------

@@ -37,7 +37,10 @@ const config = require("./config")
 -----------------------------------------------------
 const UNKNOWN: number = config.unknownType
 const typeSigns = config.typeSigns
-const VECTOR: number = config.dynamicVectorType == "Vector3" and typeSigns.vector3 or typeSigns.vector
+const VECTOR: number = typeSigns.vector
+const VECTOR3: number = typeSigns.vector3
+const INSTANCE: number = typeSigns.instance
+const SERINSTANCE: number = typeSigns.serInstance
 const INT32: number = typeSigns.int32
 const INT16: number = typeSigns.int16
 const INT8: number = typeSigns.int8
@@ -55,7 +58,6 @@ const ARRAY255: number = typeSigns.array255
 const CFRAME: number = typeSigns.cframe
 const VECTOR2: number = typeSigns.vector2
 const COLOR3: number = typeSigns.color3
-const INSTANCE: number = config.dynamicInstanceType == "instance" and typeSigns.instance or typeSigns.serInstance
 const ENUM: number = typeSigns.enum
 -----------------------------------------------------
 -- LOCALIZATIONS                                   --
@@ -106,7 +108,7 @@ const function inferValueType<T>(element: T): number
 		const isMap: boolean = NEXT(element, #element) ~= nil
 		return if isMap then MAP else len <= 255 and ARRAY255 or ARRAY
 	elseif vType == "Vector3" then
-		return VECTOR
+		return config.dynamicVectorType == "vector" and VECTOR or VECTOR3
 	elseif vType == "Vector2" then
 		return VECTOR2
 	elseif vType == "CFrame" then
@@ -114,7 +116,7 @@ const function inferValueType<T>(element: T): number
 	elseif vType == "Color3" then
 		return COLOR3
 	elseif vType == "Instance" then
-		return INSTANCE
+		return config.dynamicInstanceType == "instance" and INSTANCE or SERINSTANCE
 	elseif vType == "EnumItem" then
 		return ENUM
 	end

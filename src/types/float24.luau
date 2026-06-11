@@ -28,7 +28,8 @@ const TYPE: <T>(T) -> string = type
 const NEED: (number) -> boolean = writer.NEED
 const WRITE: (number) -> () = writer.F24
 const READ: () -> (number, number?) = reader.F24
-const FAIL_FN = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 -----------------------------------------------------
 -- READ/WRITE                                      --

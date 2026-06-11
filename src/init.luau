@@ -2,7 +2,7 @@
 --!native
 --[[
 	================================================================================
-	  VoidSentry2  |  v0.1.2  |  Apache-2.0  |  by IAMNOTULTRA3
+	  VoidSentry2  |  v0.1.3  |  Apache-2.0  |  by IAMNOTULTRA3
 	================================================================================
 	  Buffer serialization library for Roblox. Converts Luau & Roblox values into
 	buffers and back. Supports schema-based (static) and schemaless
@@ -90,7 +90,7 @@
 	  LINKS
 	================================================================================
 	• Github: https://github.com/Elentium/VoidSentry2
-	• Wally: "elentium/voidsentry2@0.1.2" https://wally.run/package/elentium/voidsentry2
+	• Wally: "elentium/voidsentry2@0.1.3" https://wally.run/package/elentium/voidsentry2
 	• Creator Store: https://create.roblox.com/store/asset/109800466320728
 	• Pesde: "pesde add elentium/voidsentry2" https://pesde.dev/packages/elentium/voidsentry2
 ]]
@@ -117,13 +117,16 @@ export type types = exports.voidSentryTypes
 export type voidSentry2 = exports.voidSentry2
 export type possibleNode = exports.possibleNode
 export type typeNode<T = any> = exports.typeNode<T>
+export type constants = exports.voidSentryConstants
 
 -----------------------------------------------------
 -- VARIABLES                                       --
 -----------------------------------------------------
 local signMap: { possibleNode } = typesModule.signMap
 local types: types = typesModule.types
-local failFn: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+local failFn: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
+local editableConstantsMap: { [string]: string } = config.editableConstantsMap
 
 -----------------------------------------------------
 -- INIT                                            --
@@ -190,6 +193,34 @@ local function registerInstanceSchema(className: string, schema: { [string]: typ
 	serInstanceSigns.nameLookup[className] = idx
 end
 
+local updateBigBuffer = writer.UPDATEBIGBUFFER
+
+local function setConstant<T>(constant: constants, value: T): ()
+	local constantValueType: string? = editableConstantsMap[constant]
+	if not constantValueType then
+		failFn(`[VoidSentry2]: SetConstant failed – the unsupported editable constant: {constant}`)
+		return
+	end
+
+	local valueType: string = type(value)
+	if valueType ~= constantValueType then
+		failFn(`[VoidSentry2]: SetConstant failed – invalid argument #2, {constantValueType} expected, got {valueType}`)
+		return
+	end
+
+	if valueType == "table" then
+		local tbl = config[constant]
+		for k, v in value do
+			tbl[k] = v
+		end
+	else
+		config[constant] = value
+		if constant == "maxBufferSize" then
+			updateBigBuffer()
+		end
+	end
+end
+
 -----------------------------------------------------
 -- MODULE                                          --
 -----------------------------------------------------
@@ -204,7 +235,9 @@ local VoidSentry2 = {
 	writeFinish = writer.FINISH,
 	readFinish = reader.FINISH,
 	getWriteCursor = writer.GETCURSOR,
-	getReadCursor = reader.GETCURSOR
+	getReadCursor = reader.GETCURSOR,
+	updateBigBuffer = updateBigBuffer,
+	setConstant = setConstant,
 }
 
 return VoidSentry2 :: voidSentry2

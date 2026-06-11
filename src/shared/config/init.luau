@@ -5,8 +5,9 @@
 ]]
 const constants = require("@self/constants")
 const typeSigns = require("@self/typeSigns")
+const createFailFn = require("@self/failFn")
 
-return {
+local config = {
 	-- constants
 	maxBufferSize = constants.maxBufferSize,
 	strictMode = constants.strictMode,
@@ -19,6 +20,18 @@ return {
 	unsupportedUnionExTypes = constants.unsupportedUnionExTypes,
 	instanceIdAttribute = constants.instanceIdAttribute,
 
+	editableConstantsMap = {
+		maxBufferSize = "number",
+		strictMode = "boolean",
+		dynamicVectorType = "string",
+		dynamicInstanceType = "string",
+		unsupportedUnionExTypes = "table",
+	},
+
 	-- type signs
 	typeSigns = typeSigns,
 }
+
+config.failFn = createFailFn(config)
+
+return config

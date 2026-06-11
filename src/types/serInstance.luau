@@ -12,6 +12,7 @@
 -----------------------------------------------------
 const exports = require("../shared/exports")
 const struct = require("./struct") -- manual require to avoid recursive requires
+const config = require("../shared/config")
 const constants = require("../shared/config/constants")
 const instanceSchemas = require("../static/instanceSchemas")
 
@@ -38,7 +39,8 @@ const compiledSchemas: { [string]: typeNode & { T: { [string]: typeNode } } } = 
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
 const NEW: (string, Instance?) -> Instance = Instance.new
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = constants.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 @native
 const function TBLSET(tbl: { [string]: any }, instance: Instance, origin: { [string]: any }): ()

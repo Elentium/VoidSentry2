@@ -29,7 +29,8 @@ const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
 const WRITE_QCF: (CFrame) -> () = writer.QCF32
 const READ_QCF: () -> (number, CFrame?) = reader.QCF32
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 -----------------------------------------------------
 -- READ/WRITE                                      --

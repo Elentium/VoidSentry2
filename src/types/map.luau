@@ -32,7 +32,8 @@ const TYPE: <T>(T) -> string = type
 const NEED: (number) -> boolean = writer.NEED
 const WRITE_LEN: (number) -> () = writer.U16
 const READ_LEN: () -> (number, number?) = reader.U16
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 @native
 const function mapNodeBuild<K, V>(keyType: typeNode<K>, valueType: typeNode<V>): typeNode<{ [K]: V }>

@@ -159,6 +159,8 @@ export type voidSentryTypes = {
 	boolPacked: typeNode<{ boolean }>
 }
 
+export type voidSentryConstants = "maxBufferSize" | "strictMode" | "dynamicVectorType" | "dynamicInstanceType" | "unsupportedUnionExTypes"
+
 export type voidSentry2 = {
 	static: staticSerializer,
 	dynamic: dynamicSerializer,
@@ -170,7 +172,9 @@ export type voidSentry2 = {
 	writeFinish: () -> buffer,
 	readFinish: () -> (),
 	getWriteCursor: () -> number,
-	getReadCursor: () -> number
+	getReadCursor: () -> number,
+	updateBigBuffer: () -> (),
+	setConstant: <T>(constant: voidSentryConstants, value: T) -> (),
 }
 
 return {}

@@ -36,7 +36,8 @@ const NEED: (number) -> boolean = writer.NEED
 const WRITE_U16: (number) -> () = writer.U16
 const READ_U16: () -> (number, number?) = reader.U16
 const CREATE: typeof(table.create) = table.create
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 @native
 const function arrayNodeBuild<T>(valueType: typeNode<T>): typeNode<{ T }>

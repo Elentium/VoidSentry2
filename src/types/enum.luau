@@ -31,7 +31,8 @@ const VAL_TYPE2: string = "EnumItem"
 -- LOCALIZING                                      --
 -----------------------------------------------------
 const TYPE: <T>(T) -> string = typeof
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 const WRITE: (number) -> () = writer.U16
 const READ: () -> (number, number?) = reader.U16
 const TOSTRING: <T>(T) -> string = tostring

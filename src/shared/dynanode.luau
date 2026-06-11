@@ -56,7 +56,8 @@ const WRITE_SIGN: (number) -> () = writer.U8
 const WRITE_ID: (number) -> () = writer.U16
 const READ_ID: () -> (number, number?) = reader.U16
 const TYPE: <T>(T) -> string = type
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 return table.freeze({
 	write = @native function(value: any): number

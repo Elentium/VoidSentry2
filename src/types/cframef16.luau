@@ -28,7 +28,8 @@ const TYPE: <T>(T) -> string = typeof
 const NEED: (number) -> boolean = writer.NEED
 const WRITE_CF: (CFrame) -> () = writer.CF16
 const READ_CF: () -> (number, CFrame?) = reader.CF16
-const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.strictMode and error or warn
+const FAIL_FN: (<T...>(T...) -> ()) | (<T>(T, number?) -> never) = config.failFn
+
 
 -----------------------------------------------------
 -- READ/WRITE                                      --

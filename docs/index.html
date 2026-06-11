@@ -12,7 +12,7 @@
         <nav class="sidebar" aria-label="Primary">
             <div class="logo">
                 <h1>VoidSentry2</h1>
-                <p class="version">v0.1.2</p>
+                <p class="version">v0.1.3</p>
                 <div class="logo-links">
                     <a href="https://github.com/Elentium/VoidSentry2" target="_blank" rel="noopener" class="logo-link">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -125,7 +125,7 @@ local name, id, pos, sprinting = dynamic.deserialize(nil, nil, buf)
                         <p>Add the dependency and run the installer.</p>
                         <div class="code-block">
                             <pre><code class="language-toml">[dependencies]
-VoidSentry2 = "elentium/voidsentry2@0.1.2"</code></pre>
+VoidSentry2 = "elentium/voidsentry2@0.1.3"</code></pre>
                         </div>
                         <p>Then run <code class="inline-code">wally install</code> and <code class="inline-code">require</code> the module from your tree (for example <code class="inline-code">game.ReplicatedStorage.Packages.VoidSentry2</code> depending on layout).</p>
                     </div>
@@ -299,6 +299,32 @@ VoidSentry2 = "elentium/voidsentry2@0.1.2"</code></pre>
                             <h3 class="api-signature">.combine(t1, t2)</h3>
                             <p><code>combine&lt;T1, T2&gt;(t1: T1, t2: T2) -&gt; T1 &amp; T2</code></p>
                             <p>Shallow merge helper. Useful for composing struct field tables at module scope. Not serialization-specific.</p>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">.setConstant(constant, value)</h3>
+                            <p><code>setConstant&lt;T&gt;(constant: voidSentryConstants, value: T) -&gt; ()</code></p>
+                            <p>Updates a runtime configuration value without editing <code class="inline-code">constants.luau</code>. See the <a href="#configuration" class="inline-ref">Configuration</a> page for what each option does.</p>
+                            <p><strong>Editable constants:</strong> <code class="inline-code">maxBufferSize</code> (<code class="inline-code">number</code>), <code class="inline-code">strictMode</code> (<code class="inline-code">boolean</code>), <code class="inline-code">dynamicVectorType</code> (<code class="inline-code">string</code>), <code class="inline-code">dynamicInstanceType</code> (<code class="inline-code">string</code>), <code class="inline-code">unsupportedUnionExTypes</code> (<code class="inline-code">table</code>).</p>
+                            <ul class="types-list" style="margin-top:1rem;">
+                                <li>For scalar constants, <code class="inline-code">value</code> replaces the current setting.</li>
+                                <li>For <code class="inline-code">unsupportedUnionExTypes</code>, keys from <code class="inline-code">value</code> are merged into the existing table (shallow).</li>
+                                <li>When <code class="inline-code">maxBufferSize</code> changes, <code class="inline-code">updateBigBuffer</code> is called automatically.</li>
+                                <li>Invalid constant names or wrong value types error (strict mode) or warn and no-op (lax mode).</li>
+                            </ul>
+                            <div class="code-block">
+                                <pre><code class="language-luau">local VS = require(path.to.VoidSentry2)
+
+VS.setConstant("strictMode", false)
+VS.setConstant("maxBufferSize", 20_000_000)</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-item">
+                            <h3 class="api-signature">.updateBigBuffer()</h3>
+                            <p><code>updateBigBuffer() -&gt; ()</code></p>
+                            <p>Reallocates the internal serialize scratch buffer so its capacity matches the current <code class="inline-code">maxBufferSize</code>. Existing bytes in the scratch buffer (up to the previous capacity) are copied into the new buffer.</p>
+                            <p>You rarely call this yourself — <code class="inline-code">setConstant("maxBufferSize", ...)</code> invokes it automatically. Use it only if you changed <code class="inline-code">maxBufferSize</code> through another path and need the scratch buffer resized before the next serialize.</p>
                         </div>
 
                         <div class="api-item">
@@ -1030,9 +1056,18 @@ local Packet = T.union(T.map(T.string255, T.int32), MyTaggedNode)</code></pre>
                 <div class="page-content">
                     <h1 class="page-title">Update logs</h1>
                     <div class="changelog-item latest">
+                        <h3 class="version-badge">VoidSentry2 v0.1.3</h3>
+                        <ul>
+                            <li>Fixed client instance map script to not throw error when attempting to get an attribute of an internal instance.</li>
+                            <li>Added <code class="inline-code">setConstant</code> for managing configurations.</li>
+                            <li>Added <code class="inline-code">updateBigBuffer</code> for updating the internal scratch buffer when the <code class="inline-code">maxBufferSize</code> constant changes.</li>
+                            <li>Made the codebase compatible with the constants editing.</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-item">
                         <h3 class="version-badge">VoidSentry2 v0.1.2</h3>
                         <ul>
-                            <li>Fixed server instance map script to not throw error when attemping to set an attribute on an internal instance.</li>
+                            <li>Fixed server instance map script to not throw error when attempting to set an attribute on an internal instance.</li>
                             <li>Minor polishes.</li>
                         </ul>
                     </div>
