@@ -1,6 +1,6 @@
 --!optimize 2
 --[[
-	Dynanode V0.1.0
+	Dynanode V0.1.4
 
 	Dynamic node behaviour shared by @any.luau and @dynamic.luau
 
@@ -51,7 +51,7 @@ const enumReverseMap: { [Enum]: number } = enumMap.reverseMap
 -- LOCALIZATIONS                                   --
 -----------------------------------------------------
 const NEED: (number) -> boolean = writer.NEED
-const READ_SIGN: (...any) -> (number, number?) = reader.U8
+const READ_SIGN: () -> (number, number?) = reader.U8
 const WRITE_SIGN: (number) -> () = writer.U8
 const WRITE_ID: (number) -> () = writer.U16
 const READ_ID: () -> (number, number?) = reader.U16
@@ -63,7 +63,7 @@ return table.freeze({
 	write = @native function(value: any): number
 		-- initialize types & other related constants on first op (prevent recursive dependency from any <-> types <--> dynanode)
 		if typesModule == nil then
-			typesModule = require("../types" :: string)
+			typesModule = require("../types")
 			serInstanceSigns = require("../static/serInstanceSigns")
 			SER_INSTANCE_NAMEMAP = serInstanceSigns.nameLookup
 			SER_INSTANCE_SIGNMAP = serInstanceSigns.signLookup
@@ -115,13 +115,12 @@ return table.freeze({
 			end
 		end
 
-		-- now the node write
-		return (node :: typeNode).write(value)
+		return node.write(value)
 	end,
 
 	read = @native function(): (number, any?)
 		if typesModule == nil then
-			typesModule = require("../types" :: string)
+			typesModule = require("../types")
 			serInstanceSigns = require("../static/serInstanceSigns")
 			SER_INSTANCE_NAMEMAP = serInstanceSigns.nameLookup
 			SER_INSTANCE_SIGNMAP = serInstanceSigns.signLookup
@@ -174,6 +173,6 @@ return table.freeze({
 			end
 		end
 
-		return (node :: typeNode).read(flag)
+		return node.read(flag)
 	end,
 })

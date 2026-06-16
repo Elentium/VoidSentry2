@@ -2,7 +2,7 @@
 --!native
 --[[
 	================================================================================
-	  VoidSentry2  |  v0.1.3  |  Apache-2.0  |  by IAMNOTULTRA3
+	  VoidSentry2  |  v0.1.4  |  Apache-2.0  |  by IAMNOTULTRA3
 	================================================================================
 	  Buffer serialization library for Roblox. Converts Luau & Roblox values into
 	buffers and back. Supports schema-based (static) and schemaless
@@ -90,10 +90,15 @@
 	  LINKS
 	================================================================================
 	• Github: https://github.com/Elentium/VoidSentry2
-	• Wally: "elentium/voidsentry2@0.1.3" https://wally.run/package/elentium/voidsentry2
+	• Wally: "elentium/voidsentry2@0.1.4" https://wally.run/package/elentium/voidsentry2
 	• Creator Store: https://create.roblox.com/store/asset/109800466320728
 	• Pesde: "pesde add elentium/voidsentry2" https://pesde.dev/packages/elentium/voidsentry2
 ]]
+-----------------------------------------------------
+-- SERVICES                              	       --
+-----------------------------------------------------
+local RunService = game:GetService("RunService")
+
 -----------------------------------------------------
 -- DEPENDENCIES                                    --
 -----------------------------------------------------
@@ -239,5 +244,11 @@ local VoidSentry2 = {
 	updateBigBuffer = updateBigBuffer,
 	setConstant = setConstant,
 }
+
+if RunService:IsServer() then
+	require("@self/static/instanceMap/server")
+else
+	require("@self/static/instanceMap/client")
+end
 
 return VoidSentry2 :: voidSentry2

@@ -1,3 +1,7 @@
+## 0.1.4:
+- Fixed instanceMap not being populated with pesde package
+- Minor code polishes
+
 ## 0.1.3:
 - Fixed client instance map script to not throw error when attempting to get an attribute of an internal instance.
 - Added `setConstant` for managing configurations.

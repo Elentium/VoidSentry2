@@ -11,4 +11,4 @@
 
 ## FORKS:
 ### Performance-Oriented Version: https://github.com/Elentium/BlazeSentry
-### (Multi-Cursor version coming soon)
+### Multi-Cursor Version: https://github.com/Elentium/OmniSentry

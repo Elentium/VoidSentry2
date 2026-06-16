@@ -1,7 +1,7 @@
 --!strict
 --!optimize 2
 --[[
-    InstanceMap.client V0.1.3
+    InstanceMap.client V0.1.4
 
     Initializes client instance map
 ]]
@@ -53,3 +53,5 @@ game.DescendantAdded:Connect(onInstance)
 for _, instance: Instance in game:GetDescendants() do
 	onInstance(instance)
 end
+
+return nil
