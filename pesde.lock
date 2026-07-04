@@ -2,5 +2,5 @@
 # It is not intended for manual editing.
 format = 2
 name = "elentium/voidsentry2"
-version = "0.1.4"
+version = "0.1.5"
 target = "roblox"

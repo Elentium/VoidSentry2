@@ -1,3 +1,6 @@
+## 0.1.5:
+- Merged upstream changes from BlazeSentry V0.1.6
+
 ## 0.1.4:
 - Fixed instanceMap not being populated with pesde package
 - Minor code polishes

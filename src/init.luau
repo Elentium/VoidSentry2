@@ -2,7 +2,7 @@
 --!native
 --[[
 	================================================================================
-	  VoidSentry2  |  v0.1.4  |  Apache-2.0  |  by IAMNOTULTRA3
+	  VoidSentry2  |  v0.1.5  |  Apache-2.0  |  by IAMNOTULTRA3
 	================================================================================
 	  Buffer serialization library for Roblox. Converts Luau & Roblox values into
 	buffers and back. Supports schema-based (static) and schemaless
@@ -90,7 +90,7 @@
 	  LINKS
 	================================================================================
 	• Github: https://github.com/Elentium/VoidSentry2
-	• Wally: "elentium/voidsentry2@0.1.4" https://wally.run/package/elentium/voidsentry2
+	• Wally: "elentium/voidsentry2@0.1.5" https://wally.run/package/elentium/voidsentry2
 	• Creator Store: https://create.roblox.com/store/asset/109800466320728
 	• Pesde: "pesde add elentium/voidsentry2" https://pesde.dev/packages/elentium/voidsentry2
 ]]
