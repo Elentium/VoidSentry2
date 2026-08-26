@@ -1,6 +1,14 @@
 [package]
 name = "elentium/voidsentry2"
-version = "0.1.5"
+version = "0.1.6"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-exclude = ["roblox", "pesde.toml", "docs", "pesde.lock"]
+exclude = [
+    "roblox",
+    "pesde.toml",
+    "docs",
+    "pesde.lock",
+    ".cursor",
+    "temp.luau",
+    "sourcemap.json",
+]

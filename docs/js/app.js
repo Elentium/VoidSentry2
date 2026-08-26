@@ -1,44 +1,3 @@
-function renderBenchmarks() {
-	const root = document.getElementById("benchmarks-root");
-	if (!root) return;
-
-	const data = window.VS2_BENCHMARKS;
-	if (!data || typeof data !== "object") {
-		root.innerHTML = "<p class=\"muted\">No benchmark data (<code>VS2_BENCHMARKS</code> missing).</p>";
-		return;
-	}
-
-	const sections = Object.keys(data);
-	let html = "";
-	for (const section of sections) {
-		const tests = data[section];
-		if (!tests || typeof tests !== "object") continue;
-
-		html += "<div class=\"benchmark-section card\">";
-		html += "<h3 class=\"benchmark-section-title\">" + escapeHtml(section) + "</h3>";
-		html += "<div class=\"benchmark-table-wrap\"><table class=\"benchmark-table\"><thead><tr>";
-		html += "<th>Test</th><th class=\"num\">Avg (µs)</th>";
-		html += "</tr></thead><tbody>";
-
-		const names = Object.keys(tests);
-		for (const name of names) {
-			const v = tests[name];
-			const num = typeof v === "number" && !Number.isNaN(v) ? v.toFixed(2) : escapeHtml(String(v));
-			html += "<tr><td>" + escapeHtml(name) + "</td><td class=\"num\">" + num + "</td></tr>";
-		}
-		html += "</tbody></table></div></div>";
-	}
-	root.innerHTML = html || "<p class=\"muted\">Benchmark map is empty.</p>";
-}
-
-function escapeHtml(s) {
-	return String(s)
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/\"/g, "&quot;");
-}
-
 function initCodeCopyButtons() {
 	const copyIcon =
 		'<svg class="code-block__copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">' +
@@ -118,9 +77,6 @@ function initNav() {
 		});
 		if (scrollTop) {
 			window.scrollTo(0, 0);
-		}
-		if (targetPage === "benchmarks") {
-			renderBenchmarks();
 		}
 	}
 
@@ -216,7 +172,4 @@ document.addEventListener("DOMContentLoaded", function () {
 		hljs.highlightAll();
 	}
 	initCodeCopyButtons();
-	if (document.getElementById("benchmarks") && document.getElementById("benchmarks").classList.contains("active")) {
-		renderBenchmarks();
-	}
 });

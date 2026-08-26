@@ -2,7 +2,7 @@
 --!native
 --[[
 	================================================================================
-	  VoidSentry2  |  v0.1.5  |  Apache-2.0  |  by IAMNOTULTRA3
+	  VoidSentry2  |  v0.1.6  |  Apache-2.0  |  by IAMNOTULTRA3
 	================================================================================
 	  Buffer serialization library for Roblox. Converts Luau & Roblox values into
 	buffers and back. Supports schema-based (static) and schemaless
@@ -67,6 +67,8 @@
 	  SPECIAL             size     notes
 	    void              0 B      empty table {}; no bytes written
 	    struct({k=T})     sum(T)   values only, keys sorted, no names on wire
+	    deltaStruct({k=T}) 1+n(1+T) present keys only; u8 count + u8 field ids (max 255)
+	    deltaStruct16({k=T}) 2+n(2+T) present keys only; u16 count + u16 field ids (max 65535)
 	    optional(T)       1+T?     1 B presence flag; inner T only if present
 	    union(T...)       1+T      1 B variant index (max 255 variants); each variant must have a unique exType
 	    any               1+T      1 B discriminator + dynamically inferred value
@@ -90,7 +92,7 @@
 	  LINKS
 	================================================================================
 	• Github: https://github.com/Elentium/VoidSentry2
-	• Wally: "elentium/voidsentry2@0.1.5" https://wally.run/package/elentium/voidsentry2
+	• Wally: "elentium/voidsentry2@0.1.6" https://wally.run/package/elentium/voidsentry2
 	• Creator Store: https://create.roblox.com/store/asset/109800466320728
 	• Pesde: "pesde add elentium/voidsentry2" https://pesde.dev/packages/elentium/voidsentry2
 ]]

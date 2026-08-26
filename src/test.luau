@@ -176,6 +176,14 @@ const CONFIG = {
 		["struct – wrong type for field errors"] = 3,
 		["struct – wrong type for field returns nil"] = 3,
 
+		-- ─── Static · DeltaStruct Type ───
+		["deltaStruct – sparse subset of fields"] = 14,
+		["deltaStruct – empty present set"] = 8,
+		["deltaStruct – ignores unknown keys"] = 12,
+		["deltaStruct16 – sparse subset of fields"] = 16,
+		["deltaStruct – wrong type errors"] = 3,
+		["deltaStruct – wrong type returns nil"] = 3,
+
 		-- ─── Static · Nested Structs & Arrays ───
 		["struct inside struct (entity with pos)"] = 18,
 		["array of structs – 3 entries"] = 20,
@@ -2181,7 +2189,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 	end
 
 	do
-		local uAM = types.union(types.array(types.uint8), types.map(types.string255, types.int32))
+		local uAM = (types.union :: any)(types.array(types.uint8), types.map(types.string255, types.int32))
 		local arr = { 9, 8, 7 }
 		local m = { k = -1, zz = 42 }
 		test("union(array|map) – non-empty array branch", function()
@@ -2404,6 +2412,98 @@ const function voidSentry2_Test(createUI: boolean?): number
 			if vsConfig.strictMode
 				then "struct – wrong type for field errors"
 				else "struct – wrong type for field returns nil",
+			function()
+				local bad = { name = "ok", wrong = "not a number" }
+				local ok, res = pcall(function()
+					return ser(s, bad)
+				end)
+				return expectRejectSerialize(ok, res)
+			end,
+			function()
+				if vsConfig.strictMode then
+					staticRoundTripPerf(s, nil, nil, { name = "ok", wrong = 1 })
+				else
+					staticRoundTripPerf(s, nil, nil, { name = "ok", wrong = "not a number" })
+				end
+			end
+		)
+	end
+
+	-- ─── Static Serializer: DeltaStruct ───────────────────────────────────────────
+	section("Static · DeltaStruct Type")
+
+	do
+		local s = types.deltaStruct({
+			x = types.float32,
+			y = types.float32,
+			z = types.float32,
+		})
+		local patch = { x = 1.5, z = 3.25 }
+		test("deltaStruct – sparse subset of fields", function()
+			return roundTrip(s, function(v)
+				return approxEq(v.x, patch.x, 1e-4)
+					and v.y == nil
+					and approxEq(v.z, patch.z, 1e-4)
+			end, patch)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, patch)
+		end)
+	end
+
+	do
+		local s = types.deltaStruct({
+			a = types.uint8,
+			b = types.uint8,
+		})
+		test("deltaStruct – empty present set", function()
+			return roundTrip(s, function(v)
+				return next(v) == nil
+			end, {})
+		end, function()
+			staticRoundTripPerf(s, nil, nil, {})
+		end)
+	end
+
+	do
+		local s = types.deltaStruct({
+			health = types.float32,
+			armor = types.float32,
+		})
+		local patch = { health = 80, unknown = 1 }
+		test("deltaStruct – ignores unknown keys", function()
+			return roundTrip(s, function(v)
+				return approxEq(v.health, 80, 1e-4) and v.armor == nil and v.unknown == nil
+			end, patch)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, { health = 80 })
+		end)
+	end
+
+	do
+		local s = types.deltaStruct16({
+			x = types.float32,
+			y = types.float32,
+			z = types.float32,
+		})
+		local patch = { y = -2.5 }
+		test("deltaStruct16 – sparse subset of fields", function()
+			return roundTrip(s, function(v)
+				return v.x == nil and approxEq(v.y, patch.y, 1e-4) and v.z == nil
+			end, patch)
+		end, function()
+			staticRoundTripPerf(s, nil, nil, patch)
+		end)
+	end
+
+	do
+		local s = types.deltaStruct({
+			name = types.string255,
+			wrong = types.int8,
+		})
+		test(
+			if vsConfig.strictMode
+				then "deltaStruct – wrong type errors"
+				else "deltaStruct – wrong type returns nil",
 			function()
 				local bad = { name = "ok", wrong = "not a number" }
 				local ok, res = pcall(function()
@@ -3170,7 +3270,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 				return false
 			end
 			local v = des(s, b)
-			return typeof(v) == "Instance" and v:IsA("Part") and v.Name == src.Name
+			return typeof(v) == "Instance" and (v :: any):IsA("Part") and v.Name == src.Name
 		end, function()
 			staticRoundTripPerf(s, nil, nil, src)
 		end)
@@ -3238,7 +3338,7 @@ const function voidSentry2_Test(createUI: boolean?): number
 				return false
 			end
 			local v = des(s, b)
-			return typeof(v) == "Instance" and v ~= src and v:IsA("Part")
+			return typeof(v) == "Instance" and v ~= src and (v :: any):IsA("Part")
 		end, function()
 			staticRoundTripPerf(s, nil, nil, src)
 		end)

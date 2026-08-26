@@ -1,0 +1,13 @@
+{
+    "name": "voidsentry2playtest",
+    "emitLegacyScripts": false,
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "VoidSentry2": {
+                "$path": "src"
+            }
+        }
+    }
+}

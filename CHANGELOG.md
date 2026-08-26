@@ -1,3 +1,6 @@
+## 0.1.6:
+- Merged upstream changes from BlazeSentry V0.1.7
+
 ## 0.1.5:
 - Merged upstream changes from BlazeSentry V0.1.6
 

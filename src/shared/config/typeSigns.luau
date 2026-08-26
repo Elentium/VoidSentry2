@@ -61,4 +61,6 @@ return {
 	enum = 45,
 	union = 46,
 	boolPacked = 47,
+	deltaStruct = 48,
+	deltaStruct16 = 49,
 }

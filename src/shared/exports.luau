@@ -152,6 +152,8 @@ export type voidSentryTypes = {
 
 	-- SPECIAL TYPES --
 	struct: <T>(struct: T) -> typeNode<extractTypesFromTypeNodes<T>>,
+	deltaStruct: <T>(struct: T) -> typeNode<extractTypesFromTypeNodes<T>>,
+	deltaStruct16: <T>(struct: T) -> typeNode<extractTypesFromTypeNodes<T>>,
 	void: typeNode<{}>,
 	any: typeNode<any>,
 	optional: <V>(v: V) -> typeNode<extractTypeFromTypeNode<V>?>,
